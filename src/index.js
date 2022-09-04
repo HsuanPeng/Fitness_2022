@@ -8,7 +8,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import App from './App';
 import Home from './pages/Home/Home';
 import Training from './pages/Training/Training';
-import Calender from './pages/Calender/Calender';
+import Calendar from './pages/Calendar/Calendar';
 import Statistics from './pages/Statistics/Statistics';
 import Map from './pages/Map/Map';
 import Animal from './pages/Animal/Animal';
@@ -20,7 +20,7 @@ root.render(
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
         <Route path="training" element={<Training />} />
-        <Route path="calender" element={<Calender />} />
+        <Route path="calender" element={<Calendar />} />
         <Route path="statistics" element={<Statistics />} />
         <Route path="map" element={<Map />} />
         <Route path="animal" element={<Animal />} />
