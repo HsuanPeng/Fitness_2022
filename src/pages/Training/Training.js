@@ -1235,11 +1235,7 @@ const Training = () => {
     setShowHistoryToggle(true);
     setPickHistory(trainingData[index].docID);
     setImageList(trainingData.picture);
-    if (showPicture == true) {
-      setShowPicture(false);
-    } else if (showPicture == false) {
-      setShowPicture(true);
-    }
+    setShowPicture((prevShowPicture) => !prevShowPicture);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
