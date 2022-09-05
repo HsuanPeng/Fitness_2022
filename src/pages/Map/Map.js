@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+//components
+import UserContext from '../../contexts/UserContext';
 
 const Map = () => {
-  return <div>地圖</div>;
+  //UserContext拿資料
+  const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+
+  return <div>Map</div>;
 };
 
 export default Map;

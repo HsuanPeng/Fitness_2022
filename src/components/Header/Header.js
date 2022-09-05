@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+//components
+import UserContext from '../../contexts/UserContext';
 
 const Wrapper = styled.div`
   display: flex;
@@ -15,6 +18,8 @@ const MapPage = styled(Link)``;
 const AnimalPage = styled(Link)``;
 
 const Header = () => {
+  const { isLoggedIn, setIsLoggedIn, userSignOut } = useContext(UserContext);
+
   return (
     <>
       <Wrapper>
@@ -24,9 +29,20 @@ const Header = () => {
         <StatisticsPage to="/statistics">健數據</StatisticsPage>
         <MapPage to="/map">健地圖</MapPage>
         <AnimalPage to="/animal">健畜</AnimalPage>
+        {isLoggedIn ? (
+          <Logout
+            onClick={() => {
+              userSignOut();
+            }}
+          >
+            登出
+          </Logout>
+        ) : null}
       </Wrapper>
     </>
   );
 };
 
 export default Header;
+
+const Logout = styled.button``;
