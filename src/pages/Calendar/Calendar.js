@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const Calendar = () => {
-  //抓出localstorage資料
-  const uid = localStorage.getItem('uid');
-  const accessToken = localStorage.getItem('accessToken');
-  const email = localStorage.getItem('email');
-  const name = localStorage.getItem('name');
-  console.log(accessToken);
+//components
+import UserContext from '../../contexts/UserContext';
 
-  return <div>日曆頁</div>;
+const Calendar = () => {
+  //UserContext拿資料
+  const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+
+  return (
+    <>
+      <div>日曆</div>
+    </>
+  );
 };
 
 export default Calendar;

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 //components
 import PiePage from '../Statistics/PiePage';
 import LinePage from '../Statistics/LinePage';
+import UserContext from '../../contexts/UserContext';
 
 const PieOutside = styled.div`
   padding-top: 100px;
@@ -19,6 +20,9 @@ const LineOutside = styled.div`
 `;
 
 const Statistics = () => {
+  //UserContext拿資料
+  const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+
   return (
     <div>
       Statistics
