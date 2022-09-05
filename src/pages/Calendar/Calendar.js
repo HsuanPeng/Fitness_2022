@@ -7,6 +7,7 @@ import UserContext from '../../contexts/UserContext';
 const Calendar = () => {
   //UserContext拿資料
   const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+  console.log(isLoggedIn);
 
   return (
     <>

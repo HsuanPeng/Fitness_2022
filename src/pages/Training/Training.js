@@ -21,12 +21,17 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import { v4 } from 'uuid';
 
-//chart.js
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
-
 //components
 import UserContext from '../../contexts/UserContext';
+import Video from './Video';
+import HistoryZone from './HistoryZone';
+import OpenHistoryZone from './OpenHistoryZone';
+import TrainingOutsideOneZone from './TrainingOutsideOneZone';
+import ChoiceActionOutsideZone from './ChoiceActionOutsideZone';
+import PromoteActionOutsideZone from './PromoteActionOutsideZone';
+import CalculationShowZone from './CalculationShowZone';
+
+//引入動作菜單
 import BackActions from './BackActions';
 import ArmActions from './ArmActions';
 import ShoulderActions from './ShoulderActions';
@@ -35,6 +40,9 @@ import CoreActions from './CoreActions';
 import UpperBodyActions from './UpperBodyActions';
 import AllActions from './AllActions';
 import ButtLegActions from './ButtLegActions';
+
+//chart.js
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 const Training = () => {
   //UserContext拿資料
@@ -324,10 +332,6 @@ const Training = () => {
     setVideoShow(true);
   }
 
-  function closeVideo() {
-    setVideoShow(false);
-  }
-
   // ＝＝＝＝＝＝＝＝＝＝播放個別影片＝＝＝＝＝＝＝＝＝＝＝
 
   // ＝＝＝＝＝＝＝＝＝＝上傳照片、顯示照片、個別對應＝＝＝＝＝＝＝＝＝＝＝
@@ -356,9 +360,11 @@ const Training = () => {
   //點到哪個菜單就顯示誰的照片
   useEffect(() => {
     const imageListRef = ref(storage, `${uid}/${pickHistory}`);
-    getDownloadURL(imageListRef).then((url) => {
-      setImageList(url);
-    });
+    if (pickHistory) {
+      getDownloadURL(imageListRef).then((url) => {
+        setImageList(url);
+      });
+    }
   }, [showPicture]);
 
   function closeHistory() {
@@ -375,186 +381,70 @@ const Training = () => {
     <Wrapper>
       <LoginUser>{localStorage.getItem('name')}你好！</LoginUser>
       <AddTrainingTable onClick={addTraining}>點擊建立菜單</AddTrainingTable>
-      <HistoryOutside>
-        {trainingData.map((item, index) => (
-          <HistoryItemsOutside
-            index={index}
-            onClick={() => {
-              openHistory(index);
-            }}
-          >
-            <HistoryLeft>
-              <HistoryPic></HistoryPic>
-            </HistoryLeft>
-            <HistoryRight>
-              <HistoryTitle>主題：{item.title}</HistoryTitle>
-              <HistoryDate>訓練日期：{item.trainingDate}</HistoryDate>
-              <HistoryWeight>總重量：{item.totalWeight}</HistoryWeight>
-              <HistoryTimes>總動作數：{item.totalActions}</HistoryTimes>
-              <HistoryComplete>狀態：{item.complete}</HistoryComplete>
-            </HistoryRight>
-          </HistoryItemsOutside>
-        ))}
-      </HistoryOutside>
-      <OpenHistory $isHide={showHistoryToggle}>
-        <Close onClick={closeHistory}>X</Close>
-        <HistoryTop>
-          <div>主題：{showHistory.title}</div>
-          <div>訓練日期：{showHistory.trainingDate}</div>
-          <div>總重量：{showHistory.totalWeight}</div>
-          <div>總動作數：{showHistory.totalActions}</div>
-          <div>狀態：{showHistory.complete}</div>
-        </HistoryTop>
-        {showHistoryActions.map((item) => {
-          return (
-            <HistoryActions>
-              <div>部位：{item.bodyPart}</div>
-              <div>動作：{item.actionName}</div>
-              <div>重量：{item.weight}</div>
-              <div>次數：{item.times}</div>
-            </HistoryActions>
-          );
-        })}
-        {imageList ? <HistoryImage src={imageList} /> : <HistoryImageAlert>趕快上傳照片吧</HistoryImageAlert>}
-        <AddPhoto>
-          <input
-            type="file"
-            onChange={(event) => {
-              setImageUpload(event.target.files[0]);
-            }}
-          />
-          <button
-            onClick={(e) => {
-              uploadImage(e);
-            }}
-          >
-            上傳照片
-          </button>
-        </AddPhoto>
-        <CompleteTraining onClick={completeTraining}>完成本次鍛鍊</CompleteTraining>
-      </OpenHistory>
+      <HistoryZone trainingData={trainingData} openHistory={openHistory} />
+      <OpenHistoryZone
+        showHistory={showHistory}
+        openHistory={openHistory}
+        showHistoryToggle={showHistoryToggle}
+        closeHistory={closeHistory}
+        showHistoryActions={showHistoryActions}
+        setShowHistoryActions={setShowHistoryActions}
+        imageList={imageList}
+        setImageList={setImageList}
+        imageUpload={imageUpload}
+        setImageUpload={setImageUpload}
+        completeTraining={completeTraining}
+        uploadImage={uploadImage}
+      />
       <TrainingOutside $isHide={openTrainingInput}>
         <TrainingInputOutside>
-          <TrainingOutsideOne $isHide={openTrainingOne}>
-            <Close onClick={closeAddTraining}>X</Close>
-            主題
-            <TitleInput onChange={(e) => setTitle(e.target.value)}></TitleInput>
-            日期
-            <DateInput type="date" onChange={(e) => setDate(e.target.value)}></DateInput>
-            <TurnOutside>
-              <TurnRight onClick={getPageTwo}>下一頁</TurnRight>
-            </TurnOutside>
-          </TrainingOutsideOne>
+          <TrainingOutsideOneZone
+            openTrainingOne={openTrainingOne}
+            closeAddTraining={closeAddTraining}
+            setTitle={setTitle}
+            setDate={setDate}
+            getPageTwo={getPageTwo}
+          />
           <TrainingOutsideTwo $isHide={openTrainingTwo}>
             <Close onClick={closeAddTraining}>X</Close>
             <ActionOutside>
-              <ChoiceActionOutside>
-                {choiceAction.map((item, index) => (
-                  <ChoiceItemOutside id={index}>
-                    <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
-                    <ChoiceItemName>{item.actionName}</ChoiceItemName>
-                    <WeightOutside>
-                      <Weight
-                        onChange={(e) => {
-                          choiceAction[index].weight = e.target.value;
-                        }}
-                      />
-                      KG
-                    </WeightOutside>
-                    <TimesOutside>
-                      <Times
-                        onChange={(e) => {
-                          choiceAction[index].times = e.target.value;
-                        }}
-                      />
-                      次
-                    </TimesOutside>
-                    <Delete
-                      onClick={() => {
-                        deleteItem(index);
-                      }}
-                    >
-                      刪除
-                    </Delete>
-                  </ChoiceItemOutside>
-                ))}
-                <TotalZone>
-                  <TotalWeightButton onClick={calTotalWeight}>計算總重量</TotalWeightButton>
-                  <TotalWeight>總重量：{totalWeight}</TotalWeight>
-                  <TotalActionNumbers>總動作數：{choiceAction.length}</TotalActionNumbers>
-                </TotalZone>
-              </ChoiceActionOutside>
-              <PromoteActionOutside>
-                <PromoteItemOutside>
-                  <PartTitle>部位</PartTitle>
-                  <select onChange={(e) => setPart(e.target.value)}>
-                    {/* <option value="none" selected disabled hidden>
-                      請選擇選項
-                    </option> */}
-                    <option value="肩">肩</option>
-                    <option value="手臂">手臂</option>
-                    <option value="胸">胸</option>
-                    <option value="背">背</option>
-                    <option value="臀腿">臀腿</option>
-                    <option value="核心">核心</option>
-                    <option value="上半身">上半身</option>
-                    <option value="全身">全身</option>
-                  </select>
-                  <div>
-                    {promoteActions.map((item, index) => (
-                      <PromoteListOutside>
-                        <AddIcon
-                          id={index}
-                          onClick={(e) => {
-                            addActionItem(e);
-                          }}
-                        >
-                          ⊕
-                        </AddIcon>
-                        <PromoteListPart>{item.bodyPart}</PromoteListPart>
-                        <PromoteLisName>{item.actionName}</PromoteLisName>
-                        <VideoTag
-                          id={index}
-                          onClick={(e) => {
-                            openVideo(e);
-                          }}
-                        >
-                          影片按鈕
-                        </VideoTag>
-                      </PromoteListOutside>
-                    ))}
-                  </div>
-                </PromoteItemOutside>
-              </PromoteActionOutside>
+              <ChoiceActionOutsideZone
+                choiceAction={choiceAction}
+                deleteItem={deleteItem}
+                calTotalWeight={calTotalWeight}
+                totalWeight={totalWeight}
+              />
+              <PromoteActionOutsideZone
+                setPart={setPart}
+                promoteActions={promoteActions}
+                addActionItem={addActionItem}
+                openVideo={openVideo}
+              />
             </ActionOutside>
-            <CalculationShow>
-              <PieOutside>{choiceAction.length > 0 ? <Pie data={data} /> : <Pie data={dataNull} />}</PieOutside>
-              <CompeleteTrainingSetting
-                onClick={() => {
-                  getCompleteSetting();
-                  compeleteTrainingSetting();
-                }}
-              >
-                完成菜單設定
-              </CompeleteTrainingSetting>
-            </CalculationShow>
+            <CalculationShowZone
+              choiceAction={choiceAction}
+              data={data}
+              dataNull={dataNull}
+              getCompleteSetting={getCompleteSetting}
+            />
             <TurnOutside>
               <TurnLeft onClick={getPageOne}>上一頁</TurnLeft>
             </TurnOutside>
           </TrainingOutsideTwo>
         </TrainingInputOutside>
       </TrainingOutside>
-      <Video $isHide={videoShow}>
-        <Close onClick={closeVideo}>X</Close>
-        <video autoPlay loop width={640} controls src={videoUrl}></video>
-      </Video>
+      <Video
+        videoUrl={videoUrl}
+        setVideoUrl={setVideoUrl}
+        videoShow={videoShow}
+        setVideoShow={setVideoShow}
+        compeleteTrainingSetting={compeleteTrainingSetting}
+      />
     </Wrapper>
   );
 };
 
 export default Training;
-
-// ＝＝＝＝＝＝＝＝＝＝＝styled＝＝＝＝＝＝＝＝＝＝＝
 
 const Wrapper = styled.div`
   display: flex;
@@ -567,30 +457,9 @@ const Wrapper = styled.div`
 
 const LoginUser = styled.div``;
 
-const HistoryOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+const AddTrainingTable = styled.button`
+  width: 100px;
 `;
-
-const HistoryItemsOutside = styled.div`
-  margin: 30px;
-  cursor: pointer;
-  background: #fdf5e6;
-  padding: 10px;
-  font-size: 16px;
-`;
-
-const HistoryLeft = styled.div``;
-const HistoryRight = styled.div``;
-const HistoryPic = styled.div``;
-const HistoryTitle = styled.div``;
-const HistoryDate = styled.div``;
-const HistoryWeight = styled.div``;
-const HistoryTimes = styled.div``;
-const HistoryComplete = styled.div``;
-
-const AddTrainingTable = styled.button``;
 
 const TrainingOutside = styled.div`
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
@@ -603,18 +472,6 @@ const TrainingInputOutside = styled.div`
   margin: 0 auto;
 `;
 
-const TrainingOutsideOne = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-`;
-
-const Video = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-  position: fixed;
-  background: #ffe4b5;
-  padding: 30px;
-  border-radius: 3%;
-`;
-
 const TrainingOutsideTwo = styled.div`
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
 `;
@@ -623,137 +480,7 @@ const ActionOutside = styled.div`
   display: flex;
 `;
 
-const ChoiceActionOutside = styled.div`
-  background: #dcdcdc;
-  width: 50%;
-  padding: 10px;
-`;
-
-const ChoiceItemOutside = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  margin: 10px;
-  background: #8dc3c9;
-`;
-
-const ChoiceItemPart = styled.div`
-  width: 10%;
-`;
-
-const ChoiceItemName = styled.div`
-  width: 30%;
-`;
-
-const WeightOutside = styled.div`
-  width: 20%;
-`;
-
-const Weight = styled.input`
-  width: 30px;
-`;
-
-const TimesOutside = styled.div`
-  width: 20%;
-`;
-
-const Times = styled.input`
-  width: 30px;
-`;
-
-const Delete = styled.div`
-  width: 20%;
-  cursor: pointer;
-`;
-
-const ChoiceItem = styled.div``;
-
-const PromoteActionOutside = styled.div`
-  background: #dcdcdc;
-  width: 50%;
-`;
-
-const PromoteItemOutside = styled.div`
-  padding: 10px;
-`;
-
-const PartTitle = styled.div``;
-
-const ActionTitle = styled.div``;
-
-const PromoteListOutside = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin: 10px;
-  background: #8dc3c9;
-`;
-
-const AddIcon = styled.div`
-  width: 10%;
-  cursor: pointer;
-`;
-
-const PromoteListPart = styled.div`
-  width: 30%;
-`;
-
-const PromoteLisName = styled.div`
-  width: 30%;
-`;
-
-const VideoTag = styled.div`
-  width: 30%;
-  cursor: pointer;
-`;
-
-const TrainingOutsideThree = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-`;
-
-const TitleInput = styled.input``;
-
-const DateInput = styled.input``;
-
-const AddPhoto = styled.button``;
-
-const CompleteTraining = styled.button``;
-
-const PieOutside = styled.div`
-  max-width: 350px;
-  padding: 10px;
-  margin: 0 auto;
-`;
-
-const CalculationShow = styled.div`
-  margin: 0 auto;
-`;
-
-const Calculation = styled.div``;
-
-const TotalWeight = styled.div``;
-
-const TotalActionNumbers = styled.div``;
-
-const TrainingOutsideThreeLeft = styled.div`
-  display: flex;
-`;
-
-const TotalZone = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 10px;
-`;
-
-const TotalWeightButton = styled.button``;
-
-const CompeleteTrainingSetting = styled.button``;
-
-const TrainingSettingComplete = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-`;
-
 const TurnLeft = styled.div``;
-
-const TurnRight = styled.div``;
 
 const TurnOutside = styled.div`
   display: flex;
@@ -761,31 +488,3 @@ const TurnOutside = styled.div`
 `;
 
 const Close = styled.div``;
-
-const OpenHistory = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-  margin: 0 auto;
-  background: #dcdcdc;
-  margin-bottom: 20px;
-  width: 800px;
-  padding: 10px;
-`;
-
-const HistoryActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const HistoryTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const HistoryImage = styled.img`
-  width: 200px;
-  height: auto;
-`;
-
-const HistoryImageAlert = styled.div``;
-
-// ＝＝＝＝＝＝＝＝＝＝＝styled＝＝＝＝＝＝＝＝＝＝＝
