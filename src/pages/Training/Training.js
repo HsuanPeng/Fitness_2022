@@ -7,19 +7,14 @@ import {
   getFirestore,
   doc,
   setDoc,
-  getDoc,
   collection,
-  addDoc,
-  getDocs,
   onSnapshot,
   query,
-  where,
-  Timestamp,
   orderBy,
   updateDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
-import { v4 } from 'uuid';
 
 //components
 import UserContext from '../../contexts/UserContext';
@@ -202,14 +197,17 @@ const Training = () => {
     setOpenTrainingTwo(true);
   }
 
+  //點擊完成菜單設定
   function getCompleteSetting() {
     if (title !== '' && date !== '') {
       setOpenTrainingOne(false);
       setOpenTrainingTwo(false);
       setOpenTrainingInput(false);
+      alert('完成菜單設定');
     }
   }
 
+  //點擊左上角XX
   function closeAddTraining() {
     setOpenTrainingInput(false);
     setOpenTrainingOne(false);
@@ -217,8 +215,35 @@ const Training = () => {
     setOpenCompleteSetting(false);
   }
 
+  //點擊「完成本次鍛鍊」
   function completeTraining() {
     setShowHistoryToggle(false);
+    alert('恭喜完成本次鍛鍊');
+    changeCompleteCondition();
+  }
+
+  //改變狀態
+  async function changeCompleteCondition() {
+    try {
+      const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
+      const data = {
+        complete: '已完成',
+      };
+      await updateDoc(docRef, data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  //可以刪除菜單
+  async function deleteTrainingItem() {
+    try {
+      const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
+      await deleteDoc(docRef);
+      setShowHistoryToggle(false);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   // ＝＝＝＝＝＝＝＝＝＝點擊建立菜單+上下頁切換＝＝＝＝＝＝＝＝＝＝＝
@@ -298,8 +323,8 @@ const Training = () => {
 
   useEffect(() => {
     async function getTrainingTables() {
-      const q = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-      onSnapshot(q, (item) => {
+      const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
+      onSnapshot(docRef, (item) => {
         const newData = [];
         item.forEach((doc) => {
           newData.push(doc.data());
@@ -379,7 +404,7 @@ const Training = () => {
 
   return (
     <Wrapper>
-      <LoginUser>{localStorage.getItem('name')}你好！</LoginUser>
+      <LoginUser>{localStorage.getItem('name')}來建立菜單吧～</LoginUser>
       <AddTrainingTable onClick={addTraining}>點擊建立菜單</AddTrainingTable>
       <HistoryZone trainingData={trainingData} openHistory={openHistory} />
       <OpenHistoryZone
@@ -394,7 +419,9 @@ const Training = () => {
         imageUpload={imageUpload}
         setImageUpload={setImageUpload}
         completeTraining={completeTraining}
+        setOpenCompleteSetting={setOpenCompleteSetting}
         uploadImage={uploadImage}
+        deleteTrainingItem={deleteTrainingItem}
       />
       <TrainingOutside $isHide={openTrainingInput}>
         <TrainingInputOutside>
@@ -426,6 +453,7 @@ const Training = () => {
               data={data}
               dataNull={dataNull}
               getCompleteSetting={getCompleteSetting}
+              compeleteTrainingSetting={compeleteTrainingSetting}
             />
             <TurnOutside>
               <TurnLeft onClick={getPageOne}>上一頁</TurnLeft>
@@ -433,13 +461,7 @@ const Training = () => {
           </TrainingOutsideTwo>
         </TrainingInputOutside>
       </TrainingOutside>
-      <Video
-        videoUrl={videoUrl}
-        setVideoUrl={setVideoUrl}
-        videoShow={videoShow}
-        setVideoShow={setVideoShow}
-        compeleteTrainingSetting={compeleteTrainingSetting}
-      />
+      <Video videoUrl={videoUrl} setVideoUrl={setVideoUrl} videoShow={videoShow} setVideoShow={setVideoShow} />
     </Wrapper>
   );
 };

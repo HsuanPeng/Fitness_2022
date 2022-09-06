@@ -1,4 +1,3 @@
-import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const OpenHistoryZone = (props) => {
@@ -8,8 +7,8 @@ const OpenHistoryZone = (props) => {
       <HistoryTop>
         <div>主題：{props.showHistory.title}</div>
         <div>訓練日期：{props.showHistory.trainingDate}</div>
-        <div>總重量：{props.showHistory.totalWeight}</div>
-        <div>總動作數：{props.showHistory.totalActions}</div>
+        <div>總重量：{props.showHistory.totalWeight} KG</div>
+        <div>總動作數：{props.showHistory.totalActions} 個</div>
         <div>狀態：{props.showHistory.complete}</div>
       </HistoryTop>
       {props.showHistoryActions.map((item) => {
@@ -17,8 +16,8 @@ const OpenHistoryZone = (props) => {
           <HistoryActions>
             <div>部位：{item.bodyPart}</div>
             <div>動作：{item.actionName}</div>
-            <div>重量：{item.weight}</div>
-            <div>次數：{item.times}</div>
+            <div>重量：{item.weight} KG</div>
+            <div>次數：{item.times} 次</div>
           </HistoryActions>
         );
       })}
@@ -39,6 +38,7 @@ const OpenHistoryZone = (props) => {
         </button>
       </AddPhoto>
       <CompleteTraining onClick={props.completeTraining}>完成本次鍛鍊</CompleteTraining>
+      <DeleteTrainingItem onClick={props.deleteTrainingItem}>刪除本菜單</DeleteTrainingItem>
     </OpenHistory>
   );
 };
@@ -76,3 +76,7 @@ const HistoryImageAlert = styled.div``;
 const AddPhoto = styled.button``;
 
 const CompleteTraining = styled.button``;
+
+const DeleteTrainingItem = styled.div`
+  cursor: pointer;
+`;

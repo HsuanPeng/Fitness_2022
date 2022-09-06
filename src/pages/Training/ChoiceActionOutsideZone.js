@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const ChoiceActionOutsideZone = (props) => {
@@ -13,7 +12,7 @@ const ChoiceActionOutsideZone = (props) => {
               onChange={(e) => {
                 props.choiceAction[index].weight = e.target.value;
               }}
-            />
+            />{' '}
             KG
           </WeightOutside>
           <TimesOutside>
@@ -21,7 +20,7 @@ const ChoiceActionOutsideZone = (props) => {
               onChange={(e) => {
                 props.choiceAction[index].times = e.target.value;
               }}
-            />
+            />{' '}
             次
           </TimesOutside>
           <Delete
@@ -35,8 +34,8 @@ const ChoiceActionOutsideZone = (props) => {
       ))}
       <TotalZone>
         <TotalWeightButton onClick={props.calTotalWeight}>計算總重量</TotalWeightButton>
-        <TotalWeight>總重量：{props.totalWeight}</TotalWeight>
-        <TotalActionNumbers>總動作數：{props.choiceAction.length}</TotalActionNumbers>
+        <TotalWeight>總重量：{props.totalWeight} KG</TotalWeight>
+        <TotalActionNumbers>總動作數：{props.choiceAction.length} 個</TotalActionNumbers>
       </TotalZone>
     </ChoiceActionOutside>
   );
