@@ -1,4 +1,3 @@
-import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const HistoryZone = (props) => {
@@ -17,8 +16,8 @@ const HistoryZone = (props) => {
           <HistoryRight>
             <HistoryTitle>主題：{item.title}</HistoryTitle>
             <HistoryDate>訓練日期：{item.trainingDate}</HistoryDate>
-            <HistoryWeight>總重量：{item.totalWeight}</HistoryWeight>
-            <HistoryTimes>總動作數：{item.totalActions}</HistoryTimes>
+            <HistoryWeight>總重量：{item.totalWeight} KG</HistoryWeight>
+            <HistoryTimes>總動作數：{item.totalActions} 個</HistoryTimes>
             <HistoryComplete>狀態：{item.complete}</HistoryComplete>
           </HistoryRight>
         </HistoryItemsOutside>

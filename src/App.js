@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 //Route
@@ -8,39 +8,11 @@ import { createGlobalStyle } from 'styled-components';
 //firebase
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  collection,
-  addDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-  Timestamp,
-  orderBy,
-  updateDoc,
-} from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, collection } from 'firebase/firestore';
 
 //components
 import Header from './components/Header/Header';
 import UserContext from './contexts/UserContext';
-
-const GlobalStyle = createGlobalStyle`
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Noto Sans TC', sans-serif;
-  }
-
-  a{
-    text-decoration:none;
-  }
-`;
 
 const App = () => {
   //判斷有無登入
@@ -123,15 +95,15 @@ const App = () => {
       //再建立第二層
       const docRefSub = doc(collection(db, 'users', uid, 'trainingTables'));
       const dataSub = {
-        docID: docRef.id,
+        docID: docRefSub.id,
         complete: '未完成',
         picture: '',
         title: '範例檔案',
-        totalActions: null,
-        totalWeight: null,
-        trainingDate: null,
+        totalActions: Number(0),
+        totalWeight: Number(0),
+        trainingDate: '2022-09-07',
         setDate: new Date(),
-        actions: [],
+        actions: [{ actionName: '動作名稱', bodyPart: '動作部位', times: Number(0), videoURL: '', weight: Number(0) }],
       };
       await setDoc(docRefSub, dataSub);
     }
@@ -151,3 +123,18 @@ const App = () => {
 };
 
 export default App;
+
+const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+    outline:solid 1px black;
+  }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  a{
+    text-decoration:none;
+  }
+`;
