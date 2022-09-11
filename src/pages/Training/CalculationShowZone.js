@@ -5,19 +5,23 @@ import { Pie } from 'react-chartjs-2';
 
 const CalculationShowZone = (props) => {
   return (
-    <CalculationShow>
-      <PieOutside>
-        {props.choiceAction.length > 0 ? <Pie data={props.data} /> : <Pie data={props.dataNull} />}
-      </PieOutside>
-      <CompeleteTrainingSetting
-        onClick={() => {
-          props.getCompleteSetting();
-          props.compeleteTrainingSetting();
-        }}
-      >
-        完成菜單設定
-      </CompeleteTrainingSetting>
-    </CalculationShow>
+    <>
+      <CalculationShow>
+        <PieOutside>
+          {props.choiceAction.length > 0 ? <Pie data={props.data} /> : <Pie data={props.dataNull} />}
+        </PieOutside>
+        <CompeleteTrainingSetting
+          type="button"
+          value="submit"
+          onClick={() => {
+            props.getCompleteSetting();
+            props.compeleteTrainingSetting();
+          }}
+        >
+          完成菜單設定
+        </CompeleteTrainingSetting>
+      </CalculationShow>
+    </>
   );
 };
 

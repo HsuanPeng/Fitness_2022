@@ -5,18 +5,6 @@ import styled from 'styled-components';
 //components
 import UserContext from '../../contexts/UserContext';
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const Logo = styled(Link)``;
-const TrainingPage = styled(Link)``;
-const CalenderPage = styled(Link)``;
-const StatisticsPage = styled(Link)``;
-const MapPage = styled(Link)``;
-const AnimalPage = styled(Link)``;
-
 const Header = () => {
   const { isLoggedIn, setIsLoggedIn, userSignOut } = useContext(UserContext);
 
@@ -25,18 +13,20 @@ const Header = () => {
       <Wrapper>
         <Logo to="/">Logo</Logo>
         <TrainingPage to="/training">健菜單</TrainingPage>
-        <CalenderPage to="/calender">健日曆</CalenderPage>
+        <CalendarPage to="/CalendarPage">健日曆</CalendarPage>
         <StatisticsPage to="/statistics">健數據</StatisticsPage>
         <MapPage to="/map">健地圖</MapPage>
-        <AnimalPage to="/animal">健畜</AnimalPage>
         {isLoggedIn ? (
-          <Logout
-            onClick={() => {
-              userSignOut();
-            }}
-          >
-            登出
-          </Logout>
+          <>
+            <LoginUser>{localStorage.getItem('name')} 登入中</LoginUser>
+            <Logout
+              onClick={() => {
+                userSignOut();
+              }}
+            >
+              登出
+            </Logout>
+          </>
         ) : null}
       </Wrapper>
     </>
@@ -46,3 +36,19 @@ const Header = () => {
 export default Header;
 
 const Logout = styled.button``;
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  height: 100px;
+`;
+
+const Logo = styled(Link)``;
+const TrainingPage = styled(Link)``;
+const CalendarPage = styled(Link)``;
+const StatisticsPage = styled(Link)``;
+const MapPage = styled(Link)``;
+
+const LoginUser = styled.div``;
