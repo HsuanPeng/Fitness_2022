@@ -1,16 +1,21 @@
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 
 const BodyWeightDataPage = (props) => {
   return (
     <BodyWeightWriteDataZone>
       <BodyWeightWriteDataTitle>登錄數據</BodyWeightWriteDataTitle>
       日期
-      <BodyWeightDateInput type="date" onChange={(e) => props.setWeightDateInput(e.target.value)}></BodyWeightDateInput>
+      <BodyWeightDateInput
+        type="date"
+        onChange={(e) => props.setWeightDateInput(e.target.value)}
+        min={new Date().toISOString().split('T')[0]}
+      ></BodyWeightDateInput>
       體重
       <BodyWeightInput onChange={(e) => props.setWeightNumberInput(e.target.value)}></BodyWeightInput>KG
       <BodyWeightInputButton onClick={props.writeBodyWeight}>登錄</BodyWeightInputButton>
       {props.weightRecord.map((item, index) => (
-        <BodyWeightHistoryOutside id={index}>
+        <BodyWeightHistoryOutside id={index} key={uuidv4()}>
           <BodyWeightMeasureDate>日期：{item.measureDate}</BodyWeightMeasureDate>
           <BodyWeightChange>
             距離上次變化：

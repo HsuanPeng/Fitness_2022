@@ -1,14 +1,17 @@
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 
 const ChoiceActionOutsideZone = (props) => {
   return (
     <ChoiceActionOutside>
       {props.choiceAction.map((item, index) => (
-        <ChoiceItemOutside id={index}>
+        <ChoiceItemOutside id={index} key={uuidv4()}>
           <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
           <ChoiceItemName>{item.actionName}</ChoiceItemName>
           <WeightOutside>
             <Weight
+              type="input"
+              placeholder="0"
               onChange={(e) => {
                 props.choiceAction[index].weight = e.target.value;
               }}
@@ -17,6 +20,8 @@ const ChoiceActionOutsideZone = (props) => {
           </WeightOutside>
           <TimesOutside>
             <Times
+              type="input"
+              placeholder="0"
               onChange={(e) => {
                 props.choiceAction[index].times = e.target.value;
               }}
@@ -85,17 +90,9 @@ const Delete = styled.div`
   cursor: pointer;
 `;
 
-const ChoiceItem = styled.div``;
-
-const Calculation = styled.div``;
-
 const TotalWeight = styled.div``;
 
 const TotalActionNumbers = styled.div``;
-
-const TrainingOutsideThreeLeft = styled.div`
-  display: flex;
-`;
 
 const TotalZone = styled.div`
   display: flex;

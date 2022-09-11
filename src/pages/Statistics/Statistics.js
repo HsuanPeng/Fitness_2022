@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 
 //components
 import UserContext from '../../contexts/UserContext';
@@ -51,6 +52,9 @@ const Statistics = () => {
   //體重率折線圖
   const [weightDateLine, setWeightDateLine] = useState([]);
   const [weightNumberLine, setWeightNumberLine] = useState([]);
+
+  //抓出過去完成菜單
+  const [finishTraining, setFinishTraining] = useState([]);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -246,9 +250,25 @@ const Statistics = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝＝頁面切換＝＝＝＝＝＝＝＝＝＝＝
 
-  if (!fatRecord) {
-    return null;
-  }
+  // ＝＝＝＝＝＝＝＝＝＝＝抓出過去完成菜單＝＝＝＝＝＝＝＝＝＝＝
+
+  useEffect(() => {
+    async function getFinishTrainingTables() {
+      const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
+      onSnapshot(docRef, (item) => {
+        const newData = [];
+        item.forEach((doc) => {
+          if (doc.data().complete == '已完成') {
+            newData.push(doc.data());
+          }
+          setFinishTraining(newData);
+        });
+      });
+    }
+    getFinishTrainingTables();
+  }, [isLoggedIn, uid]);
+
+  // ＝＝＝＝＝＝＝＝＝＝＝抓出過去完成菜單＝＝＝＝＝＝＝＝＝＝＝
 
   return (
     <Wrapper>
@@ -256,6 +276,7 @@ const Statistics = () => {
         <GoBodyFat onClick={goBodyFatPage}>體脂肪率</GoBodyFat>
         <GoBodyWeight onClick={goBodyWeightPage}>體重</GoBodyWeight>
       </ChangeMenuZone>
+
       <ChangeToBodyFat $isHide={showFatRecord}>
         <BodyFatDataPage
           setFatDateInput={setFatDateInput}
@@ -288,6 +309,19 @@ const Statistics = () => {
           </BodyWeightLineOutside>
         </BodyWeightLinePageZone>
       </ChangeToBodyWeight>
+      <FinishTrainingZone>
+        <FinishTrainingTitle>已完成鍛鍊</FinishTrainingTitle>
+        {finishTraining.map((item) => {
+          return (
+            <FinishList key={uuidv4()}>
+              <div>日期：{item.trainingDate}</div>
+              <div>主題：{item.title}</div>
+              <div>{item.description}</div>
+              <FinishPic src={item.picture}></FinishPic>
+            </FinishList>
+          );
+        })}
+      </FinishTrainingZone>
     </Wrapper>
   );
 };
@@ -295,20 +329,23 @@ const Statistics = () => {
 export default Statistics;
 
 const Wrapper = styled.div`
-  display: flex;
   margin: 0 auto;
-  max-width: 1400px;
-  justify-content: space-evenly;
+  padding: 30px;
 `;
 
-const ChangeMenuZone = styled.div``;
+const ChangeMenuZone = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 
 const GoBodyFat = styled.div`
   cursor: pointer;
+  padding: 20px;
 `;
 
 const GoBodyWeight = styled.div`
   cursor: pointer;
+  padding: 20px;
 `;
 
 // ＝＝＝＝＝＝＝＝＝＝＝體脂肪區＝＝＝＝＝＝＝＝＝＝＝
@@ -321,7 +358,9 @@ const ChangeToBodyFat = styled.div`
 
 // ＝＝＝＝＝＝＝＝＝＝＝體脂肪折線圖區＝＝＝＝＝＝＝＝＝＝＝
 
-const BodyFatLinePageZone = styled.div``;
+const BodyFatLinePageZone = styled.div`
+  margin-top: 30px;
+`;
 
 const BodyFatLinePageTitle = styled.div``;
 
@@ -343,7 +382,9 @@ const ChangeToBodyWeight = styled.div`
 
 // ＝＝＝＝＝＝＝＝＝＝＝體重折線圖區＝＝＝＝＝＝＝＝＝＝＝
 
-const BodyWeightLinePageZone = styled.div``;
+const BodyWeightLinePageZone = styled.div`
+  margin-top: 30px;
+`;
 
 const BodyWeightLinePageTitle = styled.div``;
 
@@ -354,3 +395,22 @@ const BodyWeightLineOutside = styled.div`
 `;
 
 // ＝＝＝＝＝＝＝＝＝＝＝體重折線圖區＝＝＝＝＝＝＝＝＝＝＝
+
+// ＝＝＝＝＝＝＝＝＝＝＝完成鍛鍊區＝＝＝＝＝＝＝＝＝＝＝
+
+const FinishTrainingZone = styled.div`
+  margin-top: 30px;
+`;
+
+const FinishTrainingTitle = styled.div``;
+
+const FinishList = styled.div`
+  display: flex;
+`;
+
+const FinishPic = styled.img`
+  weight: 50px;
+  height: 50px;
+`;
+
+// ＝＝＝＝＝＝＝＝＝＝＝完成鍛鍊區＝＝＝＝＝＝＝＝＝＝＝

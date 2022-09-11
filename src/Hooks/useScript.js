@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export function useScript(src) {
   // Keep track of script status ("idle", "loading", "ready", "error")

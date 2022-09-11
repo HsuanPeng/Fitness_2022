@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 
 //firebase
@@ -21,23 +21,23 @@ import UserContext from '../../contexts/UserContext';
 import Video from './Video';
 import HistoryZone from './HistoryZone';
 import OpenHistoryZone from './OpenHistoryZone';
-import TrainingOutsideOneZone from './TrainingOutsideOneZone';
 import ChoiceActionOutsideZone from './ChoiceActionOutsideZone';
 import PromoteActionOutsideZone from './PromoteActionOutsideZone';
 import CalculationShowZone from './CalculationShowZone';
 
 //引入動作菜單
-import BackActions from './BackActions';
-import ArmActions from './ArmActions';
-import ShoulderActions from './ShoulderActions';
-import ChestActions from './ChestActions';
-import CoreActions from './CoreActions';
-import UpperBodyActions from './UpperBodyActions';
-import AllActions from './AllActions';
-import ButtLegActions from './ButtLegActions';
+import ACTIONS from './allActionsLists';
+
+//寄信
+import emailjs from 'emailjs-com';
 
 //chart.js
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+
+//Dnd.js
+// import Dnd from './Dnd';
+// import Dnd2 from './Dnd2';
+// import BeautifulDnD from './BeautifulDnD';
 
 const Training = () => {
   //UserContext拿資料
@@ -54,10 +54,13 @@ const Training = () => {
 
   //抓出localstorage資料
   const uid = localStorage.getItem('uid');
+  const email = localStorage.getItem('email');
+  const name = localStorage.getItem('name');
 
   //抓到菜單input
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
+  const [description, setDescription] = useState('');
   const [part, setPart] = useState('');
   const [promoteActions, setPromoteActions] = useState([]);
   const [choiceAction, setChoiceAction] = useState([]);
@@ -197,9 +200,9 @@ const Training = () => {
     setOpenTrainingTwo(true);
   }
 
-  //點擊完成菜單設定
+  //點擊完成菜單設定，頁面開關
   function getCompleteSetting() {
-    if (title !== '' && date !== '') {
+    if (title !== '' && date !== '' && description !== '' && totalWeight !== 0) {
       setOpenTrainingOne(false);
       setOpenTrainingTwo(false);
       setOpenTrainingInput(false);
@@ -250,29 +253,33 @@ const Training = () => {
 
   useEffect(() => {
     if (part == '背') {
-      setPromoteActions(BackActions);
+      setPromoteActions(ACTIONS.BACK);
     } else if (part == '手臂') {
-      setPromoteActions(ArmActions);
+      setPromoteActions(ACTIONS.ARM);
     } else if (part == '胸') {
-      setPromoteActions(ChestActions);
+      setPromoteActions(ACTIONS.CHEST);
     } else if (part == '臀腿') {
-      setPromoteActions(ButtLegActions);
+      setPromoteActions(ACTIONS.BUTTLEG);
     } else if (part == '核心') {
-      setPromoteActions(CoreActions);
+      setPromoteActions(ACTIONS.CORE);
     } else if (part == '肩') {
-      setPromoteActions(ShoulderActions);
+      setPromoteActions(ACTIONS.SHOULDER);
     } else if (part == '上半身') {
-      setPromoteActions(UpperBodyActions);
+      setPromoteActions(ACTIONS.UPPERBODY);
     } else if (part == '全身') {
-      setPromoteActions(AllActions);
+      setPromoteActions(ACTIONS.ALL);
     }
   }, [part]);
 
   //從右邊加入左邊
   function addActionItem(e) {
     const newArray = [...choiceAction];
-    newArray.push(promoteActions[e.target.id]);
-    setChoiceAction(newArray);
+    if (!newArray.includes(promoteActions[e.target.id])) {
+      newArray.push(promoteActions[e.target.id]);
+      setChoiceAction(newArray);
+    } else {
+      alert('已經加入過該動作了！');
+    }
   }
 
   //左邊的可以刪除
@@ -293,15 +300,17 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝寫入菜單＝＝＝＝＝＝＝＝＝＝＝
 
+  //點擊完成菜單設定，寫入菜單
   async function compeleteTrainingSetting() {
     try {
-      if (title !== '' && date !== '') {
+      if (title !== '' && date !== '' && description !== '' && totalWeight !== 0) {
         const docRef = doc(collection(db, 'users', uid, 'trainingTables'));
         const data = {
           docID: docRef.id,
           complete: '未完成',
-          picture: imageList,
+          picture: '',
           title: title,
+          description: description,
           totalActions: choiceAction.length,
           totalWeight: totalWeight,
           trainingDate: date,
@@ -309,8 +318,11 @@ const Training = () => {
           actions: choiceAction,
         };
         await setDoc(docRef, data);
+        setChoiceAction([]);
+        setTotalWeight(0);
+        sendEmail();
       } else {
-        alert('請填寫完整資料');
+        alert('請填寫完整資料，並計算總重量');
       }
     } catch (e) {
       console.log(e);
@@ -362,30 +374,25 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝上傳照片、顯示照片、個別對應＝＝＝＝＝＝＝＝＝＝＝
 
   //上傳後即時顯示
-  function uploadImage(e) {
+  async function uploadImage(e) {
     if (imageUpload == null) return;
-    const imageRef = ref(storage, `${uid}/${pickHistory}`);
-    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+    const imageRef = await ref(storage, `${uid}/${pickHistory}`);
+    await uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
         setImageList(url);
+        const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
+        const data = {
+          picture: url,
+        };
+        updateDoc(docRef, data);
       });
     });
-    updatePicture();
-  }
-
-  //把圖片url寫到firestore的picture欄位
-  function updatePicture() {
-    const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
-    const data = {
-      picture: imageList,
-    };
-    updateDoc(docRef, data);
   }
 
   //點到哪個菜單就顯示誰的照片
   useEffect(() => {
     const imageListRef = ref(storage, `${uid}/${pickHistory}`);
-    if (pickHistory) {
+    if (imageListRef) {
       getDownloadURL(imageListRef).then((url) => {
         setImageList(url);
       });
@@ -398,15 +405,27 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝上傳照片、顯示照片、個別對應＝＝＝＝＝＝＝＝＝＝
 
-  if (!trainingData) {
-    return null;
-  }
+  // ＝＝＝＝＝＝＝＝＝＝寄信＝＝＝＝＝＝＝＝＝＝
+
+  const form = useRef();
+
+  const sendEmail = (e) => {
+    emailjs.sendForm('service_aqtfkmw', 'template_jq89u95', form.current, 'c1RPxdcmtzncbu3Wv').then(
+      (result) => {
+        console.log(result.text);
+      },
+      (error) => {
+        console.log(error.text);
+      }
+    );
+  };
+
+  // ＝＝＝＝＝＝＝＝＝＝寄信＝＝＝＝＝＝＝＝＝＝
 
   return (
     <Wrapper>
-      <LoginUser>{localStorage.getItem('name')}來建立菜單吧～</LoginUser>
       <AddTrainingTable onClick={addTraining}>點擊建立菜單</AddTrainingTable>
-      <HistoryZone trainingData={trainingData} openHistory={openHistory} />
+      {trainingData ? <HistoryZone trainingData={trainingData} openHistory={openHistory} /> : null}
       <OpenHistoryZone
         showHistory={showHistory}
         openHistory={openHistory}
@@ -422,21 +441,38 @@ const Training = () => {
         setOpenCompleteSetting={setOpenCompleteSetting}
         uploadImage={uploadImage}
         deleteTrainingItem={deleteTrainingItem}
+        choiceAction={choiceAction}
+        data={data}
       />
       <TrainingOutside $isHide={openTrainingInput}>
         <TrainingInputOutside>
-          <TrainingOutsideOneZone
-            openTrainingOne={openTrainingOne}
-            closeAddTraining={closeAddTraining}
-            setTitle={setTitle}
-            setDate={setDate}
-            getPageTwo={getPageTwo}
-          />
+          <TrainingOutsideOne $isHide={openTrainingOne}>
+            <Close onClick={closeAddTraining}>X</Close>
+            <form ref={form}>
+              主題
+              <TitleInput onChange={(e) => setTitle(e.target.value)} name="to_title"></TitleInput>
+              日期
+              <DateInput
+                type="date"
+                onChange={(e) => setDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                name="to_date"
+              ></DateInput>
+              本次訓練重點
+              <Description name="to_description" onChange={(e) => setDescription(e.target.value)}></Description>
+              <ToName name="to_name" defaultValue={name}></ToName>
+              <ToEmail name="to_email" defaultValue={email}></ToEmail>
+            </form>
+            <TurnOutside>
+              <TurnRight onClick={getPageTwo}>下一頁</TurnRight>
+            </TurnOutside>
+          </TrainingOutsideOne>
           <TrainingOutsideTwo $isHide={openTrainingTwo}>
             <Close onClick={closeAddTraining}>X</Close>
             <ActionOutside>
               <ChoiceActionOutsideZone
                 choiceAction={choiceAction}
+                setChoiceAction={setChoiceAction}
                 deleteItem={deleteItem}
                 calTotalWeight={calTotalWeight}
                 totalWeight={totalWeight}
@@ -454,6 +490,7 @@ const Training = () => {
               dataNull={dataNull}
               getCompleteSetting={getCompleteSetting}
               compeleteTrainingSetting={compeleteTrainingSetting}
+              sendEmail={sendEmail}
             />
             <TurnOutside>
               <TurnLeft onClick={getPageOne}>上一頁</TurnLeft>
@@ -461,6 +498,9 @@ const Training = () => {
           </TrainingOutsideTwo>
         </TrainingInputOutside>
       </TrainingOutside>
+      {/* <Dnd />
+      <Dnd2 />
+      <BeautifulDnD /> */}
       <Video videoUrl={videoUrl} setVideoUrl={setVideoUrl} videoShow={videoShow} setVideoShow={setVideoShow} />
     </Wrapper>
   );
@@ -477,8 +517,6 @@ const Wrapper = styled.div`
   font-size: 20px;
 `;
 
-const LoginUser = styled.div``;
-
 const AddTrainingTable = styled.button`
   width: 100px;
 `;
@@ -486,6 +524,18 @@ const AddTrainingTable = styled.button`
 const TrainingOutside = styled.div`
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
 `;
+
+const TrainingOutsideOne = styled.div`
+  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
+`;
+
+const TitleInput = styled.input``;
+
+const DateInput = styled.input``;
+
+const Description = styled.input``;
+
+const TurnRight = styled.div``;
 
 const TrainingInputOutside = styled.div`
   background: #fff5ee;
@@ -510,3 +560,11 @@ const TurnOutside = styled.div`
 `;
 
 const Close = styled.div``;
+
+const ToEmail = styled.input`
+  display: none;
+`;
+
+const ToName = styled.input`
+  display: none;
+`;

@@ -14,6 +14,11 @@ import { getFirestore, doc, setDoc, getDoc, collection } from 'firebase/firestor
 import Header from './components/Header/Header';
 import UserContext from './contexts/UserContext';
 
+//maps
+import { LoadScript } from '@react-google-maps/api';
+const lib = ['places'];
+const key = 'AIzaSyD5nTpPrqrLzR4Lfxa3be-4AqEJ3cKCP8A'; // PUT GMAP API KEY HERE
+
 const App = () => {
   //判斷有無登入
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(window.localStorage.getItem('accessToken')));
@@ -39,9 +44,6 @@ const App = () => {
 
   const provider = new GoogleAuthProvider();
 
-  //登入後菜單刷新
-  const navigate = useNavigate();
-
   //強迫登入
   if (!localStorage.getItem('uid') || localStorage.getItem('uid') == '') {
     signInWithGoogle();
@@ -57,7 +59,6 @@ const App = () => {
         localStorage.setItem('accessToken', result.user.accessToken);
         setIsLoggedIn(true);
         checkFirstSignIn();
-        // navigate('/training', { replace: false });
       })
       .catch((error) => console.log(error));
   }
@@ -71,7 +72,6 @@ const App = () => {
         localStorage.setItem('email', '');
         localStorage.setItem('uid', '');
         localStorage.setItem('accessToken', '');
-        // navigate('/training', { replace: false });
       })
       .catch((error) => {
         console.log('An error happened');
@@ -99,9 +99,10 @@ const App = () => {
         complete: '未完成',
         picture: '',
         title: '範例檔案',
+        description: '對本次鍛鍊的描述',
         totalActions: Number(0),
         totalWeight: Number(0),
-        trainingDate: '2022-09-07',
+        trainingDate: '',
         setDate: new Date(),
         actions: [{ actionName: '動作名稱', bodyPart: '動作部位', times: Number(0), videoURL: '', weight: Number(0) }],
       };
@@ -116,7 +117,9 @@ const App = () => {
       <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn, userSignOut }}>
         <GlobalStyle />
         <Header />
-        <Outlet />
+        <LoadScript googleMapsApiKey={key} libraries={lib}>
+          <Outlet />
+        </LoadScript>
       </UserContext.Provider>
     </>
   );
@@ -127,7 +130,7 @@ export default App;
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
-    outline:solid 1px black;
+    ${'' /* outline:solid 1px black; */}
   }
 
   body {
