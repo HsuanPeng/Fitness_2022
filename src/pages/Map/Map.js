@@ -20,8 +20,8 @@ const mapContainerStyle = {
   width: '80vw',
 };
 const center = {
-  lat: 25.038606651446255,
-  lng: 121.53243547067326,
+  lat: 25.03411303772624,
+  lng: 121.56247802392849,
 };
 
 const options = {
@@ -41,6 +41,9 @@ export default function Map() {
   //附近的健身房
   const [gyms, setGyms] = useState([]);
 
+  //我得所在地
+  const [myPosition, setMyPosition] = useState([]);
+
   const mapRef = useRef();
   const onMapLoad = useCallback((map) => {
     mapRef.current = map;
@@ -51,15 +54,16 @@ export default function Map() {
     mapRef.current.panTo({ lat, lng });
     mapRef.current.setZoom(16);
     nearbyGymsMap({ lat, lng });
+    setMyPosition({ lat, lng });
   }, []);
 
   //找出附近的健身房
   async function nearbyGymsMap({ lat, lng }) {
     const res = await fetch(
-      'https://cors-anywhere.herokuapp.com/' +
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lng}&radius=1500&type=gym&keyword=健&key=${process.env.REACT_APP_API_KEY}`
+      `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
     );
     const json = await res.json();
+    console.log(json);
     setGyms(json.results);
   }
 
@@ -79,6 +83,7 @@ export default function Map() {
           onLoad={onMapLoad}
           options={options}
         >
+          <Marker position={myPosition} />
           {gyms.map((marker) => (
             <Marker
               key={marker.place_id}
