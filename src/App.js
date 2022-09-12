@@ -15,7 +15,6 @@ import Header from './components/Header/Header';
 import UserContext from './contexts/UserContext';
 
 //maps
-import { LoadScript } from '@react-google-maps/api';
 const lib = ['places'];
 const key = 'AIzaSyD5nTpPrqrLzR4Lfxa3be-4AqEJ3cKCP8A'; // PUT GMAP API KEY HERE
 
@@ -117,9 +116,7 @@ const App = () => {
       <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn, userSignOut }}>
         <GlobalStyle />
         <Header />
-        <LoadScript googleMapsApiKey={key} libraries={lib}>
-          <Outlet />
-        </LoadScript>
+        <Outlet />
       </UserContext.Provider>
     </>
   );
