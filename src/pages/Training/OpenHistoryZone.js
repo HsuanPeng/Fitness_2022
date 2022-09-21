@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,9 +12,19 @@ import UserContext from '../../contexts/UserContext';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
+//pics
+import remove from '../../images/remove.png';
+import armMuscle from '../../images/armMuscle.png';
+
+//FontAwesomeIcon
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock, faDumbbell, faWeightHanging } from '@fortawesome/free-solid-svg-icons';
+import { faGooglePlus } from '@fortawesome/free-brands-svg-icons';
+
 const OpenHistoryZone = (props) => {
   //UserContext拿資料
-  const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+  const { isLoggedIn, setIsLoggedIn, alertPop, setContent } = useContext(UserContext);
 
   //點擊過完成鍛鍊後，該按鈕消失
   const [showCompleteTrainingButton, setShowCompleteTrainingButton] = useState(true);
@@ -31,6 +41,9 @@ const OpenHistoryZone = (props) => {
   const [buttLegPercent, setButtLegPercent] = useState(0);
   const [corePercent, setCorePercent] = useState(0);
 
+  //判斷日曆狀態
+  const [alreadyLoad, setAlreadyLoad] = useState(false);
+
   // ＝＝＝＝＝＝＝＝＝＝＝chart.js＝＝＝＝＝＝＝＝＝＝＝
 
   ChartJS.register(ArcElement, Tooltip, Legend);
@@ -38,23 +51,15 @@ const OpenHistoryZone = (props) => {
   const data = {
     datasets: [
       {
-        label: '# of Votes',
         data: [shoulderPercent, armPercent, chestPercent, backPercent, buttLegPercent, corePercent],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
+        backgroundColor: ['#a8e8f9', '#00537a', '#013c58', '#f5a201', '#ffba42', '#ffd35b'],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
+          'rgba(0, 0, 0, 1)',
+          'rgba(0, 0, 0, 1)',
+          'rgba(0, 0, 0, 1)',
+          'rgba(0, 0, 0, 1)',
+          'rgba(0, 0, 0, 1)',
+          'rgba(0, 0, 0, 1)',
         ],
         borderWidth: 1,
       },
@@ -65,28 +70,13 @@ const OpenHistoryZone = (props) => {
   const dataNull = {
     datasets: [
       {
-        label: '# of Votes',
-        data: [0, 0, 0, 0, 0, 0],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
+        data: [1],
+        backgroundColor: ['grey'],
+        borderColor: ['rgba(0, 0, 0, 1)'],
         borderWidth: 1,
       },
     ],
-    labels: ['肩', '手臂', '胸', '背', '臀腿', '核心'],
+    labels: ['無資料'],
   };
 
   useEffect(() => {
@@ -108,16 +98,18 @@ const OpenHistoryZone = (props) => {
 
   // ＝＝＝＝＝＝＝＝＝＝＝Google日曆＝＝＝＝＝＝＝＝＝＝＝
 
-  //讓script onload
+  // 讓script onload
   useEffect(() => {
-    if (API === 'ready') {
+    if (API === 'ready' && alreadyLoad === false) {
       gapiLoaded();
+      setAlreadyLoad(true);
     }
   }, [props.openHistory]);
 
   useEffect(() => {
-    if (Accounts === 'ready') {
+    if (Accounts === 'ready' && alreadyLoad === false) {
       gisLoaded();
+      setAlreadyLoad(true);
     }
   }, [props.openHistory]);
 
@@ -149,14 +141,15 @@ const OpenHistoryZone = (props) => {
     gisInited = true;
   }
 
-  function handleAuthClick() {
+  async function handleAuthClick() {
+    console.log('handleAuthClick');
+    console.log(tokenClient);
     tokenClient.callback = async (resp) => {
       if (resp.error !== undefined) {
         throw resp;
       }
       await listUpcomingEvents();
     };
-
     if (window.gapi.client.getToken() === null) {
       tokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
@@ -178,6 +171,7 @@ const OpenHistoryZone = (props) => {
       response = await window.gapi.client.calendar.events.list(request);
     } catch (err) {
       document.getElementById('content').innerText = err.message;
+      console.log(err);
       return;
     }
     insertEvent();
@@ -201,102 +195,513 @@ const OpenHistoryZone = (props) => {
       resource: event,
     });
     request.execute(function (event) {});
-    alert('已加入google日曆！');
+    alertPop();
+    setContent('成功加入google日曆');
   }
 
   // ＝＝＝＝＝＝＝＝＝＝＝Google日曆＝＝＝＝＝＝＝＝＝＝＝
 
   return (
-    <OpenHistory $isHide={props.showHistoryToggle}>
-      <Close onClick={props.closeHistory}>X</Close>
-      <HistoryTop>
-        <div>主題：{props.showHistory.title}</div>
-        <div>訓練日期：{props.showHistory.trainingDate}</div>
-        <div>本次訓練重點：{props.showHistory.description}</div>
-        <div>總重量：{props.showHistory.totalWeight} KG</div>
-        <div>總動作數：{props.showHistory.totalActions} 個</div>
-        <div>狀態：{props.showHistory.complete}</div>
-      </HistoryTop>
-      {props.showHistoryActions.map((item) => {
-        return (
-          <HistoryActions key={uuidv4()}>
-            <div>部位：{item.bodyPart}</div>
-            <div>動作：{item.actionName}</div>
-            <div>重量：{item.weight} KG</div>
-            <div>次數：{item.times} 次</div>
-          </HistoryActions>
-        );
-      })}
-      <PieOutside>{props.showHistoryActions.length > 0 ? <Pie data={data} /> : <Pie data={dataNull} />}</PieOutside>
-      {props.imageList ? <HistoryImage src={props.imageList} /> : <HistoryImageAlert>趕快上傳照片吧</HistoryImageAlert>}
-      <AddPhoto>
-        <input
-          type="file"
-          onChange={(event) => {
-            props.setImageUpload(event.target.files[0]);
-          }}
-        />
-        <button
-          onClick={(e) => {
-            props.uploadImage(e);
-          }}
-        >
-          上傳照片
-        </button>
-      </AddPhoto>
-      {props.showHistory.complete === '已完成' ? null : (
-        <CompleteTraining onClick={props.completeTraining} $isHide={props.showCompleteTrainingButton}>
-          完成本鍛鍊
-        </CompleteTraining>
-      )}
-      <DeleteTrainingItem onClick={props.deleteTrainingItem}>刪除本菜單</DeleteTrainingItem>
-      <button id="authorize_button" onClick={handleAuthClick}>
-        將行程加入google日曆
-      </button>
-    </OpenHistory>
+    <>
+      <OpenHistory $isHide={props.showHistoryToggle}>
+        <Close onClick={props.closeHistory} src={remove}></Close>
+        <HistoryTop>
+          <Title>主題：{props.showHistory.title}</Title>
+          <Detail>
+            <Date>
+              <DateTitle>訓練日期：{props.showHistory.trainingDate}</DateTitle>
+              <AddGoogleCalendarOutside>
+                <AddGoogleCalendar id="authorize_button" onClick={handleAuthClick}>
+                  加入google日曆
+                </AddGoogleCalendar>
+                <FaGooglePlus>
+                  <FontAwesomeIcon icon={faGooglePlus} />
+                </FaGooglePlus>
+              </AddGoogleCalendarOutside>
+            </Date>
+            <TotalWeight>總重量：{props.showHistory.totalWeight} KG</TotalWeight>
+            <TotalActions>總動作數：{props.showHistory.totalActions} 個</TotalActions>
+          </Detail>
+          <DescriptionComplete>
+            <Description>本次訓練重點：{props.showHistory.description}</Description>
+            <Complete>狀態：{props.showHistory.complete}</Complete>
+          </DescriptionComplete>
+        </HistoryTop>
+        {props.showHistoryActions.map((item) => {
+          return (
+            <HistoryActions key={uuidv4()}>
+              <BodyPart>
+                <BodyPartPicOutside>
+                  <BodyPartPic src={armMuscle} />
+                </BodyPartPicOutside>
+                部位：{item.bodyPart}
+              </BodyPart>
+              <ActionName>
+                <FaDumbbellName>
+                  <FontAwesomeIcon icon={faDumbbell} />
+                </FaDumbbellName>
+                動作：{item.actionName}
+              </ActionName>
+              <Weight>
+                <FaDumbbellWeight>
+                  <FontAwesomeIcon icon={faWeightHanging} />
+                </FaDumbbellWeight>
+                重量：{item.weight} KG
+              </Weight>
+              <Times>
+                <FaDumbbellTimes>
+                  <FontAwesomeIcon icon={faClock} />
+                </FaDumbbellTimes>
+                次數：{item.times} 次
+              </Times>
+            </HistoryActions>
+          );
+        })}
+        <HistoryMiddle>
+          <PieOutside>
+            {props.showHistoryActions.length > 0 ? (
+              <Pie data={data} options={{ color: 'white', fontSize: 20 }} />
+            ) : (
+              <Pie data={dataNull} options={{ color: 'white', fontSize: 20 }} />
+            )}
+          </PieOutside>
+          {props.imageList ? (
+            <HistoryMiddleRight>
+              <AddPhotoOutside>
+                <AddPhotoInput
+                  onChange={(event) => {
+                    props.setImageUpload(event.target.files[0]);
+                  }}
+                  onClick={(e) => {
+                    props.uploadImage(e);
+                  }}
+                >
+                  上傳照片
+                  <input type="file" style={{ display: 'none' }} />
+                </AddPhotoInput>
+              </AddPhotoOutside>
+              <HistoryImageOutside>
+                <HistoryImage src={props.imageList} />
+              </HistoryImageOutside>
+            </HistoryMiddleRight>
+          ) : (
+            <HistoryMiddleRight>
+              <AddPhotoOutside>
+                <AddPhotoInput
+                  onChange={(event) => {
+                    props.setImageUpload(event.target.files[0]);
+                  }}
+                  onClick={(e) => {
+                    props.uploadImage(e);
+                  }}
+                >
+                  上傳照片
+                  <input type="file" style={{ display: 'none' }} />
+                </AddPhotoInput>
+              </AddPhotoOutside>
+              <HistoryNoOutside>
+                <HistoryNo>請上傳照片</HistoryNo>
+              </HistoryNoOutside>
+            </HistoryMiddleRight>
+          )}
+        </HistoryMiddle>
+        <HistoryBottom>
+          {props.showHistory.complete === '已完成' ? null : (
+            <CompleteTrainingOutside>
+              <CompleteTraining onClick={props.completeTraining} $isHide={props.showCompleteTrainingButton}>
+                完成鍛鍊
+              </CompleteTraining>
+            </CompleteTrainingOutside>
+          )}
+          <DeleteTrainingItemOutside>
+            <DeleteTrainingItem onClick={props.deleteTrainingItem}>刪除菜單</DeleteTrainingItem>
+          </DeleteTrainingItemOutside>
+        </HistoryBottom>
+      </OpenHistory>
+      <SignInMenuBackground $isHide={props.showHistoryBackground} />
+    </>
   );
 };
 
 export default OpenHistoryZone;
 
-const Close = styled.div``;
+const Close = styled.img`
+  cursor: pointer;
+  width: 30px;
+  position: absolute;
+  right: 25px;
+  top: 20px;
+  scale: 1;
+  transition: 0.3s;
+  &:hover {
+    scale: 1.2;
+  }
+`;
 
 const OpenHistory = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-  margin: 0 auto;
-  background: #dcdcdc;
-  margin-bottom: 20px;
-  width: 800px;
-  padding: 10px;
+  background: #313237;
+  max-width: 1000px;
+  padding-top: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 15px;
+  margin-bottom: 40px;
+  color: white;
+  border-top: 0.5rem solid #74c6cc;
+  @media screen and (max-width: 1279px) {
+    max-width: 700px;
+  }
+  @media screen and (max-width: 767px) {
+    max-width: 320px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+`;
+
+const HistoryTop = styled.div`
+  margin-top: 40px;
+  @media screen and (max-width: 1279px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+  }
+`;
+
+const Title = styled.div`
+  margin: 10px 0px;
+`;
+
+const Date = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0px;
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+    align-items: start;
+    margin-top: 0px;
+  }
+`;
+
+const DateTitle = styled.div`
+  @media screen and (max-width: 767px) {
+    margin: 10px 0px;
+  }
+`;
+
+const Detail = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media screen and (max-width: 1279px) {
+    flex-direction: column;
+    align-items: start;
+  }
+`;
+
+const DescriptionComplete = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  @media screen and (max-width: 1279px) {
+    justify-content: center;
+    align-items: start;
+  }
+`;
+
+const Complete = styled.div`
+  margin: 10px 0px;
+`;
+
+const FaGooglePlus = styled.div`
+  margin-left: 3px;
+`;
+
+const AddGoogleCalendarOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  width: 180px;
+  color: black;
+  cursor: pointer;
+  margin-left: 20px;
+  border-radius: 20px;
+  &:hover {
+    background: black;
+    color: white;
+  }
+  @media screen and (max-width: 767px) {
+    margin-top: 10px;
+    margin-left: 0px;
+  }
+`;
+
+const AddGoogleCalendar = styled.div`
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-weight: 600;
+`;
+
+const TotalWeight = styled.div`
+  margin: 10px 0px;
+`;
+
+const TotalActions = styled.div`
+  margin: 10px 0px;
+`;
+
+const Description = styled.div`
+  margin: 10px 0px;
 `;
 
 const HistoryActions = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
+  align-items: center;
+  margin: 10px 0px;
+  border: 1px solid #818a8e;
+  padding: 5px 10px 5px 10px;
+  background: #818a8e;
+  max-width: 900px;
+  color: black;
+  @media screen and (max-width: 1279px) {
+    flex-wrap: wrap;
+  }
 `;
 
-const HistoryTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const HistoryImage = styled.img`
+const BodyPart = styled.div`
   width: 200px;
-  height: auto;
+  display: flex;
+  margin-left: 10px;
+  @media screen and (max-width: 1279px) {
+    width: 270px;
+    margin-left: 40px;
+  }
+  @media screen and (max-width: 767px) {
+    width: 200px;
+    margin: 5px 0px;
+  }
 `;
 
-const HistoryImageAlert = styled.div``;
+const BodyPartPicOutside = styled.div``;
 
-const AddPhoto = styled.button``;
+const BodyPartPic = styled.img`
+  object: fit;
+  width: 25px;
+  margin-right: 10px;
+  @media screen and (max-width: 767px) {
+    width: 25px;
 
-const CompleteTraining = styled.button``;
+    margin-right: 10px;
+  }
+`;
 
-const DeleteTrainingItem = styled.div`
-  cursor: pointer;
+const FaDumbbellName = styled.div`
+  margin-right: 10px;
+  color: #74c6cc;
+`;
+
+const ActionName = styled.div`
+  display: flex;
+  flex-grow: 1;
+  @media screen and (max-width: 1279px) {
+    margin-left: 10px;
+  }
+  @media screen and (max-width: 767px) {
+    margin: 5px 0px;
+  }
+`;
+
+const FaDumbbellWeight = styled.div`
+  margin-right: 14px;
+  color: #74c6cc;
+`;
+
+const Weight = styled.div`
+  display: flex;
+  width: 200px;
+  @media screen and (max-width: 1279px) {
+    width: 270px;
+    margin-left: 40px;
+  }
+  @media screen and (max-width: 767px) {
+    width: 200px;
+    margin: 5px 0px;
+  }
+`;
+
+const FaDumbbellTimes = styled.div`
+  margin-right: 13px;
+  color: #74c6cc;
+`;
+
+const Times = styled.div`
+  display: flex;
+  margin: 5px 0px;
+  width: 150px;
+  @media screen and (max-width: 1279px) {
+    margin-left: 10px;
+  }
+  @media screen and (max-width: 767px) {
+    margin-left: 0px;
+  }
+`;
+
+const HistoryMiddle = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 20px 0px;
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+  }
 `;
 
 const PieOutside = styled.div`
-  max-width: 350px;
-  padding: 10px;
+  width: 460px;
+  @media screen and (max-width: 1279px) {
+    width: 300px;
+  }
+`;
+
+const HistoryMiddleRight = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const HistoryImageOutside = styled.div`
+  width: 350px;
+  height: 280px;
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+  @media screen and (max-width: 767px) {
+    width: 300px;
+    margin: 0 auto;
+  }
+`;
+
+const HistoryImage = styled.img`
+  object-fit: contain;
+  width: 350px;
+  height: 280px;
+  @media screen and (max-width: 767px) {
+    width: 300px;
+    margin: 0 auto;
+  }
+`;
+
+const HistoryNoOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 280px;
+  margin-right: 30px;
+  margin-left: 10px;
+  border: 1px solid #818a8e;
+  border-radius: 5%;
+  @media screen and (max-width: 767px) {
+    width: 300px;
+    margin-right: 10px;
+  }
+`;
+
+const HistoryNo = styled.div`
+  ${'' /* width: 350px; */}
+`;
+
+const AddPhotoOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const AddPhotoInput = styled.label`
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  background: black;
+  width: 120px;
+  margin: 20px 14px;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 18px;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+  border-radius: 20px;
+  &:hover {
+    background: white;
+    color: black;
+  }
+`;
+
+const HistoryBottom = styled.div`
+  display: flex;
   margin: 0 auto;
+  max-width: 500px;
+`;
+
+const CompleteTrainingOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 120px;
+  margin: 20px auto;
+  color: black;
+  cursor: pointer;
+  &:hover {
+    background: white;
+    color: black;
+  }
+`;
+
+const CompleteTraining = styled.div`
+  cursor: pointer;
+  padding: 8px;
+  font-size: 18px;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+`;
+
+const DeleteTrainingItemOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 120px;
+  margin: 20px auto;
+  color: black;
+  cursor: pointer;
+  &:hover {
+    background: white;
+    color: black;
+  }
+`;
+
+const DeleteTrainingItem = styled.div`
+  cursor: pointer;
+  padding: 8px;
+  font-size: 18px;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+`;
+
+const SignInMenuBackground = styled.div`
+  background: black;
+  top: 0;
+  opacity: 50%;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
 `;

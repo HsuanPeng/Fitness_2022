@@ -24,12 +24,26 @@ import {
   Legend,
 } from 'chart.js';
 
+//pic
+import trainingBanner from '../../images/Athlete-preparing-for-training-467612.jpg';
+
+//loading animation
+import { Blocks } from 'react-loader-spinner';
+
 const Statistics = () => {
   //UserContext拿資料
-  const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
-
-  //抓出localstorage資料
-  const uid = localStorage.getItem('uid');
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    userSignOut,
+    signInWithGoogle,
+    uid,
+    displayName,
+    email,
+    signIn,
+    alertPop,
+    setContent,
+  } = useContext(UserContext);
 
   //控制顯示體脂肪or體重
   const [showFatRecord, setShowFatRecord] = useState(true);
@@ -53,8 +67,8 @@ const Statistics = () => {
   const [weightDateLine, setWeightDateLine] = useState([]);
   const [weightNumberLine, setWeightNumberLine] = useState([]);
 
-  //抓出過去完成菜單
-  const [finishTraining, setFinishTraining] = useState([]);
+  //loading動畫
+  const [loading, setLoading] = useState(false);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -78,6 +92,7 @@ const Statistics = () => {
   useEffect(() => {
     async function getFatRecord() {
       const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
+      setLoading(true);
       onSnapshot(docRef, (item) => {
         const newData = [];
         item.forEach((doc) => {
@@ -95,26 +110,34 @@ const Statistics = () => {
           setFatDateLine(newFatDateData);
         });
       });
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     }
     getFatRecord();
-  }, [isLoggedIn, uid]);
+  }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
   //登錄資料
   async function writeBodyFat(index) {
-    try {
-      if (fatDateInput !== undefined && fatNumberInput !== undefined) {
-        const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
-        const data = {
-          measureDate: fatDateInput,
-          bodyFat: Number(fatNumberInput),
-          docID: docRef.id,
-        };
-        await setDoc(docRef, data);
-      } else {
-        alert('請填寫完整資料');
+    if (isLoggedIn) {
+      try {
+        if (fatDateInput !== undefined && fatNumberInput !== undefined) {
+          const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
+          const data = {
+            measureDate: fatDateInput,
+            bodyFat: Number(fatNumberInput),
+            docID: docRef.id,
+          };
+          await setDoc(docRef, data);
+        } else {
+          alertPop();
+          setContent('請填寫完整資料');
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
+    } else {
+      signIn();
     }
   }
 
@@ -146,8 +169,21 @@ const Statistics = () => {
         label: '體脂肪率',
         data: fatNumberLine,
         fill: true,
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: 'rgba(238,141,71,0.2)',
+        borderColor: 'rgba(238,141,71,1)',
+      },
+    ],
+  };
+
+  const dataNull = {
+    labels: fatDateLine,
+    datasets: [
+      {
+        label: '無資料',
+        data: [0],
+        fill: true,
+        backgroundColor: 'grey',
+        borderColor: 'grey',
       },
     ],
   };
@@ -179,24 +215,29 @@ const Statistics = () => {
       });
     }
     getWeightRecord();
-  }, [isLoggedIn, uid]);
+  }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
   //登錄資料
   async function writeBodyWeight(index) {
-    try {
-      if (weightDateInput !== undefined && weightNumberInput !== undefined) {
-        const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
-        const data = {
-          measureDate: weightDateInput,
-          bodyWeight: Number(weightNumberInput),
-          docID: docRef.id,
-        };
-        await setDoc(docRef, data);
-      } else {
-        alert('請填寫完整資料');
+    if (isLoggedIn) {
+      try {
+        if (weightDateInput !== undefined && weightNumberInput !== undefined) {
+          const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
+          const data = {
+            measureDate: weightDateInput,
+            bodyWeight: Number(weightNumberInput),
+            docID: docRef.id,
+          };
+          await setDoc(docRef, data);
+        } else {
+          alertPop();
+          setContent('請填寫完整資料');
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
+    } else {
+      signIn();
     }
   }
 
@@ -250,102 +291,213 @@ const Statistics = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝＝頁面切換＝＝＝＝＝＝＝＝＝＝＝
 
-  // ＝＝＝＝＝＝＝＝＝＝＝抓出過去完成菜單＝＝＝＝＝＝＝＝＝＝＝
-
-  useEffect(() => {
-    async function getFinishTrainingTables() {
-      const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-      onSnapshot(docRef, (item) => {
-        const newData = [];
-        item.forEach((doc) => {
-          if (doc.data().complete == '已完成') {
-            newData.push(doc.data());
-          }
-          setFinishTraining(newData);
-        });
-      });
-    }
-    getFinishTrainingTables();
-  }, [isLoggedIn, uid]);
-
-  // ＝＝＝＝＝＝＝＝＝＝＝抓出過去完成菜單＝＝＝＝＝＝＝＝＝＝＝
-
   return (
-    <Wrapper>
-      <ChangeMenuZone>
-        <GoBodyFat onClick={goBodyFatPage}>體脂肪率</GoBodyFat>
-        <GoBodyWeight onClick={goBodyWeightPage}>體重</GoBodyWeight>
-      </ChangeMenuZone>
-
-      <ChangeToBodyFat $isHide={showFatRecord}>
-        <BodyFatDataPage
-          setFatDateInput={setFatDateInput}
-          setFatNumberInput={setFatNumberInput}
-          writeBodyFat={writeBodyFat}
-          fatRecord={fatRecord}
-          fatNumberLine={fatNumberLine}
-          deleteFatRecord={deleteFatRecord}
-        />
-        <BodyFatLinePageZone>
-          <BodyFatLinePageTitle>變化趨勢</BodyFatLinePageTitle>
-          <BodyFatLineOutside>
-            <Line data={BodyFatData} />
-          </BodyFatLineOutside>
-        </BodyFatLinePageZone>
-      </ChangeToBodyFat>
-      <ChangeToBodyWeight $isHide={showWeightRecord}>
-        <BodyWeightDataPage
-          setWeightDateInput={setWeightDateInput}
-          setWeightNumberInput={setWeightNumberInput}
-          writeBodyWeight={writeBodyWeight}
-          weightRecord={weightRecord}
-          weightNumberLine={weightNumberLine}
-          deleteWeightRecord={deleteWeightRecord}
-        />
-        <BodyWeightLinePageZone>
-          <BodyWeightLinePageTitle>變化趨勢</BodyWeightLinePageTitle>
-          <BodyWeightLineOutside>
-            <Line data={BodyWeightData} />
-          </BodyWeightLineOutside>
-        </BodyWeightLinePageZone>
-      </ChangeToBodyWeight>
-      <FinishTrainingZone>
-        <FinishTrainingTitle>已完成鍛鍊</FinishTrainingTitle>
-        {finishTraining.map((item) => {
-          return (
-            <FinishList key={uuidv4()}>
-              <div>日期：{item.trainingDate}</div>
-              <div>主題：{item.title}</div>
-              <div>{item.description}</div>
-              <FinishPic src={item.picture}></FinishPic>
-            </FinishList>
-          );
-        })}
-      </FinishTrainingZone>
-    </Wrapper>
+    <>
+      {' '}
+      <LoadingOutside $isActive={loading}>
+        <LoadingBlocks>
+          <Blocks
+            visible={true}
+            height="260"
+            width="260"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+          />
+        </LoadingBlocks>
+      </LoadingOutside>
+      <Wrapper>
+        <BannerOutside>
+          <Banner>
+            <BannerText>追蹤自己的身體變化！</BannerText>
+          </Banner>
+        </BannerOutside>
+        <ChangeOutside>
+          <ChangeMenuZone>
+            <GoBodyFatOutide onClick={goBodyFatPage}>
+              <GoBodyFat $isActive={showFatRecord}>體脂肪率</GoBodyFat>
+            </GoBodyFatOutide>
+            <GoBodyWeightOutside onClick={goBodyWeightPage}>
+              <GoBodyWeight $isActive={showWeightRecord}>體重</GoBodyWeight>
+            </GoBodyWeightOutside>
+          </ChangeMenuZone>
+          <ChangeToBodyFat $isHide={showFatRecord}>
+            <BodyFatZone>
+              <BodyFatDataPage
+                setFatDateInput={setFatDateInput}
+                setFatNumberInput={setFatNumberInput}
+                writeBodyFat={writeBodyFat}
+                fatRecord={fatRecord}
+                fatNumberLine={fatNumberLine}
+                deleteFatRecord={deleteFatRecord}
+              />
+              <BodyFatLinePageZone>
+                <BodyFatLineOutside>
+                  {fatRecord.length > 0 ? (
+                    <Line data={BodyFatData} options={{ color: 'white' }} />
+                  ) : (
+                    <Line data={dataNull} options={{ color: 'white' }} />
+                  )}
+                </BodyFatLineOutside>
+              </BodyFatLinePageZone>
+            </BodyFatZone>
+          </ChangeToBodyFat>
+          <ChangeToBodyWeight $isHide={showWeightRecord}>
+            <BodyWeightZone>
+              <BodyWeightDataPage
+                setWeightDateInput={setWeightDateInput}
+                setWeightNumberInput={setWeightNumberInput}
+                writeBodyWeight={writeBodyWeight}
+                weightRecord={weightRecord}
+                weightNumberLine={weightNumberLine}
+                deleteWeightRecord={deleteWeightRecord}
+              />
+              <BodyWeightLinePageZone>
+                <BodyWeightLineOutside>
+                  {weightRecord.length > 0 ? (
+                    <Line data={BodyWeightData} options={{ color: 'white' }} />
+                  ) : (
+                    <Line data={dataNull} options={{ color: 'white' }} />
+                  )}
+                </BodyWeightLineOutside>
+              </BodyWeightLinePageZone>
+            </BodyWeightZone>
+          </ChangeToBodyWeight>
+        </ChangeOutside>
+      </Wrapper>
+    </>
   );
 };
 
 export default Statistics;
 
+const LoadingOutside = styled.div`
+  position: absolute;
+  z-index: 2000;
+  top: 0%;
+  background: rgba(49, 50, 55, 1);
+  height: 100vh;
+  width: 100vw;
+  display: ${(props) => (props.$isActive ? 'block' : 'none')};
+`;
+
+const LoadingBlocks = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
 const Wrapper = styled.div`
   margin: 0 auto;
-  padding: 30px;
+  color: white;
+  padding-top: 90px;
+`;
+
+const BannerOutside = styled.div`
+  height: 320px;
+  @media screen and (max-width: 1279px) {
+    height: 200px;
+  }
+`;
+
+const Banner = styled.div`
+  background-image: url(${trainingBanner});
+  background-size: cover;
+  background-position: 0% 45%;
+  position: absolute;
+  width: 100%;
+  height: 320px;
+  @media screen and (max-width: 1279px) {
+    height: 200px;
+  }
+`;
+
+const BannerText = styled.div`
+  color: white;
+  padding-top: 180px;
+  padding-left: 150px;
+  font-size: 25px;
+  letter-spacing: 3px;
+  font-size: 35px;
+  animation-name: fadein;
+  animation-duration: 2s;
+  @keyframes fadein {
+    0% {
+      transform: translateX(-6%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 100%;
+    }
+  }
+  @media screen and (max-width: 1279px) {
+    font-size: 25px;
+    padding-left: 50px;
+    padding-top: 100px;
+  }
+`;
+
+const ChangeOutside = styled.div`
+  max-width: 1200px;
+  margin: 0px auto 50px auto;
+  @media screen and (max-width: 1279px) {
+    padding: 0px 30px;
+    max-width: 800px;
+  }
 `;
 
 const ChangeMenuZone = styled.div`
   display: flex;
+  justify-content: start;
+  margin-top: 25px;
+  @media screen and (max-width: 767px) {
+    justify-content: center;
+  }
+`;
+
+const GoBodyFatOutide = styled.div`
+  display: flex;
   justify-content: center;
+  align-items: center;
+  margin-right: 10px;
 `;
 
 const GoBodyFat = styled.div`
   cursor: pointer;
-  padding: 20px;
+  padding: 5px 15px;
+  background: #313237;
+  border-radius: 7px;
+  color: white;
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-weight: 500;
+  background: ${(props) => (props.$isActive ? '#74c6cc;' : '#313237;')};
+  &:hover {
+    background: #74c6cc;
+  }
+`;
+
+const GoBodyWeightOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
 `;
 
 const GoBodyWeight = styled.div`
   cursor: pointer;
-  padding: 20px;
+  padding: 5px 15px;
+  border-radius: 7px;
+  color: white;
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-weight: 500;
+  background: ${(props) => (props.$isActive ? '#74c6cc;' : '#313237;')};
+  &:hover {
+    background: #74c6cc;
+  }
 `;
 
 // ＝＝＝＝＝＝＝＝＝＝＝體脂肪區＝＝＝＝＝＝＝＝＝＝＝
@@ -354,20 +506,44 @@ const ChangeToBodyFat = styled.div`
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
 `;
 
+const BodyFatZone = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #313237;
+  padding-bottom: 30px;
+  margin-top: 20px;
+  border-top: 0.5rem solid #74c6cc;
+  @media screen and (max-width: 1279px) {
+    flex-direction: column;
+  }
+`;
+
 // ＝＝＝＝＝＝＝＝＝＝＝體脂肪區＝＝＝＝＝＝＝＝＝＝＝
 
 // ＝＝＝＝＝＝＝＝＝＝＝體脂肪折線圖區＝＝＝＝＝＝＝＝＝＝＝
 
-const BodyFatLinePageZone = styled.div`
-  margin-top: 30px;
-`;
-
-const BodyFatLinePageTitle = styled.div``;
+const BodyFatLinePageZone = styled.div``;
 
 const BodyFatLineOutside = styled.div`
-  padding-top: 100px;
   width: 500px;
-  margin: 0 auto;
+  margin: 40px auto 0px auto;
+  @media screen and (max-width: 1279px) {
+    margin: 50px auto;
+    margin-right: 55px;
+  }
+  @media screen and (max-width: 767px) {
+    width: 450px;
+    margin-right: 10px;
+  }
+  @media screen and (max-width: 550px) {
+    width: 350px;
+    margin-right: 10px;
+  }
+  @media screen and (max-width: 450px) {
+    width: 280px;
+    margin-right: 10px;
+  }
 `;
 
 // ＝＝＝＝＝＝＝＝＝＝＝體脂肪折線圖區＝＝＝＝＝＝＝＝＝＝＝
@@ -378,39 +554,44 @@ const ChangeToBodyWeight = styled.div`
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
 `;
 
+const BodyWeightZone = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #313237;
+  padding-bottom: 30px;
+  margin-top: 20px;
+  border-top: 0.5rem solid #74c6cc;
+  @media screen and (max-width: 1279px) {
+    flex-direction: column;
+  }
+`;
+
 // ＝＝＝＝＝＝＝＝＝＝＝體重區＝＝＝＝＝＝＝＝＝＝＝
 
 // ＝＝＝＝＝＝＝＝＝＝＝體重折線圖區＝＝＝＝＝＝＝＝＝＝＝
 
-const BodyWeightLinePageZone = styled.div`
-  margin-top: 30px;
-`;
-
-const BodyWeightLinePageTitle = styled.div``;
+const BodyWeightLinePageZone = styled.div``;
 
 const BodyWeightLineOutside = styled.div`
-  padding-top: 100px;
   width: 500px;
-  margin: 0 auto;
+  margin: 40px auto 0px auto;
+  @media screen and (max-width: 1279px) {
+    margin: 50px auto;
+    margin-right: 55px;
+  }
+  @media screen and (max-width: 767px) {
+    width: 450px;
+    margin-right: 10px;
+  }
+  @media screen and (max-width: 550px) {
+    width: 350px;
+    margin-right: 10px;
+  }
+  @media screen and (max-width: 450px) {
+    width: 280px;
+    margin-right: 10px;
+  }
 `;
 
 // ＝＝＝＝＝＝＝＝＝＝＝體重折線圖區＝＝＝＝＝＝＝＝＝＝＝
-
-// ＝＝＝＝＝＝＝＝＝＝＝完成鍛鍊區＝＝＝＝＝＝＝＝＝＝＝
-
-const FinishTrainingZone = styled.div`
-  margin-top: 30px;
-`;
-
-const FinishTrainingTitle = styled.div``;
-
-const FinishList = styled.div`
-  display: flex;
-`;
-
-const FinishPic = styled.img`
-  weight: 50px;
-  height: 50px;
-`;
-
-// ＝＝＝＝＝＝＝＝＝＝＝完成鍛鍊區＝＝＝＝＝＝＝＝＝＝＝

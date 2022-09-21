@@ -8,18 +8,12 @@ const CalculationShowZone = (props) => {
     <>
       <CalculationShow>
         <PieOutside>
-          {props.choiceAction.length > 0 ? <Pie data={props.data} /> : <Pie data={props.dataNull} />}
+          {props.choiceAction.length > 0 ? (
+            <Pie data={props.data} options={{ color: 'white', fontSize: 20 }} />
+          ) : (
+            <Pie data={props.dataNull} options={{ color: 'white', fontSize: 20 }} />
+          )}
         </PieOutside>
-        <CompeleteTrainingSetting
-          type="button"
-          value="submit"
-          onClick={() => {
-            props.getCompleteSetting();
-            props.compeleteTrainingSetting();
-          }}
-        >
-          完成菜單設定
-        </CompeleteTrainingSetting>
       </CalculationShow>
     </>
   );
@@ -28,17 +22,12 @@ const CalculationShowZone = (props) => {
 export default CalculationShowZone;
 
 const PieOutside = styled.div`
-  max-width: 350px;
+  width: 300px;
   padding: 10px;
   margin: 0 auto;
+  margin-top: 20px;
 `;
 
 const CalculationShow = styled.div`
   margin: 0 auto;
-`;
-
-const CompeleteTrainingSetting = styled.button``;
-
-const TrainingSettingComplete = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
 `;
