@@ -16,11 +16,15 @@ const BodyWeightDataPage = (props) => {
           <BodyWeightDateInput
             type="date"
             onChange={(e) => props.setWeightDateInput(e.target.value)}
+            value={props.weightDateInput}
           ></BodyWeightDateInput>
         </Date>
         <Weight>
           <WeightTitle>體重：</WeightTitle>
-          <BodyWeightInput onChange={(e) => props.setWeightNumberInput(e.target.value)}></BodyWeightInput>
+          <BodyWeightInput
+            onChange={(e) => props.setWeightNumberInput(e.target.value)}
+            value={props.weightNumberInput}
+          ></BodyWeightInput>
         </Weight>
         <BodyWeightInputButtonOutside>
           <BodyWeightInputButton onClick={props.writeBodyWeight}>新增</BodyWeightInputButton>

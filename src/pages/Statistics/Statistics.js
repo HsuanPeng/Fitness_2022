@@ -133,6 +133,8 @@ const Statistics = () => {
             docID: docRef.id,
           };
           await setDoc(docRef, data);
+          setFatNumberInput('');
+          setFatDateInput('');
         } else {
           alertPop();
           setContent('請填寫完整資料');
@@ -237,6 +239,8 @@ const Statistics = () => {
             docID: docRef.id,
           };
           await setDoc(docRef, data);
+          setWeightNumberInput('');
+          setWeightDateInput('');
         } else {
           alertPop();
           setContent('請填寫完整資料');
@@ -333,11 +337,13 @@ const Statistics = () => {
             <BodyFatZone>
               <BodyFatDataPage
                 setFatDateInput={setFatDateInput}
+                fatNumberInput={fatNumberInput}
                 setFatNumberInput={setFatNumberInput}
                 writeBodyFat={writeBodyFat}
                 fatRecord={fatRecord}
                 fatNumberLine={fatNumberLine}
                 deleteFatRecord={deleteFatRecord}
+                fatDateInput={fatDateInput}
               />
               <BodyFatLinePageZone>
                 <BodyFatLineOutside>
@@ -355,10 +361,12 @@ const Statistics = () => {
               <BodyWeightDataPage
                 setWeightDateInput={setWeightDateInput}
                 setWeightNumberInput={setWeightNumberInput}
+                weightNumberInput={weightNumberInput}
                 writeBodyWeight={writeBodyWeight}
                 weightRecord={weightRecord}
                 weightNumberLine={weightNumberLine}
                 deleteWeightRecord={deleteWeightRecord}
+                weightDateInput={weightDateInput}
               />
               <BodyWeightLinePageZone>
                 <BodyWeightLineOutside>

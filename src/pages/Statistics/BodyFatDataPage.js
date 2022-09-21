@@ -13,11 +13,18 @@ const BodyFatDataPage = (props) => {
       <Top>
         <Date>
           <DateTitle>日期：</DateTitle>
-          <BodyFatDateInput type="date" onChange={(e) => props.setFatDateInput(e.target.value)}></BodyFatDateInput>
+          <BodyFatDateInput
+            type="date"
+            onChange={(e) => props.setFatDateInput(e.target.value)}
+            value={props.fatDateInput}
+          ></BodyFatDateInput>
         </Date>
         <Fat>
           <FatTitle>體脂肪率：</FatTitle>
-          <BodyFatInput onChange={(e) => props.setFatNumberInput(e.target.value)}></BodyFatInput>
+          <BodyFatInput
+            onChange={(e) => props.setFatNumberInput(e.target.value)}
+            value={props.fatNumberInput}
+          ></BodyFatInput>
         </Fat>
         <BodyFatInputButtonOutside>
           <BodyFatInputButton onClick={props.writeBodyFat}>新增</BodyFatInputButton>
@@ -56,6 +63,7 @@ export default BodyFatDataPage;
 
 const BodyFatWriteDataZone = styled.div`
   margin-right: 40px;
+
   @media screen and (max-width: 1279px) {
     margin-right: 0px;
   }
@@ -155,7 +163,7 @@ const BodyFatHistoryOutside = styled.div`
 
 const Bottom = styled.div`
   height: 350px;
-  -y: scroll;
+  overflow-y: scroll;
 `;
 
 const BodyFatMeasureDate = styled.div`

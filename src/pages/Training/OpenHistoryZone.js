@@ -334,7 +334,7 @@ const OpenHistory = styled.div`
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 15;
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
   background: #313237;
   max-width: 1000px;

@@ -339,6 +339,9 @@ const Training = () => {
         setShowHistoryBackground(false);
         alertPop();
         setContent('完成菜單設定');
+        setTitle('');
+        setDate('');
+        setDescription('');
       } else if (title == '' || date == '' || description == '') {
         alertPop();
         setContent('請填寫完整資料');
@@ -527,7 +530,7 @@ const Training = () => {
                   <TitleInputText>
                     主題
                     <TitleInputLine />
-                    <TitleInput onChange={(e) => setTitle(e.target.value)} name="to_title"></TitleInput>
+                    <TitleInput onChange={(e) => setTitle(e.target.value)} name="to_title" value={title}></TitleInput>
                   </TitleInputText>
                   <DateInputText>
                     日期
@@ -537,6 +540,7 @@ const Training = () => {
                       onChange={(e) => setDate(e.target.value)}
                       // min={new Date().toISOString().split('T')[0]}
                       name="to_date"
+                      value={date}
                     ></DateInput>
                   </DateInputText>
                   <DescriptionText>
@@ -545,6 +549,7 @@ const Training = () => {
                     <DescriptionInput
                       name="to_description"
                       onChange={(e) => setDescription(e.target.value)}
+                      value={description}
                     ></DescriptionInput>
                   </DescriptionText>
                   <ToName name="to_name" defaultValue={displayName}></ToName>
@@ -774,7 +779,7 @@ const TrainingOutside = styled.div`
   left: 50%;
   top: 15%;
   transform: translate(-50%, -5%);
-  z-index: 10;
+  z-index: 20;
   display: ${(props) => (props.$isHide ? 'block' : 'none')};
   background: #313237;
   max-width: ${(props) => (props.$isActive ? '1000px' : '700px')};
@@ -1084,6 +1089,7 @@ const TrainingBackground = styled.div`
   background: black;
   top: 0;
   opacity: 50%;
+  z-index: 11;
   position: fixed;
   width: 100vw;
   height: 100vh;
