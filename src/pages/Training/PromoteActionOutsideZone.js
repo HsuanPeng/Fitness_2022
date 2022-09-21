@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -36,9 +37,11 @@ const PromoteActionOutsideZone = (props) => {
           <PromoteListPart>{item.bodyPart}</PromoteListPart>
           <PromoteLisName>{item.actionName}</PromoteLisName>
           <VideoTag
+            $isActive={index == props.playing}
             id={index}
             onClick={(e) => {
               props.openVideo(e);
+              props.setPlaying(e.target.id);
             }}
           >
             <FontAwesomeIcon icon={faVideo} style={{ pointerEvents: 'none' }} />
@@ -149,6 +152,7 @@ const PromoteLisName = styled.div`
 const VideoTag = styled.div`
   width: 10%;
   cursor: pointer;
+  color: ${(props) => (props.$isActive ? '#74c6cc' : 'black')};
   &:hover {
     color: #74c6cc;
   }

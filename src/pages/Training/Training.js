@@ -112,6 +112,7 @@ const Training = () => {
   //點擊顯示影片
   const [videoUrl, setVideoUrl] = useState('');
   const [videoShow, setVideoShow] = useState(false);
+  const [playing, setPlaying] = useState();
 
   //loading動畫
   const [loading, setLoading] = useState(false);
@@ -469,6 +470,7 @@ const Training = () => {
 
   function closeVideo() {
     setVideoShow(false);
+    setPlaying(null);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝關閉影片＝＝＝＝＝＝＝＝＝＝＝
@@ -585,6 +587,8 @@ const Training = () => {
                 promoteActions={promoteActions}
                 addActionItem={addActionItem}
                 openVideo={openVideo}
+                playing={playing}
+                setPlaying={setPlaying}
               />
             </ActionOutside>
             <TrainingOutsideTwoBottom>
