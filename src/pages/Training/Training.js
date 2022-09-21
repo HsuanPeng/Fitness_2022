@@ -101,6 +101,7 @@ const Training = () => {
   const [showHistoryToggle, setShowHistoryToggle] = useState(false);
   const [showHistoryActions, setShowHistoryActions] = useState([]);
   const [showHistoryBackground, setShowHistoryBackground] = useState(false);
+  const [historyIndex, setHistoryIndex] = useState();
 
   //上傳照片
   const [imageUpload, setImageUpload] = useState();
@@ -114,6 +115,9 @@ const Training = () => {
 
   //loading動畫
   const [loading, setLoading] = useState(false);
+
+  //狀態感變
+  const [isComplete, setIsComplete] = useState(false);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -235,6 +239,11 @@ const Training = () => {
         complete: '已完成',
       };
       await updateDoc(docRef, data);
+      trainingData[historyIndex].complete = '已完成';
+      setIsComplete(true);
+      setTimeout(() => {
+        setIsComplete(false);
+      }, 4000);
     } catch (e) {
       console.log(e);
     }
@@ -374,6 +383,7 @@ const Training = () => {
 
   function openHistory(index) {
     setLoading(true);
+    setHistoryIndex(index);
     setShowHistory(trainingData[index]);
     setShowHistoryActions(trainingData[index].actions);
     setShowHistoryToggle(true);
@@ -506,6 +516,7 @@ const Training = () => {
           deleteTrainingItem={deleteTrainingItem}
           choiceAction={choiceAction}
           data={data}
+          isComplete={isComplete}
         />
         <TrainingOutside $isHide={openTrainingInput} $isActive={pageTwo}>
           <TrainingOutsideOne $isHide={openTrainingOne}>

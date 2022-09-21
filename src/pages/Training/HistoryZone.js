@@ -43,6 +43,7 @@ const HistoryOutside = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   max-width: 1200px;
+  width: 95%;
   margin: 0 auto;
   @media screen and (max-width: 1279px) {
     max-width: 800px;
@@ -113,7 +114,7 @@ const NoPicOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 250px;
+  width: 200px;
   height: 180px;
   border: 1px solid #818a8e;
   border-radius: 5%;
@@ -129,7 +130,7 @@ const HistoryPicOutside = styled.div`
 
 const HistoryPic = styled.img`
   object-fit: contain;
-  width: 250px;
+  width: 200px;
   height: 180px;
 `;
 

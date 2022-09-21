@@ -224,7 +224,7 @@ const OpenHistoryZone = (props) => {
           </Detail>
           <DescriptionComplete>
             <Description>本次訓練重點：{props.showHistory.description}</Description>
-            <Complete>狀態：{props.showHistory.complete}</Complete>
+            <Complete $isComplete={props.isComplete}>狀態：{props.showHistory.complete}</Complete>
           </DescriptionComplete>
         </HistoryTop>
         {props.showHistoryActions.map((item) => {
@@ -367,6 +367,9 @@ const HistoryTop = styled.div`
 
 const Title = styled.div`
   margin: 10px 0px;
+  font-size: 25px;
+  color: #74c6cc;
+  font-weight: 700;
 `;
 
 const Date = styled.div`
@@ -409,6 +412,24 @@ const DescriptionComplete = styled.div`
 
 const Complete = styled.div`
   margin: 10px 0px;
+  animation-name: ${(props) => (props.$isComplete ? 'flipUp' : null)};
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+  @keyframes flipUp {
+    0% {
+      opacity: 0;
+      transform: rotateX(90def);
+    }
+    50% {
+      opacity: 1;
+      transform: rotateX(720deg);
+    }
+    100% {
+      /* animate nothing to pause animation at the end */
+      opacity: 1;
+      transform: rotateX(720deg);
+    }
+  }
 `;
 
 const FaGooglePlus = styled.div`

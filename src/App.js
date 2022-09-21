@@ -264,7 +264,6 @@ const AlertOutside = styled.div`
   background: #191a1e;
   top: 150px;
   left: -350px;
-  ${'' /* transform: translateX(-50%); */}
   z-index: 1000;
   padding: 40px 10px;
   color: white;
