@@ -18,7 +18,7 @@ root.render(
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
         <Route path="training" element={<Training />} />
-        <Route path="CalendarPage" element={<CalendarPage />} />
+        <Route path="calendar" element={<CalendarPage />} />
         <Route path="statistics" element={<Statistics />} />
         <Route path="map" element={<Map />} />
         <Route path="*" element={<Navigate to="/" replace />} />
