@@ -242,11 +242,13 @@ const Training = () => {
 
   //可以刪除菜單
   async function deleteTrainingItem() {
+    setLoading(true);
     try {
       const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
       await deleteDoc(docRef);
       setShowHistoryToggle(false);
       setShowHistoryBackground(false);
+      setLoading(false);
       alertPop();
       setContent('成功刪除菜單');
     } catch (e) {
@@ -345,21 +347,25 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝即時抓出每筆菜單資料＝＝＝＝＝＝＝＝＝＝＝
 
   useEffect(() => {
-    async function getTrainingTables() {
-      const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-      // setLoading(true);
-      onSnapshot(docRef, (item) => {
-        const newData = [];
-        item.forEach((doc) => {
-          newData.push(doc.data());
-          setTrainingData(newData);
+    if (isLoggedIn == false) {
+      setTrainingData(null);
+    } else {
+      async function getTrainingTables() {
+        const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
+        setLoading(true);
+        onSnapshot(docRef, (item) => {
+          const newData = [];
+          item.forEach((doc) => {
+            newData.push(doc.data());
+            setTrainingData(newData);
+          });
         });
-      });
-      // setTimeout(() => {
-      //   setLoading(false);
-      // }, 2000);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1500);
+      }
+      getTrainingTables();
     }
-    getTrainingTables();
   }, [isLoggedIn]);
 
   // ＝＝＝＝＝＝＝＝＝＝即時抓出每筆菜單資料＝＝＝＝＝＝＝＝＝＝＝
@@ -367,6 +373,7 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
 
   function openHistory(index) {
+    setLoading(true);
     setShowHistory(trainingData[index]);
     setShowHistoryActions(trainingData[index].actions);
     setShowHistoryToggle(true);
@@ -374,6 +381,9 @@ const Training = () => {
     setImageList(trainingData.picture);
     setShowPicture((prevShowPicture) => !prevShowPicture);
     setShowHistoryBackground(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
@@ -391,9 +401,11 @@ const Training = () => {
 
   //上傳後即時顯示
   async function uploadImage(e) {
+    console.log('uploadImage1');
     if (imageUpload == null) return;
     const imageRef = await ref(storage, `${uid}/${pickHistory}`);
     await uploadBytes(imageRef, imageUpload).then((snapshot) => {
+      console.log('uploadImage2');
       getDownloadURL(snapshot.ref).then((url) => {
         setImageList(url);
         const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
@@ -411,13 +423,9 @@ const Training = () => {
   useEffect(() => {
     const imageListRef = ref(storage, `${uid}/${pickHistory}`);
     if (imageListRef) {
-      // setLoading(true);
       getDownloadURL(imageListRef).then((url) => {
         setImageList(url);
       });
-      // setTimeout(() => {
-      //   setLoading(false);
-      // }, 2000);
     }
   }, [showPicture]);
 

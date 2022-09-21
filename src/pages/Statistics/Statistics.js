@@ -90,31 +90,35 @@ const Statistics = () => {
 
   //即時map出歷史資料
   useEffect(() => {
-    async function getFatRecord() {
-      const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
-      setLoading(true);
-      onSnapshot(docRef, (item) => {
-        const newData = [];
-        item.forEach((doc) => {
-          newData.push(doc.data());
-          setFatRecord(newData);
+    if (isLoggedIn == false) {
+      setFatRecord([]);
+    } else {
+      async function getFatRecord() {
+        const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
+        setLoading(true);
+        onSnapshot(docRef, (item) => {
+          const newData = [];
+          item.forEach((doc) => {
+            newData.push(doc.data());
+            setFatRecord(newData);
+          });
+          const newFatNumberData = [];
+          item.forEach((doc) => {
+            newFatNumberData.push(doc.data().bodyFat);
+            setFatNumberLine(newFatNumberData);
+          });
+          const newFatDateData = [];
+          item.forEach((doc) => {
+            newFatDateData.push(doc.data().measureDate);
+            setFatDateLine(newFatDateData);
+          });
         });
-        const newFatNumberData = [];
-        item.forEach((doc) => {
-          newFatNumberData.push(doc.data().bodyFat);
-          setFatNumberLine(newFatNumberData);
-        });
-        const newFatDateData = [];
-        item.forEach((doc) => {
-          newFatDateData.push(doc.data().measureDate);
-          setFatDateLine(newFatDateData);
-        });
-      });
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+      getFatRecord();
     }
-    getFatRecord();
   }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
   //登錄資料
@@ -194,27 +198,31 @@ const Statistics = () => {
 
   //即時map出歷史資料
   useEffect(() => {
-    async function getWeightRecord() {
-      const docRef = await query(collection(db, 'users', uid, 'weightRecords'), orderBy('measureDate'));
-      onSnapshot(docRef, (item) => {
-        const newData = [];
-        item.forEach((doc) => {
-          newData.push(doc.data());
-          setWeightRecord(newData);
+    if (isLoggedIn == false) {
+      setWeightRecord([]);
+    } else {
+      async function getWeightRecord() {
+        const docRef = await query(collection(db, 'users', uid, 'weightRecords'), orderBy('measureDate'));
+        onSnapshot(docRef, (item) => {
+          const newData = [];
+          item.forEach((doc) => {
+            newData.push(doc.data());
+            setWeightRecord(newData);
+          });
+          const newWeightNumberData = [];
+          item.forEach((doc) => {
+            newWeightNumberData.push(doc.data().bodyWeight);
+            setWeightNumberLine(newWeightNumberData);
+          });
+          const newWeightDateData = [];
+          item.forEach((doc) => {
+            newWeightDateData.push(doc.data().measureDate);
+            setWeightDateLine(newWeightDateData);
+          });
         });
-        const newWeightNumberData = [];
-        item.forEach((doc) => {
-          newWeightNumberData.push(doc.data().bodyWeight);
-          setWeightNumberLine(newWeightNumberData);
-        });
-        const newWeightDateData = [];
-        item.forEach((doc) => {
-          newWeightDateData.push(doc.data().measureDate);
-          setWeightDateLine(newWeightDateData);
-        });
-      });
+      }
+      getWeightRecord();
     }
-    getWeightRecord();
   }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
   //登錄資料

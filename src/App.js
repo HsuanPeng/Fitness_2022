@@ -6,7 +6,14 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 //firebase
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  signOut,
+  onAuthStateChanged,
+  signInWithPopup,
+} from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 //components
@@ -72,25 +79,27 @@ const App = () => {
 
   //登入google視窗
   function signInWithGoogle() {
-    signInWithRedirect(auth, provider)
+    signInWithPopup(auth, provider)
       .then((result) => {
         if (result.operationType === 'signIn') {
-          setLoading(true);
           setIsLoggedIn(true);
+          setSignInPage(false);
         }
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000);
       })
       .catch((error) => console.log(error));
   }
 
   // 登出
   function userSignOut() {
-    signOut(auth);
-    setIsLoggedIn(false);
-    alertPop();
-    setContent('成功登出');
+    signOut(auth)
+      .then(() => {
+        setIsLoggedIn(false);
+        alertPop();
+        setContent('成功登出');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   //判斷有無登入或登出
