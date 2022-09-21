@@ -329,8 +329,8 @@ const SignInMenu = styled.div`
   z-index: 99;
   position: absolute;
   left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
+  top: 20%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;

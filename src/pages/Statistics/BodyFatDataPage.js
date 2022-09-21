@@ -155,7 +155,7 @@ const BodyFatHistoryOutside = styled.div`
 
 const Bottom = styled.div`
   height: 350px;
-  overflow-y: scroll;
+  -y: scroll;
 `;
 
 const BodyFatMeasureDate = styled.div`
