@@ -103,7 +103,7 @@ const Training = () => {
   const [showHistoryBackground, setShowHistoryBackground] = useState(false);
 
   //上傳照片
-  const [imageUpload, setImageUpload] = useState(null);
+  const [imageUpload, setImageUpload] = useState();
   const [imageList, setImageList] = useState('');
   const [pickHistory, setPickHistory] = useState();
   const [showPicture, setShowPicture] = useState(true);
@@ -401,11 +401,9 @@ const Training = () => {
 
   //上傳後即時顯示
   async function uploadImage(e) {
-    console.log('uploadImage1');
     if (imageUpload == null) return;
     const imageRef = await ref(storage, `${uid}/${pickHistory}`);
     await uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      console.log('uploadImage2');
       getDownloadURL(snapshot.ref).then((url) => {
         setImageList(url);
         const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
@@ -415,6 +413,7 @@ const Training = () => {
         updateDoc(docRef, data);
         alertPop();
         setContent('照片上傳成功');
+        setImageUpload('');
       });
     });
   }

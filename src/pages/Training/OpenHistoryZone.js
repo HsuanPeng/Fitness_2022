@@ -265,45 +265,37 @@ const OpenHistoryZone = (props) => {
               <Pie data={dataNull} options={{ color: 'white', fontSize: 20 }} />
             )}
           </PieOutside>
-          {props.imageList ? (
-            <HistoryMiddleRight>
-              <AddPhotoOutside>
-                <AddPhotoInput
-                  onChange={(event) => {
-                    props.setImageUpload(event.target.files[0]);
-                  }}
+          <HistoryMiddleRight>
+            <AddPhotoOutside>
+              {props.imageUpload ? (
+                <UploadButton
                   onClick={(e) => {
                     props.uploadImage(e);
                   }}
                 >
-                  上傳照片
+                  點擊上傳
+                </UploadButton>
+              ) : (
+                <AddPhotoInput
+                  onChange={(event) => {
+                    props.setImageUpload(event.target.files[0]);
+                  }}
+                >
+                  選擇檔案
                   <input type="file" style={{ display: 'none' }} />
                 </AddPhotoInput>
-              </AddPhotoOutside>
+              )}
+            </AddPhotoOutside>
+            {props.imageList ? (
               <HistoryImageOutside>
                 <HistoryImage src={props.imageList} />
               </HistoryImageOutside>
-            </HistoryMiddleRight>
-          ) : (
-            <HistoryMiddleRight>
-              <AddPhotoOutside>
-                <AddPhotoInput
-                  onChange={(event) => {
-                    props.setImageUpload(event.target.files[0]);
-                  }}
-                  onClick={(e) => {
-                    props.uploadImage(e);
-                  }}
-                >
-                  上傳照片
-                  <input type="file" style={{ display: 'none' }} />
-                </AddPhotoInput>
-              </AddPhotoOutside>
+            ) : (
               <HistoryNoOutside>
-                <HistoryNo>請上傳照片</HistoryNo>
+                <HistoryNo>來上傳照片吧～</HistoryNo>
               </HistoryNoOutside>
-            </HistoryMiddleRight>
-          )}
+            )}
+          </HistoryMiddleRight>
         </HistoryMiddle>
         <HistoryBottom>
           {props.showHistory.complete === '已完成' ? null : (
@@ -641,6 +633,41 @@ const AddPhotoInput = styled.label`
   &:hover {
     background: white;
     color: black;
+  }
+`;
+
+const UploadButton = styled.div`
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 120px;
+  margin: 20px 14px;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 18px;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+  border-radius: 20px;
+  scale: 1;
+  animation-name: scale;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  &:hover {
+    background: white;
+    color: black;
+  }
+  @keyframes scale {
+    0% {
+      scale: 1;
+    }
+    50% {
+      scale: 1.1;
+    }
+    100% {
+      scale: 1;
+    }
   }
 `;
 
