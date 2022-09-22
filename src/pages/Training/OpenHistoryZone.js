@@ -100,14 +100,16 @@ const OpenHistoryZone = (props) => {
 
   // 讓script onload
   useEffect(() => {
-    if (API === 'ready' && alreadyLoad === false) {
+    if (API === 'ready' && alreadyLoad == false) {
+      console.log('gapiLoaded');
       gapiLoaded();
       setAlreadyLoad(true);
     }
   }, [props.openHistory]);
 
   useEffect(() => {
-    if (Accounts === 'ready' && alreadyLoad === false) {
+    if (Accounts === 'ready' && alreadyLoad == false) {
+      console.log('gisLoaded');
       gisLoaded();
       setAlreadyLoad(true);
     }
@@ -116,7 +118,7 @@ const OpenHistoryZone = (props) => {
   const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
   const SCOPES = 'https://www.googleapis.com/auth/calendar';
 
-  let tokenClient;
+  let tokenClient = useRef();
   let gapiInited = false;
   let gisInited = false;
 
@@ -133,7 +135,7 @@ const OpenHistoryZone = (props) => {
   }
 
   async function gisLoaded() {
-    tokenClient = await window.google.accounts.oauth2.initTokenClient({
+    tokenClient.current = await window.google.accounts.oauth2.initTokenClient({
       client_id: process.env.REACT_APP_CLIENT_ID,
       scope: SCOPES,
       callback: '', // defined later
@@ -142,18 +144,16 @@ const OpenHistoryZone = (props) => {
   }
 
   async function handleAuthClick() {
-    console.log('handleAuthClick');
-    console.log(tokenClient);
-    tokenClient.callback = async (resp) => {
+    tokenClient.current.callback = async (resp) => {
       if (resp.error !== undefined) {
         throw resp;
       }
       await listUpcomingEvents();
     };
     if (window.gapi.client.getToken() === null) {
-      tokenClient.requestAccessToken({ prompt: 'consent' });
+      tokenClient.current.requestAccessToken({ prompt: 'consent' });
     } else {
-      tokenClient.requestAccessToken({ prompt: '' });
+      tokenClient.current.requestAccessToken({ prompt: '' });
     }
   }
 
@@ -162,7 +162,7 @@ const OpenHistoryZone = (props) => {
     try {
       const request = {
         calendarId: 'primary',
-        timeMin: new Date().toISOString(),
+        timeMin: new window.Date().toISOString(),
         showDeleted: false,
         singleEvents: true,
         maxResults: 10,
@@ -170,7 +170,6 @@ const OpenHistoryZone = (props) => {
       };
       response = await window.gapi.client.calendar.events.list(request);
     } catch (err) {
-      document.getElementById('content').innerText = err.message;
       console.log(err);
       return;
     }
