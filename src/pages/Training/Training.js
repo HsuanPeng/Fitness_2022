@@ -145,7 +145,7 @@ const Training = () => {
     datasets: [
       {
         data: [shoulderPercent, armPercent, chestPercent, backPercent, buttLegPercent, corePercent],
-        backgroundColor: ['#a8e8f9', '#00537a', '#013c58', '#f5a201', '#ffba42', '#ffd35b'],
+        backgroundColor: ['#f1f2f6', '#8ecae6', '#219ebc', '#74c6cc', '#ffb703', '#fb8500'],
         borderColor: [
           'rgba(0, 0, 0, 1)',
           'rgba(0, 0, 0, 1)',
@@ -154,7 +154,7 @@ const Training = () => {
           'rgba(0, 0, 0, 1)',
           'rgba(0, 0, 0, 1)',
         ],
-        borderWidth: 1,
+        borderWidth: 0,
       },
     ],
     labels: ['肩', '手臂', '胸', '背', '臀腿', '核心'],
@@ -166,7 +166,7 @@ const Training = () => {
         data: [1],
         backgroundColor: ['grey'],
         borderColor: ['rgba(0, 0, 0, 1)'],
-        borderWidth: 1,
+        borderWidth: 0,
       },
     ],
     labels: ['無資料'],
@@ -370,8 +370,8 @@ const Training = () => {
           const newData = [];
           item.forEach((doc) => {
             newData.push(doc.data());
-            setTrainingData(newData);
           });
+          setTrainingData(newData);
         });
         setTimeout(() => {
           setLoading(false);
@@ -642,7 +642,7 @@ export default Training;
 const LoadingOutside = styled.div`
   position: fixed;
   z-index: 2000;
-  background: rgba(49, 50, 55, 1);
+  background: #475260;
   height: 100%;
   width: 100%;
   display: ${(props) => (props.$isActive ? 'block' : 'none')};
@@ -781,7 +781,7 @@ const NoHistory = styled.div`
 const TrainingOutside = styled.div`
   position: absolute;
   left: 50%;
-  top: 15%;
+  top: 25%;
   transform: translate(-50%, -5%);
   z-index: 20;
   display: ${(props) => (props.$isHide ? 'block' : 'none')};
@@ -791,10 +791,10 @@ const TrainingOutside = styled.div`
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
-    top: 11.5%;
+    top: 15.5%;
   }
   @media screen and (max-width: 767px) {
-    top: 7.1%;
+    top: 8.1%;
   }
 `;
 

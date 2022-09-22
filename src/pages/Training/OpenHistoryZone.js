@@ -52,7 +52,11 @@ const OpenHistoryZone = (props) => {
     datasets: [
       {
         data: [shoulderPercent, armPercent, chestPercent, backPercent, buttLegPercent, corePercent],
-        backgroundColor: ['#a8e8f9', '#00537a', '#013c58', '#f5a201', '#ffba42', '#ffd35b'],
+        backgroundColor: ['#f1f2f6', '#8ecae6', '#219ebc', '#74c6cc', '#ffb703', '#fb8500'],
+        // backgroundColor: ['#151c48', '#174580', '#3b70a2', '#00a1d7', '#70c2e8', '#5bb9d3'],
+        // backgroundColor: ['#13293d', '#006494', '#247ba0', '#1b98e0', '#e8f1fe', '#993333'],
+        // backgroundColor: ['#284177', '#006bbd', '#83ceec', '#c0e8ff', '#ede8e4', '#c2afa8'],
+        // backgroundColor: ['#ffa200', '#ffaa00', '#ffb700', '#ffc300', '#ffd000', '#ffdd00'],
         borderColor: [
           'rgba(0, 0, 0, 1)',
           'rgba(0, 0, 0, 1)',
@@ -61,7 +65,7 @@ const OpenHistoryZone = (props) => {
           'rgba(0, 0, 0, 1)',
           'rgba(0, 0, 0, 1)',
         ],
-        borderWidth: 1,
+        borderWidth: 0,
       },
     ],
     labels: ['肩', '手臂', '胸', '背', '臀腿', '核心'],
@@ -73,7 +77,7 @@ const OpenHistoryZone = (props) => {
         data: [1],
         backgroundColor: ['grey'],
         borderColor: ['rgba(0, 0, 0, 1)'],
-        borderWidth: 1,
+        borderWidth: 0,
       },
     ],
     labels: ['無資料'],
@@ -101,7 +105,6 @@ const OpenHistoryZone = (props) => {
   // 讓script onload
   useEffect(() => {
     if (API === 'ready' && alreadyLoad == false) {
-      console.log('gapiLoaded');
       gapiLoaded();
       setAlreadyLoad(true);
     }
@@ -109,7 +112,6 @@ const OpenHistoryZone = (props) => {
 
   useEffect(() => {
     if (Accounts === 'ready' && alreadyLoad == false) {
-      console.log('gisLoaded');
       gisLoaded();
       setAlreadyLoad(true);
     }
@@ -331,11 +333,12 @@ const Close = styled.img`
 
 const OpenHistory = styled.div`
   position: absolute;
+  top: 20%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;
   display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-  background: #313237;
+  background: #475260;
   max-width: 1000px;
   padding-top: 10px;
   padding-left: 30px;
@@ -345,9 +348,11 @@ const OpenHistory = styled.div`
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
+    top: 10%;
     max-width: 700px;
   }
   @media screen and (max-width: 767px) {
+    top: 6%;
     max-width: 320px;
     padding-left: 15px;
     padding-right: 15px;
@@ -480,7 +485,7 @@ const HistoryActions = styled.div`
   margin: 10px 0px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
-  background: #818a8e;
+  background: rgba(255, 255, 255, 0.5);
   max-width: 900px;
   color: black;
   @media screen and (max-width: 1279px) {
@@ -510,21 +515,21 @@ const BodyPartPic = styled.img`
   margin-right: 10px;
   @media screen and (max-width: 767px) {
     width: 25px;
-
     margin-right: 10px;
   }
 `;
 
 const FaDumbbellName = styled.div`
   margin-right: 10px;
-  color: #74c6cc;
+  color: white;
 `;
 
 const ActionName = styled.div`
   display: flex;
-  flex-grow: 1;
+  width: 300px;
   @media screen and (max-width: 1279px) {
     margin-left: 10px;
+    width: 270px;
   }
   @media screen and (max-width: 767px) {
     margin: 5px 0px;
@@ -533,7 +538,7 @@ const ActionName = styled.div`
 
 const FaDumbbellWeight = styled.div`
   margin-right: 14px;
-  color: #74c6cc;
+  color: white;
 `;
 
 const Weight = styled.div`
@@ -551,7 +556,7 @@ const Weight = styled.div`
 
 const FaDumbbellTimes = styled.div`
   margin-right: 13px;
-  color: #74c6cc;
+  color: white;
 `;
 
 const Times = styled.div`
@@ -577,7 +582,7 @@ const HistoryMiddle = styled.div`
 `;
 
 const PieOutside = styled.div`
-  width: 460px;
+  width: 350px;
   @media screen and (max-width: 1279px) {
     width: 300px;
   }
@@ -663,7 +668,7 @@ const UploadButton = styled.div`
   background: #74c6cc;
   width: 120px;
   margin: 20px 14px;
-  color: white;
+  color: black;
   cursor: pointer;
   padding: 8px;
   font-size: 18px;

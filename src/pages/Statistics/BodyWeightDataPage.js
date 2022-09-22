@@ -151,7 +151,7 @@ const BodyWeightHistoryOutside = styled.div`
   margin-right: 30px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
-  background: #818a8e;
+  background: rgba(255, 255, 255, 0.5);
   color: black;
   display: flex;
   justify-content: space-between;

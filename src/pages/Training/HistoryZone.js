@@ -86,7 +86,7 @@ const HistoryItemsOutside = styled.div`
   justify-content: space-evenly;
   margin: 0px 25px 40px 25px;
   cursor: pointer;
-  background: #313237;
+  background: #475260;
   padding: 20px;
   font-size: 16px;
   width: 45%;

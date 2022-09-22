@@ -31,6 +31,8 @@ import trainingBanner from '../../images/Athlete-preparing-for-training-467612.j
 import { Blocks } from 'react-loader-spinner';
 
 const Statistics = () => {
+  ChartJS.defaults.font.size = 16;
+
   //UserContext拿資料
   const {
     isLoggedIn,
@@ -100,18 +102,18 @@ const Statistics = () => {
           const newData = [];
           item.forEach((doc) => {
             newData.push(doc.data());
-            setFatRecord(newData);
           });
+          setFatRecord(newData);
           const newFatNumberData = [];
           item.forEach((doc) => {
             newFatNumberData.push(doc.data().bodyFat);
-            setFatNumberLine(newFatNumberData);
           });
+          setFatNumberLine(newFatNumberData);
           const newFatDateData = [];
           item.forEach((doc) => {
             newFatDateData.push(doc.data().measureDate);
-            setFatDateLine(newFatDateData);
           });
+          setFatDateLine(newFatDateData);
         });
         setTimeout(() => {
           setLoading(false);
@@ -177,8 +179,31 @@ const Statistics = () => {
         fill: true,
         backgroundColor: 'rgba(238,141,71,0.2)',
         borderColor: 'rgba(238,141,71,1)',
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 16,
+              },
+            },
+          },
+        },
       },
     ],
+  };
+
+  const bodyFatOptions = {
+    scales: {
+      y: {
+        ticks: {
+          padding: 15,
+          color: 'white',
+        },
+      },
+      x: {
+        ticks: { padding: 15, color: 'white' },
+      },
+    },
   };
 
   const dataNull = {
@@ -209,18 +234,18 @@ const Statistics = () => {
           const newData = [];
           item.forEach((doc) => {
             newData.push(doc.data());
-            setWeightRecord(newData);
           });
+          setWeightRecord(newData);
           const newWeightNumberData = [];
           item.forEach((doc) => {
             newWeightNumberData.push(doc.data().bodyWeight);
-            setWeightNumberLine(newWeightNumberData);
           });
+          setWeightNumberLine(newWeightNumberData);
           const newWeightDateData = [];
           item.forEach((doc) => {
             newWeightDateData.push(doc.data().measureDate);
-            setWeightDateLine(newWeightDateData);
           });
+          setWeightDateLine(newWeightDateData);
         });
       }
       getWeightRecord();
@@ -283,8 +308,31 @@ const Statistics = () => {
         fill: true,
         backgroundColor: 'rgba(238,141,71,0.2)',
         borderColor: 'rgba(238,141,71,1)',
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 16,
+              },
+            },
+          },
+        },
       },
     ],
+  };
+
+  const bodyWeightOptions = {
+    scales: {
+      y: {
+        ticks: {
+          padding: 15,
+          color: 'white',
+        },
+      },
+      x: {
+        ticks: { padding: 15, color: 'white' },
+      },
+    },
   };
 
   // ＝＝＝＝＝＝＝＝＝＝＝體重chart.js＝＝＝＝＝＝＝＝＝＝＝
@@ -305,7 +353,6 @@ const Statistics = () => {
 
   return (
     <>
-      {' '}
       <LoadingOutside $isActive={loading}>
         <LoadingBlocks>
           <Blocks
@@ -348,7 +395,7 @@ const Statistics = () => {
               <BodyFatLinePageZone>
                 <BodyFatLineOutside>
                   {fatRecord.length > 0 ? (
-                    <Line data={BodyFatData} options={{ color: 'white' }} />
+                    <Line data={BodyFatData} options={bodyFatOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
@@ -371,7 +418,7 @@ const Statistics = () => {
               <BodyWeightLinePageZone>
                 <BodyWeightLineOutside>
                   {weightRecord.length > 0 ? (
-                    <Line data={BodyWeightData} options={{ color: 'white' }} />
+                    <Line data={BodyWeightData} options={bodyWeightOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
@@ -391,7 +438,7 @@ const LoadingOutside = styled.div`
   position: absolute;
   z-index: 2000;
   top: 0%;
-  background: rgba(49, 50, 55, 1);
+  background: #475260;
   height: 100vh;
   width: 100vw;
   display: ${(props) => (props.$isActive ? 'block' : 'none')};
@@ -483,13 +530,12 @@ const GoBodyFatOutide = styled.div`
 const GoBodyFat = styled.div`
   cursor: pointer;
   padding: 5px 15px;
-  background: #313237;
   border-radius: 7px;
-  color: white;
-  font-size: 20px;
+  color: black;
+  font-size: 24px;
   letter-spacing: 2px;
-  font-weight: 500;
-  background: ${(props) => (props.$isActive ? '#74c6cc;' : '#313237;')};
+  font-weight: 600;
+  background: ${(props) => (props.$isActive ? '#74c6cc' : '#475260')};
   &:hover {
     background: #74c6cc;
   }
@@ -506,11 +552,11 @@ const GoBodyWeight = styled.div`
   cursor: pointer;
   padding: 5px 15px;
   border-radius: 7px;
-  color: white;
-  font-size: 20px;
+  color: black;
+  font-size: 24px;
   letter-spacing: 2px;
-  font-weight: 500;
-  background: ${(props) => (props.$isActive ? '#74c6cc;' : '#313237;')};
+  font-weight: 600;
+  background: ${(props) => (props.$isActive ? '#74c6cc' : '#475260')};
   &:hover {
     background: #74c6cc;
   }
@@ -526,7 +572,7 @@ const BodyFatZone = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #313237;
+  background: #475260;
   padding-bottom: 30px;
   margin-top: 20px;
   border-top: 0.5rem solid #74c6cc;
@@ -574,7 +620,7 @@ const BodyWeightZone = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #313237;
+  background: #475260;
   padding-bottom: 30px;
   margin-top: 20px;
   border-top: 0.5rem solid #74c6cc;

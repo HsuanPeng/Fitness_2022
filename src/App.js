@@ -240,7 +240,7 @@ const GlobalStyle = createGlobalStyle`
 const LoadingOutside = styled.div`
   position: fixed;
   z-index: 2000;
-  background: rgba(49, 50, 55, 1);
+  background: #475260;
   height: 100%;
   width: 100%;
   display: ${(props) => (props.$isActive ? 'block' : 'none')};
@@ -295,7 +295,7 @@ const AlertLine = styled.div`
   display: flex;
   justify-content: start;
   align-items: start;
-  height: 4px;
+  height: 5px;
   background: #008000;
   position: absolute;
   bottom: 0px;
@@ -313,7 +313,7 @@ const AlertLine = styled.div`
 `;
 
 const Check = styled.div`
-  font-size: 24px;
+  font-size: 30px;
   margin-right: 14px;
   color: #008000;
 `;

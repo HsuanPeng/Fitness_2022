@@ -64,8 +64,8 @@ function CalendarPage() {
         const newData = [];
         item.forEach((doc) => {
           newData.push(doc.data());
-          setTrainingItem(newData);
         });
+        setTrainingItem(newData);
       });
     }
     getTrainingTables();
