@@ -136,33 +136,40 @@ const HistoryPic = styled.img`
 
 const HistoryRight = styled.div`
   color: white;
-  font-size: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
 `;
 
-const HistoryTitle = styled.div`
+const HistoryTitle = styled.span`
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #74c6cc;
+  font-size: 24px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryDate = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryWeight = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryTimes = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryComplete = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }

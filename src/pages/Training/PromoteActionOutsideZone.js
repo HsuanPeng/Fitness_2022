@@ -112,7 +112,7 @@ const PromoteListOutside = styled.div`
   margin-left: 10px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
-  background: #818a8e;
+  background: rgba(255, 255, 255, 0.5);
   color: black;
   @media screen and (max-width: 575px) {
     flex-wrap: wrap;

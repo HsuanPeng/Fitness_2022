@@ -785,7 +785,7 @@ const TrainingOutside = styled.div`
   transform: translate(-50%, -5%);
   z-index: 20;
   display: ${(props) => (props.$isHide ? 'block' : 'none')};
-  background: #313237;
+  background: #475260;
   max-width: ${(props) => (props.$isActive ? '1000px' : '700px')};
   margin-bottom: 40px;
   color: white;
@@ -817,6 +817,8 @@ const PageOneDetailContent = styled.div``;
 
 const TitleInputText = styled.div`
   margin-top: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
@@ -854,6 +856,8 @@ const TitleInput = styled.input`
 
 const DateInputText = styled.div`
   margin-top: 25px;
+  font-weight: 600;
+  letter-spacing: 3px;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
@@ -885,6 +889,8 @@ const DateInput = styled.input`
 
 const DescriptionText = styled.div`
   margin-top: 25px;
+  font-weight: 600;
+  letter-spacing: 3px;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
@@ -959,6 +965,8 @@ const ActionText = styled.div`
   padding-bottom: 20px;
   color: #74c6cc;
   font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 3px;
   @media screen and (max-width: 767px) {
     padding-bottom: 0px;
   }

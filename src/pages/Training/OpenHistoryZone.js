@@ -369,18 +369,23 @@ const HistoryTop = styled.div`
   }
 `;
 
-const Title = styled.div`
+const Title = styled.span`
   margin: 10px 0px;
   font-size: 25px;
-  color: #74c6cc;
+  color: white;
   font-weight: 700;
+  letter-spacing: 2px;
+  background-image: linear-gradient(transparent 50%, rgba(25, 26, 30, 0.8) 50%);
+  padding: 0px 10px;
+  background-size: 100% 100%;
 `;
 
 const Date = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0px;
+  margin-top: 20px;
+  margin-bottom: 10px;
   @media screen and (max-width: 767px) {
     flex-direction: column;
     align-items: start;
@@ -429,7 +434,6 @@ const Complete = styled.div`
       transform: rotateX(720deg);
     }
     100% {
-      /* animate nothing to pause animation at the end */
       opacity: 1;
       transform: rotateX(720deg);
     }
