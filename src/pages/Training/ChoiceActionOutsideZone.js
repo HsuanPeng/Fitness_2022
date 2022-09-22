@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -15,42 +14,40 @@ const ChoiceActionOutsideZone = (props) => {
           <TotalWeightButton onClick={props.calTotalWeight}>計算總重量</TotalWeightButton>
         </TotalWeightButtonOutside>
         <TotalWeight>總重量：{props.totalWeight} KG</TotalWeight>
-        <TotalActionNumbers>總動作數：{props.choiceAction.length} 個</TotalActionNumbers>
+        <TotalActionNumbers>動作數：{props.choiceAction.length} 個</TotalActionNumbers>
       </TotalZone>
       {props.choiceAction.length > 0 ? (
         <>
           {props.choiceAction.map((item, index) => (
-            <ChoiceItemOutside id={index} key={uuidv4()}>
-              <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
-              <ChoiceItemName>{item.actionName}</ChoiceItemName>
-              <WeightOutside>
-                <Weight
-                  type="input"
-                  placeholder="0"
-                  onChange={(e) => {
-                    props.choiceAction[index].weight = e.target.value;
+            <>
+              <ChoiceItemOutside id={index}>
+                <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
+                <ChoiceItemName>{item.actionName}</ChoiceItemName>
+                <WeightOutside>
+                  <Weight
+                    onChange={(e) => {
+                      props.choiceAction[index].weight = e.target.value;
+                    }}
+                  />{' '}
+                  KG
+                </WeightOutside>
+                <TimesOutside>
+                  <Times
+                    onChange={(e) => {
+                      props.choiceAction[index].times = e.target.value;
+                    }}
+                  />{' '}
+                  次
+                </TimesOutside>
+                <Delete
+                  onClick={() => {
+                    props.deleteItem(index);
                   }}
-                />{' '}
-                KG
-              </WeightOutside>
-              <TimesOutside>
-                <Times
-                  type="input"
-                  placeholder="0"
-                  onChange={(e) => {
-                    props.choiceAction[index].times = e.target.value;
-                  }}
-                />{' '}
-                次
-              </TimesOutside>
-              <Delete
-                onClick={() => {
-                  props.deleteItem(index);
-                }}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </Delete>
-            </ChoiceItemOutside>
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </Delete>
+              </ChoiceItemOutside>
+            </>
           ))}
         </>
       ) : (
@@ -63,7 +60,7 @@ const ChoiceActionOutsideZone = (props) => {
 export default ChoiceActionOutsideZone;
 
 const ChoiceActionOutside = styled.div`
-  width: 48%;
+  width: 50%;
   color: black;
   height: 400px;
   overflow-y: scroll;

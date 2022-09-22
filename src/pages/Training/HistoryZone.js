@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 const HistoryZone = (props) => {
   return (
@@ -7,7 +6,6 @@ const HistoryZone = (props) => {
       {props.trainingData.map((item, index) => (
         <HistoryItemsOutside
           index={index}
-          key={uuidv4()}
           onClick={() => {
             props.openHistory(index);
           }}

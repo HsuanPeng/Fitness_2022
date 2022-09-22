@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //calendar
 import { useScript } from '../../Hooks/useScript';
@@ -230,7 +229,7 @@ const OpenHistoryZone = (props) => {
         </HistoryTop>
         {props.showHistoryActions.map((item) => {
           return (
-            <HistoryActions key={uuidv4()}>
+            <HistoryActions>
               <BodyPart>
                 <BodyPartPicOutside>
                   <BodyPartPic src={armMuscle} />

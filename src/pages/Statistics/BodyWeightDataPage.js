@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -34,7 +33,7 @@ const BodyWeightDataPage = (props) => {
         {props.weightRecord.length > 0 ? (
           <>
             {props.weightRecord.map((item, index) => (
-              <BodyWeightHistoryOutside id={index} key={uuidv4()}>
+              <BodyWeightHistoryOutside id={index}>
                 <BodyWeightMeasureDate>日期：{item.measureDate}</BodyWeightMeasureDate>
                 <BodyWeightChange>
                   變化：

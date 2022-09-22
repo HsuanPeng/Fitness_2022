@@ -57,7 +57,7 @@ const Header = () => {
             }}
             $isActive={currentPage}
           >
-            健菜單
+            <TrainingPageTitle> 健菜單</TrainingPageTitle>
             <UnderLine></UnderLine>
           </TrainingPage>
           <Calendar
@@ -67,7 +67,8 @@ const Header = () => {
             }}
             $isActive={currentPage}
           >
-            健日曆<UnderLine></UnderLine>
+            <CalendarPageTitle>健日曆</CalendarPageTitle>
+            <UnderLine></UnderLine>
           </Calendar>
           <StatisticsPage
             to="/statistics"
@@ -76,7 +77,8 @@ const Header = () => {
             }}
             $isActive={currentPage}
           >
-            健數據<UnderLine></UnderLine>
+            <StatisticsPageTitle> 健數據</StatisticsPageTitle>
+            <UnderLine></UnderLine>
           </StatisticsPage>
           <MapPage
             to="/map"
@@ -85,7 +87,8 @@ const Header = () => {
             }}
             $isActive={currentPage}
           >
-            健地圖<UnderLine></UnderLine>
+            <MapPageTitle> 健地圖</MapPageTitle>
+            <UnderLine></UnderLine>
           </MapPage>
           {isLoggedIn ? (
             <>
@@ -94,7 +97,8 @@ const Header = () => {
                   userSignOut();
                 }}
               >
-                登出<UnderLine></UnderLine>
+                <LogoutTitle>登出</LogoutTitle>
+                <UnderLine></UnderLine>
               </Logout>
             </>
           ) : (
@@ -103,7 +107,8 @@ const Header = () => {
                 signIn();
               }}
             >
-              登入<UnderLine></UnderLine>
+              <LoginTitle> 登入</LoginTitle>
+              <UnderLine></UnderLine>
             </Login>
           )}
         </PageSelection>
@@ -191,7 +196,8 @@ const PageSelection = styled.div`
   text-align: center;
   font-size: 24px;
   width: 580px;
-  letter-spacing: 4px;
+  letter-spacing: 7px;
+  font-weight: 600;
   @media screen and (max-width: 1279px) {
     width: 480px;
   }
@@ -265,6 +271,10 @@ const TrainingPage = styled(Link)`
   }
 `;
 
+const TrainingPageTitle = styled.div`
+  margin-left: 5px;
+`;
+
 const Calendar = styled(Link)`
   color: ${(props) => (props.$isActive === 'Calendar' ? '#74c6cc' : 'white')};
   height: 40px;
@@ -310,6 +320,10 @@ const Calendar = styled(Link)`
       }
     }
   }
+`;
+
+const CalendarPageTitle = styled.div`
+  margin-left: 5px;
 `;
 
 const StatisticsPage = styled(Link)`
@@ -359,6 +373,10 @@ const StatisticsPage = styled(Link)`
   }
 `;
 
+const StatisticsPageTitle = styled.div`
+  margin-left: 5px;
+`;
+
 const MapPage = styled(Link)`
   color: ${(props) => (props.$isActive === 'MapPage' ? '#74c6cc' : 'white')};
   height: 40px;
@@ -406,6 +424,10 @@ const MapPage = styled(Link)`
   }
 `;
 
+const MapPageTitle = styled.div`
+  margin-left: 5px;
+`;
+
 const Logout = styled.div`
   color: white;
   height: 40px;
@@ -445,6 +467,10 @@ const Logout = styled.div`
   }
 `;
 
+const LogoutTitle = styled.div`
+  margin-left: 5px;
+`;
+
 const Login = styled.div`
   color: white;
   height: 40px;
@@ -482,4 +508,8 @@ const Login = styled.div`
       }
     }
   }
+`;
+
+const LoginTitle = styled.div`
+  margin-left: 5px;
 `;

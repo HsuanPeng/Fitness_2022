@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -25,7 +24,7 @@ const PromoteActionOutsideZone = (props) => {
         </PartSelect>
       </PromoteTop>
       {props.promoteActions.map((item, index) => (
-        <PromoteListOutside key={uuidv4()}>
+        <PromoteListOutside>
           <AddIcon
             id={index}
             onClick={(e) => {
