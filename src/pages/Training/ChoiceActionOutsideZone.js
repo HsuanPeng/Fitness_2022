@@ -6,52 +6,84 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
+//beautiful-dnd
+import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
+
 const ChoiceActionOutsideZone = (props) => {
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const items = Array.from(props.choiceAction);
+    const [reorderData] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderData);
+    props.setChoiceAction(items);
+  };
+
   return (
     <ChoiceActionOutside>
       <TotalZone>
         <TotalWeightButtonOutside>
           <TotalWeightButton onClick={props.calTotalWeight}>計算總重量</TotalWeightButton>
         </TotalWeightButtonOutside>
-        <TotalWeight>總重量：{props.totalWeight} KG</TotalWeight>
+        <TotalWeight $isActive={props.totalWeightInput}>總重量：{props.totalWeight} KG</TotalWeight>
         <TotalActionNumbers>動作數：{props.choiceAction.length} 個</TotalActionNumbers>
       </TotalZone>
       {props.choiceAction.length > 0 ? (
-        <>
-          {props.choiceAction.map((item, index) => (
-            <>
-              <ChoiceItemOutside id={index}>
-                <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
-                <ChoiceItemName>{item.actionName}</ChoiceItemName>
-                <WeightOutside>
-                  <Weight
-                    onChange={(e) => {
-                      props.choiceAction[index].weight = e.target.value;
-                    }}
-                  />{' '}
-                  KG
-                </WeightOutside>
-                <TimesOutside>
-                  <Times
-                    onChange={(e) => {
-                      props.choiceAction[index].times = e.target.value;
-                    }}
-                  />{' '}
-                  次
-                </TimesOutside>
-                <Delete
-                  onClick={() => {
-                    props.deleteItem(index);
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </Delete>
-              </ChoiceItemOutside>
-            </>
-          ))}
-        </>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="list">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {props.choiceAction.map((item, index) => (
+                  <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
+                    {(provided, snapshot) => (
+                      <ChoiceItemOutside
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        style={{
+                          ...provided.draggableProps.style,
+                          border: snapshot.isDragging ? '2px solid #74c6cc' : 'none',
+                          borderStyle: snapshot.isDragging ? 'outset' : 'none',
+                          background: snapshot.isDragging ? '#74c6cc' : 'rgba(255, 255, 255, 0.5)',
+                          // marginBottom: snapshot.isDragging ? '40px' : '0px',
+                          // transform: snapshot.isDragging ? 'translate(-50%, -5%)' : null,
+                        }}
+                      >
+                        <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
+                        <ChoiceItemName>{item.actionName}</ChoiceItemName>
+                        <WeightOutside>
+                          <Weight
+                            onChange={(e) => {
+                              props.choiceAction[index].weight = e.target.value;
+                            }}
+                          />{' '}
+                          KG
+                        </WeightOutside>
+                        <TimesOutside>
+                          <Times
+                            onChange={(e) => {
+                              props.choiceAction[index].times = e.target.value;
+                            }}
+                          />{' '}
+                          次
+                        </TimesOutside>
+                        <Delete
+                          onClick={() => {
+                            props.deleteItem(index);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </Delete>
+                      </ChoiceItemOutside>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       ) : (
-        <NoAcitons>請加入動作</NoAcitons>
+        <NoAcitons>可拖曳調整動作順序</NoAcitons>
       )}
     </ChoiceActionOutside>
   );
@@ -60,6 +92,7 @@ const ChoiceActionOutsideZone = (props) => {
 export default ChoiceActionOutsideZone;
 
 const ChoiceActionOutside = styled.div`
+  position: relative;
   width: 50%;
   color: black;
   height: 400px;
@@ -111,6 +144,22 @@ const TotalWeightButton = styled.div`
 `;
 
 const TotalWeight = styled.div`
+  color: ${(props) => (props.$isActive ? '#74c6cc' : 'white')};
+  scale: 1;
+  animation-name: ${(props) => (props.$isActive ? 'active' : null)};
+  animation-duration: 2s;
+  transition: ease-in-out;
+  @keyframes active {
+    0% {
+      scale: 1;
+    }
+    50% {
+      scale: 1.2;
+    }
+    100% {
+      scale: 1;
+    }
+  }
   @media screen and (max-width: 767px) {
     margin-bottom: 10px;
   }

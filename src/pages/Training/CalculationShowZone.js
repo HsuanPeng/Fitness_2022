@@ -22,7 +22,7 @@ const CalculationShowZone = (props) => {
 export default CalculationShowZone;
 
 const PieOutside = styled.div`
-  width: 400px;
+  width: 475px;
   padding: 10px;
   margin: 0 auto;
   margin-top: 20px;

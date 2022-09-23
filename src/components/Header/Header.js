@@ -45,7 +45,12 @@ const Header = () => {
             </MenuIcon>
           </>
         )}
-        <LogoZone to="/">
+        <LogoZone
+          to="/"
+          onClick={() => {
+            setCurrentPgae('');
+          }}
+        >
           <Logo></Logo>
           <LogoTitle>健人網</LogoTitle>
         </LogoZone>

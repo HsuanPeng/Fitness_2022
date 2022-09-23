@@ -47,6 +47,9 @@ import {} from '@fortawesome/free-brands-svg-icons';
 //loading animation
 import { Blocks } from 'react-loader-spinner';
 
+//uuid
+import { v4 as uuid } from 'uuid';
+
 //Dnd.js
 // import Dnd from './Dnd';
 // import Dnd2 from './Dnd2';
@@ -87,6 +90,7 @@ const Training = () => {
 
   //計算總重量
   const [totalWeight, setTotalWeight] = useState(0);
+  const [totalWeightInput, setTotalWeightInput] = useState(false);
 
   //身體部位佔比
   const [shoulderPercent, setShoulderPercent] = useState(0);
@@ -290,9 +294,16 @@ const Training = () => {
 
   //從右邊加入左邊
   function addActionItem(e) {
-    const newArray = [...choiceAction];
-    newArray.push(promoteActions[e.target.id]);
-    setChoiceAction(newArray);
+    setChoiceAction((pre) => {
+      const addAction = { ...promoteActions[e.target.id] };
+      pre.forEach((action) => {
+        if (action.id === addAction.id) {
+          addAction.id = uuid();
+        }
+      });
+      const newArr = [...pre, addAction];
+      return newArr;
+    });
   }
 
   //左邊的可以刪除
@@ -307,6 +318,10 @@ const Training = () => {
   function calTotalWeight() {
     const total = choiceAction.reduce((prev, item) => prev + item.weight * item.times, 0);
     setTotalWeight(total);
+    setTotalWeightInput(true);
+    setTimeout(() => {
+      setTotalWeightInput(false);
+    }, 2000);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝加入動作＝＝＝＝＝＝＝＝＝＝＝
@@ -475,6 +490,8 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝關閉影片＝＝＝＝＝＝＝＝＝＝＝
 
+  console.log(pageTwo);
+
   return (
     <>
       <LoadingOutside $isActive={loading}>
@@ -581,6 +598,7 @@ const Training = () => {
                 deleteItem={deleteItem}
                 calTotalWeight={calTotalWeight}
                 totalWeight={totalWeight}
+                totalWeightInput={totalWeightInput}
               />
               <PromoteActionOutsideZone
                 setPart={setPart}
@@ -663,6 +681,7 @@ const Wrapper = styled.div`
   font-size: 20px;
   position: relative;
   padding-top: 90px;
+  ${'' /* margin-bottom: 100px; */}
 `;
 
 const Close = styled.img`
@@ -780,21 +799,20 @@ const NoHistory = styled.div`
 
 const TrainingOutside = styled.div`
   position: absolute;
-  left: 50%;
+  left: ${(props) => (props.$isActive ? 'calc(50% - 500px)' : 'calc(50% - 280px)')};
   top: 25%;
-  transform: translate(-50%, -5%);
   z-index: 20;
   display: ${(props) => (props.$isHide ? 'block' : 'none')};
   background: #475260;
   max-width: ${(props) => (props.$isActive ? '1000px' : '700px')};
-  margin-bottom: 40px;
+  margin-bottom: 100px;
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
-    top: 15.5%;
+    left: ${(props) => (props.$isActive ? 'calc(50% - 350px)' : 'calc(50% - 280px)')};
   }
   @media screen and (max-width: 767px) {
-    top: 8.1%;
+    left: ${(props) => (props.$isActive ? 'calc(50% - 237.5px)' : 'calc(50% - 220px)')};
   }
 `;
 

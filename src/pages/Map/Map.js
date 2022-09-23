@@ -73,6 +73,7 @@ export default function Map() {
     const res = await fetch();
     // `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
     const json = await res.json();
+    console.log(json);
     setGyms(json.results);
   }
 
