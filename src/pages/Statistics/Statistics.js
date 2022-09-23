@@ -350,6 +350,8 @@ const Statistics = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝＝頁面切換＝＝＝＝＝＝＝＝＝＝＝
 
+  console.log(fatRecord);
+
   return (
     <>
       <LoadingOutside $isActive={loading}>

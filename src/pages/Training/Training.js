@@ -71,7 +71,7 @@ const Training = () => {
   } = useContext(UserContext);
 
   //抓到每筆菜單
-  const [trainingData, setTrainingData] = useState();
+  const [trainingData, setTrainingData] = useState([]);
 
   //建立菜單上下頁開關
   const [openTrainingInput, setOpenTrainingInput] = useState(false);
@@ -376,7 +376,7 @@ const Training = () => {
 
   useEffect(() => {
     if (isLoggedIn == false) {
-      setTrainingData(null);
+      setTrainingData([]);
     } else {
       async function getTrainingTables() {
         const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
@@ -490,7 +490,7 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝關閉影片＝＝＝＝＝＝＝＝＝＝＝
 
-  console.log(pageTwo);
+  console.log(trainingData);
 
   return (
     <>
@@ -515,7 +515,7 @@ const Training = () => {
         <AddTrainingTableOutside>
           <AddTrainingTable onClick={addTraining}>建立菜單</AddTrainingTable>
         </AddTrainingTableOutside>
-        {trainingData ? (
+        {trainingData.length > 0 ? (
           <HistoryZone trainingData={trainingData} openHistory={openHistory} />
         ) : (
           <NoHistory>尚未建立菜單</NoHistory>
