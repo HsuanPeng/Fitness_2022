@@ -96,7 +96,7 @@ const Statistics = () => {
     } else {
       async function getFatRecord() {
         const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
-        setLoading(true);
+        // setLoading(true);
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
@@ -114,9 +114,9 @@ const Statistics = () => {
           });
           setFatDateLine(newFatDateData);
         });
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        // setTimeout(() => {
+        //   setLoading(false);
+        // }, 1000);
       }
       getFatRecord();
     }
@@ -349,8 +349,6 @@ const Statistics = () => {
   }
 
   // ＝＝＝＝＝＝＝＝＝＝＝頁面切換＝＝＝＝＝＝＝＝＝＝＝
-
-  console.log(fatRecord);
 
   return (
     <>

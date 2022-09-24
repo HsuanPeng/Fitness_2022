@@ -13,6 +13,7 @@ import {
   orderBy,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -41,7 +42,7 @@ import pageOnePic from '../../images/Empty-gym-in-sunlight-397510.jpg';
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleArrowRight, faCircleArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCircleArrowRight, faCircleArrowLeft, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
 //loading animation
@@ -123,6 +124,13 @@ const Training = () => {
 
   //狀態感變
   const [isComplete, setIsComplete] = useState(false);
+
+  //喜愛動作
+  const [favoriteTrainings, setFavoriteTrainings] = useState([]);
+  const [favoriteChoice, setFavoriteChoice] = useState(null);
+
+  //判斷菜單是否加入過
+  const [exists, setExists] = useState(false);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -256,13 +264,13 @@ const Training = () => {
 
   //可以刪除菜單
   async function deleteTrainingItem() {
-    setLoading(true);
+    // setLoading(true);
     try {
       const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
       await deleteDoc(docRef);
       setShowHistoryToggle(false);
       setShowHistoryBackground(false);
-      setLoading(false);
+      // setLoading(false);
       alertPop();
       setContent('成功刪除菜單');
     } catch (e) {
@@ -351,7 +359,7 @@ const Training = () => {
         setOpenTrainingInput(false);
         setChoiceAction([]);
         setTotalWeight(0);
-        sendEmail();
+        // sendEmail();
         setShowHistoryBackground(false);
         alertPop();
         setContent('完成菜單設定');
@@ -380,7 +388,7 @@ const Training = () => {
     } else {
       async function getTrainingTables() {
         const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-        setLoading(true);
+        // setLoading(true);
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
@@ -388,9 +396,9 @@ const Training = () => {
           });
           setTrainingData(newData);
         });
-        setTimeout(() => {
-          setLoading(false);
-        }, 1500);
+        // setTimeout(() => {
+        //   setLoading(false);
+        // }, 1500);
       }
       getTrainingTables();
     }
@@ -401,7 +409,7 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
 
   function openHistory(index) {
-    setLoading(true);
+    // setLoading(true);
     setHistoryIndex(index);
     setShowHistory(trainingData[index]);
     setShowHistoryActions(trainingData[index].actions);
@@ -410,9 +418,9 @@ const Training = () => {
     setImageList(trainingData.picture);
     setShowPicture((prevShowPicture) => !prevShowPicture);
     setShowHistoryBackground(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 1500);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
@@ -490,7 +498,35 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝關閉影片＝＝＝＝＝＝＝＝＝＝＝
 
-  console.log(trainingData);
+  // ＝＝＝＝＝＝＝＝＝＝喜愛動作功能＝＝＝＝＝＝＝＝＝＝＝
+
+  //把喜愛動作資料從雲端抓下來
+  async function getFavoriteTrainings() {
+    const docRef = query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
+    onSnapshot(docRef, (item) => {
+      const newData = [];
+      item.forEach((doc) => {
+        newData.push(doc.data());
+      });
+      setFavoriteTrainings(newData);
+    });
+  }
+
+  //map出選到的喜愛動作
+  useEffect(() => {
+    const showFavoriteTrainings = async () => {
+      const docRef = doc(db, 'users', uid, 'favoriteTrainings', favoriteChoice);
+      const docSnap = await getDoc(docRef);
+      setTitle(docSnap.data().title);
+      setDescription(docSnap.data().description);
+      setChoiceAction(docSnap.data().actions);
+      alertPop();
+      setContent('成功套用喜愛菜單');
+    };
+    showFavoriteTrainings();
+  }, [favoriteChoice]);
+
+  // ＝＝＝＝＝＝＝＝＝＝喜愛動作功能＝＝＝＝＝＝＝＝＝＝＝
 
   return (
     <>
@@ -513,7 +549,14 @@ const Training = () => {
           </Banner>
         </BannerOutside>
         <AddTrainingTableOutside>
-          <AddTrainingTable onClick={addTraining}>建立菜單</AddTrainingTable>
+          <AddTrainingTable
+            onClick={() => {
+              addTraining();
+              getFavoriteTrainings();
+            }}
+          >
+            建立菜單
+          </AddTrainingTable>
         </AddTrainingTableOutside>
         {trainingData.length > 0 ? (
           <HistoryZone trainingData={trainingData} openHistory={openHistory} />
@@ -543,11 +586,33 @@ const Training = () => {
         <TrainingOutside $isHide={openTrainingInput} $isActive={pageTwo}>
           <TrainingOutsideOne $isHide={openTrainingOne}>
             <PageOneDetail>
-              <Close onClick={closeAddTraining} src={remove} />
+              <Close onClick={closeAddTraining}>
+                <FontAwesomeIcon icon={faCircleXmark} />
+              </Close>
               <form ref={form}>
                 <PageOneDetailContent>
                   <TitleInputText>
-                    主題
+                    <FavoriteTitle>
+                      <Title> 主題</Title>
+                      <FavoriteSelectOutside onChange={(e) => setFavoriteChoice(e.target.value)}>
+                        {favoriteTrainings.length > 0 ? (
+                          <>
+                            <option disabled selected>
+                              套用喜愛菜單
+                            </option>
+                            {favoriteTrainings.map((item, index) => (
+                              <option index={index} value={item.docID}>
+                                {item.title}
+                              </option>
+                            ))}
+                          </>
+                        ) : (
+                          <option disabled selected>
+                            無喜愛菜單
+                          </option>
+                        )}
+                      </FavoriteSelectOutside>
+                    </FavoriteTitle>
                     <TitleInputLine />
                     <TitleInput onChange={(e) => setTitle(e.target.value)} name="to_title" value={title}></TitleInput>
                   </TitleInputText>
@@ -586,7 +651,9 @@ const Training = () => {
             </TurnOutside>
           </TrainingOutsideOne>
           <TrainingOutsideTwo $isHide={openTrainingTwo}>
-            <Close onClick={closeAddTraining} src={remove} />
+            <Close onClick={closeAddTraining}>
+              <FontAwesomeIcon icon={faCircleXmark} />
+            </Close>
             <ActionText>
               加入菜單動作
               <ActionLine />
@@ -619,7 +686,9 @@ const Training = () => {
               />
               {videoShow ? (
                 <VideoZone $isHide={videoShow}>
-                  <CloseVideo onClick={closeVideo} src={remove} />
+                  <CloseVideo onClick={closeVideo}>
+                    <FontAwesomeIcon icon={faCircleXmark} />
+                  </CloseVideo>
                   <video autoPlay loop width="100%" controls src={videoUrl}></video>
                 </VideoZone>
               ) : (
@@ -684,16 +753,16 @@ const Wrapper = styled.div`
   ${'' /* margin-bottom: 100px; */}
 `;
 
-const Close = styled.img`
+const Close = styled.div`
   cursor: pointer;
   width: 30px;
-  height: 30px;
-  z-index: 90;
   position: absolute;
   right: 20px;
-  top: 17px;
+  top: 10px;
   scale: 1;
   transition: 0.3s;
+  font-size: 30px;
+  color: #c14e4f;
   &:hover {
     scale: 1.2;
   }
@@ -800,19 +869,22 @@ const NoHistory = styled.div`
 const TrainingOutside = styled.div`
   position: absolute;
   left: ${(props) => (props.$isActive ? 'calc(50% - 500px)' : 'calc(50% - 280px)')};
-  top: 25%;
+  top: ${(props) => (props.$isActive ? '7%' : '15%')};
   z-index: 20;
   display: ${(props) => (props.$isHide ? 'block' : 'none')};
   background: #475260;
   max-width: ${(props) => (props.$isActive ? '1000px' : '700px')};
   margin-bottom: 100px;
+  margin-top: 100px;
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
     left: ${(props) => (props.$isActive ? 'calc(50% - 350px)' : 'calc(50% - 280px)')};
+    top: ${(props) => (props.$isActive ? '7%' : '8%')};
   }
   @media screen and (max-width: 767px) {
     left: ${(props) => (props.$isActive ? 'calc(50% - 237.5px)' : 'calc(50% - 220px)')};
+    top: ${(props) => (props.$isActive ? '4%' : '4%')};
   }
 `;
 
@@ -833,14 +905,42 @@ const PageOneDetail = styled.div`
 
 const PageOneDetailContent = styled.div``;
 
-const TitleInputText = styled.div`
-  margin-top: 10px;
+const FavoriteSelectOutside = styled.select`
+  width: 25%;
+  height: 30px;
+  background: white;
+  color: gray;
+  padding-left: 5px;
+  font-size: 14px;
+  border-radius: 6px;
+  option {
+    color: black;
+    background: white;
+    display: flex;
+    white-space: pre;
+    min-height: 20px;
+  }
+  @media screen and (max-width: 575px) {
+    width: 30%;
+  }
+`;
+
+const Title = styled.div`
   font-weight: 600;
   letter-spacing: 3px;
+  margin-right: 20px;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
 `;
+
+const FavoriteTitle = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const TitleInputText = styled.div``;
 
 const TitleInputLine = styled.div`
   border-bottom: 2px solid #74c6cc;
@@ -1015,15 +1115,16 @@ const ActionOutside = styled.div`
   }
 `;
 
-const CloseVideo = styled.img`
+const CloseVideo = styled.div`
   cursor: pointer;
   width: 30px;
   height: 30px;
   z-index: 90;
   position: absolute;
   scale: 1;
-  top: 10px;
   right: 50px;
+  color: #c14e4f;
+  font-size: 30px;
   &:hover {
     scale: 1.2;
   }

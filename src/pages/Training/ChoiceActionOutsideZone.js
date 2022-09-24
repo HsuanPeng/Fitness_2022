@@ -44,8 +44,6 @@ const ChoiceActionOutsideZone = (props) => {
                           border: snapshot.isDragging ? '2px solid #74c6cc' : 'none',
                           borderStyle: snapshot.isDragging ? 'outset' : 'none',
                           background: snapshot.isDragging ? '#74c6cc' : 'rgba(255, 255, 255, 0.5)',
-                          // marginBottom: snapshot.isDragging ? '40px' : '0px',
-                          // transform: snapshot.isDragging ? 'translate(-50%, -5%)' : null,
                         }}
                       >
                         <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>

@@ -12,21 +12,54 @@ import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 //pics
-import remove from '../../images/remove.png';
 import armMuscle from '../../images/armMuscle.png';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faDumbbell, faWeightHanging } from '@fortawesome/free-solid-svg-icons';
+import {
+  faClock,
+  faDumbbell,
+  faWeightHanging,
+  faHeartCirclePlus,
+  faCircleXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { faGooglePlus } from '@fortawesome/free-brands-svg-icons';
+
+//firebase
+import { initializeApp } from 'firebase/app';
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  updateDoc,
+  deleteDoc,
+  where,
+  getDocs,
+} from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const OpenHistoryZone = (props) => {
   //UserContext拿資料
-  const { isLoggedIn, setIsLoggedIn, alertPop, setContent } = useContext(UserContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    userSignOut,
+    signInWithGoogle,
+    uid,
+    displayName,
+    email,
+    signIn,
+    alertPop,
+    setContent,
+  } = useContext(UserContext);
 
   //點擊過完成鍛鍊後，該按鈕消失
-  const [showCompleteTrainingButton, setShowCompleteTrainingButton] = useState(true);
+  // const [showCompleteTrainingButton, setShowCompleteTrainingButton] = useState(true);
 
   //從useScript拿
   const API = useScript('https://apis.google.com/js/api.js');
@@ -42,6 +75,26 @@ const OpenHistoryZone = (props) => {
 
   //判斷日曆狀態
   const [alreadyLoad, setAlreadyLoad] = useState(false);
+
+  //判斷菜單是否加入過
+  const [exists, setExists] = useState(false);
+
+  // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
+
+  const firebaseConfig = {
+    apiKey: 'AIzaSyDtlWrSX2x1e0oTxI1_MN52sQsVyEwaOzA',
+    authDomain: 'fitness2-d4aaf.firebaseapp.com',
+    projectId: 'fitness2-d4aaf',
+    storageBucket: 'fitness2-d4aaf.appspot.com',
+    messagingSenderId: '440863323792',
+    appId: '1:440863323792:web:3f097801137f4002c7ca15',
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
   // ＝＝＝＝＝＝＝＝＝＝＝chart.js＝＝＝＝＝＝＝＝＝＝＝
 
@@ -189,7 +242,6 @@ const OpenHistoryZone = (props) => {
         date: `${props.showHistory.trainingDate}`,
       },
     };
-
     var request = window.gapi.client.calendar.events.insert({
       calendarId: 'primary',
       resource: event,
@@ -201,12 +253,57 @@ const OpenHistoryZone = (props) => {
 
   // ＝＝＝＝＝＝＝＝＝＝＝Google日曆＝＝＝＝＝＝＝＝＝＝＝
 
+  // ＝＝＝＝＝＝＝＝＝＝＝把動作加入我的最愛＝＝＝＝＝＝＝＝＝＝＝
+
+  //按下加入我的最愛後寫入
+  async function addFavoriteTraining() {
+    try {
+      const query = await getDocs(collection(db, 'users', uid, 'favoriteTrainings'));
+      query.forEach((doc) => {
+        if (doc.data().title === props.showHistory.title) {
+          alertPop();
+          setContent('您已加入過本菜單');
+        }
+      });
+      const docRef = doc(collection(db, 'users', uid, 'favoriteTrainings'));
+      const data = {
+        docID: docRef.id,
+        complete: '未完成',
+        picture: '',
+        title: props.showHistory.title,
+        description: props.showHistory.description,
+        totalActions: props.showHistoryActions.length,
+        totalWeight: props.showHistory.totalWeight,
+        trainingDate: props.showHistory.trainingDate,
+        setDate: new window.Date(),
+        actions: props.showHistoryActions,
+      };
+      setDoc(docRef, data);
+      alertPop();
+      setContent('成功加入喜愛菜單');
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  // ＝＝＝＝＝＝＝＝＝＝＝把動作加入我的最愛＝＝＝＝＝＝＝＝＝＝＝
+
   return (
     <>
       <OpenHistory $isHide={props.showHistoryToggle}>
-        <Close onClick={props.closeHistory} src={remove}></Close>
+        <Close onClick={props.closeHistory}>
+          <FontAwesomeIcon icon={faCircleXmark} />
+        </Close>
         <HistoryTop>
-          <Title>主題：{props.showHistory.title}</Title>
+          <TitleFavorite>
+            <Title>主題：{props.showHistory.title}</Title>
+            <AddFavoriteOutside onClick={addFavoriteTraining}>
+              <AddFavorite>加入喜愛菜單</AddFavorite>
+              <FaGooglePlus>
+                <FontAwesomeIcon icon={faHeartCirclePlus} />
+              </FaGooglePlus>
+            </AddFavoriteOutside>
+          </TitleFavorite>
           <Detail>
             <Date>
               <DateTitle>訓練日期：{props.showHistory.trainingDate}</DateTitle>
@@ -317,14 +414,16 @@ const OpenHistoryZone = (props) => {
 
 export default OpenHistoryZone;
 
-const Close = styled.img`
+const Close = styled.div`
   cursor: pointer;
   width: 30px;
   position: absolute;
-  right: 25px;
-  top: 20px;
+  right: 20px;
+  top: 10px;
   scale: 1;
   transition: 0.3s;
+  font-size: 30px;
+  color: #c14e4f;
   &:hover {
     scale: 1.2;
   }
@@ -332,7 +431,7 @@ const Close = styled.img`
 
 const OpenHistory = styled.div`
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;
@@ -368,6 +467,18 @@ const HistoryTop = styled.div`
   }
 `;
 
+const TitleFavorite = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 40px;
+
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+  }
+`;
+
 const Title = styled.span`
   margin: 10px 0px;
   font-size: 25px;
@@ -377,6 +488,33 @@ const Title = styled.span`
   background-image: linear-gradient(transparent 50%, rgba(25, 26, 30, 0.8) 50%);
   padding: 0px 10px;
   background-size: 100% 100%;
+  margin-right: 10px;
+`;
+
+const AddFavoriteOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  width: 160px;
+  color: black;
+  cursor: pointer;
+  margin-left: 20px;
+  border-radius: 20px;
+  margin-top: 10px;
+  &:hover {
+    color: #c14e4f;
+  }
+  @media screen and (max-width: 767px) {
+    margin: 10px 0px;
+    margin-left: 0px;
+  }
+`;
+
+const AddFavorite = styled.div`
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-weight: 600;
 `;
 
 const Date = styled.div`
@@ -411,10 +549,14 @@ const Detail = styled.div`
 const DescriptionComplete = styled.div`
   display: flex;
   justify-content: space-between;
-  flex-direction: column;
+  ${'' /* flex-direction: column; */}
   @media screen and (max-width: 1279px) {
-    justify-content: center;
-    align-items: start;
+    width: 100%;
+    ${'' /* justify-content: center; */}
+    ${'' /* align-items: start; */}
+  }
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
   }
 `;
 
