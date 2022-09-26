@@ -38,11 +38,19 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 //pic
 import trainingBanner from '../../images/Beautiful-woman-holding-heavy-604970.jpg';
 import pageOnePic from '../../images/Empty-gym-in-sunlight-397510.jpg';
+import logo from '../../images/高畫質logo_藍色2.png';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleArrowRight, faCircleArrowLeft, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleArrowRight,
+  faCircleArrowLeft,
+  faCircleXmark,
+  faCalendarDays,
+  faHandPointUp,
+  faDumbbell,
+} from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
 //loading animation
@@ -50,6 +58,7 @@ import { Blocks } from 'react-loader-spinner';
 
 //uuid
 import { v4 as uuid } from 'uuid';
+import { anatomy } from '@chakra-ui/anatomy';
 
 //Dnd.js
 // import Dnd from './Dnd';
@@ -271,13 +280,13 @@ const Training = () => {
 
   //可以刪除菜單
   async function deleteTrainingItem() {
-    // setLoading(true);
+    setLoading(true);
     try {
       const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
       await deleteDoc(docRef);
       setShowHistoryToggle(false);
       setShowHistoryBackground(false);
-      // setLoading(false);
+      setLoading(false);
       alertPop();
       setContent('成功刪除菜單');
     } catch (e) {
@@ -366,7 +375,7 @@ const Training = () => {
         setOpenTrainingInput(false);
         setChoiceAction([]);
         setTotalWeight(0);
-        // sendEmail();
+        sendEmail();
         setShowHistoryBackground(false);
         alertPop();
         setContent('完成菜單設定');
@@ -395,7 +404,7 @@ const Training = () => {
     } else {
       async function getTrainingTables() {
         const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-        // setLoading(true);
+        setLoading(true);
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
@@ -404,9 +413,9 @@ const Training = () => {
           const reverseNewData = newData.reverse();
           setTrainingData(reverseNewData);
         });
-        // setTimeout(() => {
-        //   setLoading(false);
-        // }, 1500);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
       getTrainingTables();
     }
@@ -417,7 +426,7 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
 
   function openHistory(index) {
-    // setLoading(true);
+    setLoading(true);
     setHistoryIndex(index);
     setShowHistory(trainingData[index]);
     setShowHistoryActions(trainingData[index].actions);
@@ -426,9 +435,9 @@ const Training = () => {
     setImageList(trainingData.picture);
     setShowPicture((prevShowPicture) => !prevShowPicture);
     setShowHistoryBackground(true);
-    // setTimeout(() => {
-    //   setLoading(false);
-    // }, 1500);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
@@ -641,8 +650,13 @@ const Training = () => {
                 <PageOneDetailContent>
                   <TitleInputText>
                     <FavoriteTitle>
-                      <Title>主題</Title>
-                      <FavoriteSelectOutside onChange={(e) => setFavoriteChoice(e.target.value)}>
+                      <Title>
+                        <FaDumbbell>
+                          <FontAwesomeIcon icon={faDumbbell} />
+                        </FaDumbbell>
+                        主題
+                      </Title>
+                      <FavoriteSelectOutside onChange={(e) => setFavoriteChoice(e.target.value)} defaultValue={null}>
                         {favoriteTrainings.length > 0 ? (
                           <>
                             <option disabled selected>
@@ -670,18 +684,27 @@ const Training = () => {
                     ></TitleInput>
                   </TitleInputText>
                   <DateInputText>
-                    日期
+                    <DateInputTop>
+                      <FaCalendarDays>
+                        <FontAwesomeIcon icon={faCalendarDays} />
+                      </FaCalendarDays>
+                      日期
+                    </DateInputTop>
                     <DateInputLine />
                     <DateInput
                       type="date"
                       onChange={(e) => setDate(e.target.value)}
-                      // min={new Date().toISOString().split('T')[0]}
                       name="to_date"
                       value={date}
                     ></DateInput>
                   </DateInputText>
                   <DescriptionText>
-                    本次訓練重點
+                    <DescriptionTop>
+                      <FaHandPointUp>
+                        <FontAwesomeIcon icon={faHandPointUp} />
+                      </FaHandPointUp>
+                      本次訓練重點
+                    </DescriptionTop>
                     <DescriptionLine />
                     <DescriptionInput
                       name="to_description"
@@ -709,7 +732,12 @@ const Training = () => {
               <FontAwesomeIcon icon={faCircleXmark} />
             </Close>
             <ActionText>
-              加入菜單動作
+              <ActionTop>
+                <ActionPicOutside>
+                  <ActionPic src={logo} />
+                </ActionPicOutside>
+                <ActionTitle> 加入菜單動作</ActionTitle>
+              </ActionTop>
               <ActionLine />
             </ActionText>
             <ActionOutside>
@@ -1048,9 +1076,14 @@ const Title = styled.div`
   font-weight: 600;
   letter-spacing: 3px;
   margin-right: 20px;
+  display: flex;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
+`;
+
+const FaDumbbell = styled.div`
+  margin-right: 10px;
 `;
 
 const FavoriteTitle = styled.div`
@@ -1100,6 +1133,15 @@ const DateInputText = styled.div`
   }
 `;
 
+const DateInputTop = styled.div`
+  display: flex;
+`;
+
+const FaCalendarDays = styled.div`
+  margin-right: 15px;
+  margin-left: 3px;
+`;
+
 const DateInputLine = styled.div`
   border-bottom: 2px solid #74c6cc;
   margin-top: 15px;
@@ -1131,6 +1173,15 @@ const DescriptionText = styled.div`
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
+`;
+
+const DescriptionTop = styled.div`
+  display: flex;
+`;
+
+const FaHandPointUp = styled.div`
+  margin-right: 15px;
+  margin-left: 3px;
 `;
 
 const DescriptionLine = styled.div`
@@ -1204,10 +1255,26 @@ const ActionText = styled.div`
   font-size: 24px;
   font-weight: 600;
   letter-spacing: 3px;
+
   @media screen and (max-width: 767px) {
     padding-bottom: 0px;
   }
 `;
+
+const ActionTop = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ActionPicOutside = styled.div``;
+
+const ActionPic = styled.img`
+  width: 70px;
+  margin-right: 15px;
+  padding-top: 10px;
+`;
+
+const ActionTitle = styled.div``;
 
 const ActionLine = styled.div`
   border-bottom: 2px solid #74c6cc;

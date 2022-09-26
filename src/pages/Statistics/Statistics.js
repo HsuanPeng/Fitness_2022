@@ -305,8 +305,8 @@ const Statistics = () => {
         label: '體重',
         data: weightNumberLine,
         fill: true,
-        backgroundColor: 'rgba(238,141,71,0.2)',
-        borderColor: 'rgba(238,141,71,1)',
+        backgroundColor: 'rgba(255,183,3,0.2)',
+        borderColor: 'rgba(255,183,3,1)',
         plugins: {
           legend: {
             labels: {
@@ -502,7 +502,7 @@ const BannerText = styled.div`
 `;
 
 const ChangeOutside = styled.div`
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0px auto 50px auto;
   @media screen and (max-width: 1279px) {
     padding: 0px 30px;
@@ -587,7 +587,7 @@ const BodyFatZone = styled.div`
 const BodyFatLinePageZone = styled.div``;
 
 const BodyFatLineOutside = styled.div`
-  width: 500px;
+  width: 600px;
   margin: 40px auto 0px auto;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;
@@ -635,7 +635,7 @@ const BodyWeightZone = styled.div`
 const BodyWeightLinePageZone = styled.div``;
 
 const BodyWeightLineOutside = styled.div`
-  width: 500px;
+  width: 600px;
   margin: 40px auto 0px auto;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;

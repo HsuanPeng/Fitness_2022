@@ -26,7 +26,14 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark, faTrash, faDumbbell, faPenToSquare, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleXmark,
+  faTrash,
+  faDumbbell,
+  faPenToSquare,
+  faXmark,
+  faHeartCirclePlus,
+} from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
 //pic
@@ -141,14 +148,20 @@ const FavoritePage = (props) => {
           <FontAwesomeIcon icon={faCircleXmark} />
         </Close>
         <Top>
-          <Title>喜愛菜單</Title>
+          <Title>
+            {' '}
+            <FaHeartCirclePlus>
+              <FontAwesomeIcon icon={faHeartCirclePlus} />
+            </FaHeartCirclePlus>
+            喜愛菜單
+          </Title>
           <Line />
         </Top>
         <Bottom>
           {props.favoriteTrainings.length > 0 ? (
             <>
               <NameZone>
-                <Name>主題</Name>
+                <Name> 主題</Name>
                 <NameContent>
                   {props.favoriteTrainings.map((item, index) => (
                     <NameContentListOustide
@@ -320,7 +333,12 @@ const Top = styled.div`
   }
 `;
 
+const FaHeartCirclePlus = styled.div`
+  margin-right: 12px;
+`;
+
 const Title = styled.div`
+  display: flex;
   margin-top: 25px;
   font-weight: 600;
   letter-spacing: 3px;
@@ -362,12 +380,30 @@ const NameZone = styled.div`
 
 const Name = styled.div`
   font-size: 25px;
+  letter-spacing: 12px;
 `;
 
 const NameContent = styled.div`
   height: 327px;
   overflow-y: scroll;
   padding-right: 15px;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
   @media screen and (max-width: 767px) {
     margin-bottom: 50px;
   }
@@ -457,6 +493,23 @@ const ActionContent = styled.div`
   width: 365px;
   overflow-y: scroll;
   padding-right: 15px;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
   @media screen and (max-width: 500px) {
     width: 280px;
     padding-right: 0px;
@@ -481,6 +534,7 @@ const ActionContentListOustide = styled.div`
 
 const Action = styled.div`
   font-size: 25px;
+  letter-spacing: 12px;
 `;
 
 const ActionPart = styled.div`
@@ -499,7 +553,7 @@ const ActionName = styled.div`
 const NoAction = styled.div`
   text-align: center;
   line-height: 35px;
-  width: 350px;
+  width: 320px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -507,7 +561,7 @@ const NoAction = styled.div`
   border: 1px solid #818a8e;
   margin-top: 12px;
   @media screen and (max-width: 500px) {
-    width: 280px;
+    width: 240px;
   }
 `;
 
@@ -544,7 +598,7 @@ const PicOutside = styled.div`
   margin: 20px 0px 40px 0px;
 `;
 
-const Pic = styled.img`
+const Pic = styled.div`
   width: 100%;
   height: 100%;
   background-image: url(${favoriteBanner});

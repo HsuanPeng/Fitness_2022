@@ -6,9 +6,7 @@ import styled from 'styled-components';
 import UserContext from '../../contexts/UserContext';
 
 //images
-import LogoBlue from '../../images/logo去背_藍色.png';
-import LogoWhite from '../../images/logo去背_白色.png';
-import CalendarPage from '../../pages/CalendarPage/CalendarPage';
+import LogoBlue from '../../images/高畫質logo_藍色2.png';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -16,14 +14,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
-  const { isLoggedIn, setIsLoggedIn, userSignOut, signInWithGoogle, uid, displayName, email, signIn } =
-    useContext(UserContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    userSignOut,
+    signInWithGoogle,
+    uid,
+    displayName,
+    email,
+    signIn,
+    currentPage,
+    setCurrentPgae,
+  } = useContext(UserContext);
 
   //控制手機版menu開關
   const [openMenu, setOpenMenu] = useState(false);
-
-  //控制header分頁變色
-  const [currentPage, setCurrentPgae] = useState();
 
   function mobileMenu() {
     setOpenMenu((prev) => !prev);
@@ -158,14 +163,14 @@ const LogoZone = styled(Link)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 240px;
+  width: 260px;
   scale: 1;
   transition: ease-in-out 0.2s;
   &:hover {
     scale: 1.05;
   }
   @media screen and (max-width: 1279px) {
-    width: 200px;
+    width: 220px;
   }
   @media screen and (max-width: 767px) {
     margin: 0 auto;
@@ -176,11 +181,12 @@ const Logo = styled.div`
   color: white;
   background-image: url(${LogoBlue});
   background-size: cover;
-  width: 100px;
+  width: 115px;
   height: 50px;
+  margin-right: 10px;
   @media screen and (max-width: 1279px) {
-    width: 80px;
-    height: 40px;
+    width: 103px;
+    height: 45px;
   }
 `;
 
@@ -204,13 +210,15 @@ const PageSelection = styled.div`
   letter-spacing: 7px;
   font-weight: 600;
   @media screen and (max-width: 1279px) {
-    width: 480px;
+    width: 450px;
+    font-size: 22px;
+    letter-spacing: 5px;
   }
   @media screen and (max-width: 767px) {
     position: fixed;
     z-index: 30;
     left: 0%;
-    top: 7%;
+    top: 8.1%;
     transform: ${({ openMenu }) => (openMenu ? 'translateX(0)' : 'translateX(-100%)')};
     transition: ${({ openMenu }) => (openMenu ? 'all 0.3s' : 'all 0s')};
     flex-direction: column;

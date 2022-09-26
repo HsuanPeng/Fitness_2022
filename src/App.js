@@ -52,6 +52,9 @@ const App = () => {
   //loading動畫
   const [loading, setLoading] = useState(false);
 
+  //控制header分頁變色
+  const [currentPage, setCurrentPgae] = useState();
+
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
   const firebaseConfig = {
@@ -145,6 +148,8 @@ const App = () => {
           signIn,
           alertPop,
           setContent,
+          currentPage,
+          setCurrentPgae,
         }}
       >
         <GlobalStyle />

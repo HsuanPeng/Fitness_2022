@@ -485,7 +485,6 @@ const Title = styled.span`
   background-image: linear-gradient(transparent 50%, rgba(25, 26, 30, 0.8) 50%);
   padding: 0px 10px;
   background-size: 100% 100%;
-  margin-right: 10px;
 `;
 
 const AddFavoriteOutside = styled.div`

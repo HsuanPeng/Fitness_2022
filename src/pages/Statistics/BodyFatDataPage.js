@@ -63,7 +63,6 @@ export default BodyFatDataPage;
 
 const BodyFatWriteDataZone = styled.div`
   margin-right: 40px;
-
   @media screen and (max-width: 1279px) {
     margin-right: 0px;
   }
@@ -164,6 +163,23 @@ const BodyFatHistoryOutside = styled.div`
 const Bottom = styled.div`
   height: 350px;
   overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
 `;
 
 const BodyFatMeasureDate = styled.div`
