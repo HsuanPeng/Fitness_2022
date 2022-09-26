@@ -24,7 +24,7 @@ const ChoiceActionOutsideZone = (props) => {
         <TotalWeightButtonOutside>
           <TotalWeightButton onClick={props.calTotalWeight}>計算總重量</TotalWeightButton>
         </TotalWeightButtonOutside>
-        <TotalWeight $isActive={props.totalWeightInput}>總重量：{props.totalWeight} KG</TotalWeight>
+        <TotalWeight>總重量：{props.totalWeight} KG</TotalWeight>
         <TotalActionNumbers>動作數：{props.choiceAction.length} 個</TotalActionNumbers>
       </TotalZone>
       {props.choiceAction.length > 0 ? (
@@ -49,22 +49,60 @@ const ChoiceActionOutsideZone = (props) => {
                         <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
                         <ChoiceItemName>{item.actionName}</ChoiceItemName>
                         <WeightOutside>
-                          <Weight
-                            onChange={(e) => {
-                              props.choiceAction[index].weight = e.target.value;
-                            }}
-                            maxLength={3}
-                          />{' '}
-                          KG
+                          {item.weight ? (
+                            <>
+                              <Weight
+                                onChange={(e) => {
+                                  props.choiceAction[index].weight = e.target.value;
+                                  props.setChoiceWeight(e.target.value);
+                                }}
+                                maxLength={3}
+                                defaultValue={item.weight}
+                                placeholder="0"
+                              />
+                              KG
+                            </>
+                          ) : (
+                            <>
+                              <Weight
+                                onChange={(e) => {
+                                  props.choiceAction[index].weight = e.target.value;
+                                  props.setChoiceWeight(e.target.value);
+                                }}
+                                maxLength={3}
+                                placeholder="0"
+                              />
+                              KG
+                            </>
+                          )}
                         </WeightOutside>
                         <TimesOutside>
-                          <Times
-                            onChange={(e) => {
-                              props.choiceAction[index].times = e.target.value;
-                            }}
-                            maxLength={2}
-                          />{' '}
-                          次
+                          {item.times ? (
+                            <>
+                              <Times
+                                onChange={(e) => {
+                                  props.choiceAction[index].times = e.target.value;
+                                  props.setChoiceTimes(e.target.value);
+                                }}
+                                maxLength={2}
+                                defaultValue={item.times}
+                                placeholder="0"
+                              />
+                              次
+                            </>
+                          ) : (
+                            <>
+                              <Times
+                                onChange={(e) => {
+                                  props.choiceAction[index].times = e.target.value;
+                                  props.setChoiceTimes(e.target.value);
+                                }}
+                                maxLength={2}
+                                placeholder="0"
+                              />
+                              次
+                            </>
+                          )}
                         </TimesOutside>
                         <Delete
                           onClick={() => {

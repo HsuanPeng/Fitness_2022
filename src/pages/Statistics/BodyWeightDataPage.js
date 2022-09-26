@@ -197,14 +197,14 @@ const BodyWeightMeasureDate = styled.div`
 const BodyWeightChange = styled.div`
   margin: 0px 10px;
   text-align: start;
-  width: 120px;
+  width: 130px;
   @media screen and (max-width: 767px) {
     display: none;
   }
 `;
 
 const BodyWeightResult = styled.div`
-  margin: 0px 10px;
+  margin-left: 15px;
   width: 150px;
   @media screen and (max-width: 580px) {
     margin-right: 0px;

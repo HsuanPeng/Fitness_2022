@@ -100,7 +100,8 @@ const Training = () => {
 
   //計算總重量
   const [totalWeight, setTotalWeight] = useState(0);
-  const [totalWeightInput, setTotalWeightInput] = useState(false);
+  const [choiceWeight, setChoiceWeight] = useState(0);
+  const [choiceTimes, setChoiceTimes] = useState(0);
 
   //身體部位佔比
   const [shoulderPercent, setShoulderPercent] = useState(0);
@@ -234,10 +235,15 @@ const Training = () => {
   }
 
   function getPageTwo() {
-    setOpenTrainingOne(false);
-    setOpenTrainingTwo(true);
-    setPageTwo(true);
-    setPart('肩');
+    if (title !== '' && date !== '' && description !== '') {
+      setOpenTrainingOne(false);
+      setOpenTrainingTwo(true);
+      setPageTwo(true);
+      setPart('肩');
+    } else {
+      alertPop();
+      setContent('請填寫完整資料');
+    }
   }
 
   //點擊右上角XX
@@ -251,6 +257,7 @@ const Training = () => {
     setDate('');
     setDescription('');
     setChoiceAction([]);
+    setTotalWeight(0);
   }
 
   //點擊「完成本次鍛鍊」
@@ -338,14 +345,29 @@ const Training = () => {
     setChoiceAction(newNextChoiceAction);
   }
 
+  // console.log(choiceWeight);
+
   //加總每個動作的重量
+  // useEffect(() => {
+  //   let re = /^[0-9]+.?[0-9]*$/;
+  //   const total = choiceAction.reduce((prev, item) => prev + item.weight * item.times, 0);
+  //   if (!re.test(total)) {
+  //     alertPop();
+  //     setContent('請輸入數字');
+  //   } else {
+  //     setTotalWeight(total);
+  //   }
+  // }, [choiceAction, choiceWeight, choiceTimes]);
+
   function calTotalWeight() {
+    let re = /^[0-9]+.?[0-9]*$/;
     const total = choiceAction.reduce((prev, item) => prev + item.weight * item.times, 0);
-    setTotalWeight(total);
-    setTotalWeightInput(true);
-    setTimeout(() => {
-      setTotalWeightInput(false);
-    }, 2000);
+    if (!re.test(total)) {
+      alertPop();
+      setContent('請輸入數字');
+    } else {
+      setTotalWeight(total);
+    }
   }
 
   // ＝＝＝＝＝＝＝＝＝＝加入動作＝＝＝＝＝＝＝＝＝＝＝
@@ -747,7 +769,10 @@ const Training = () => {
                 deleteItem={deleteItem}
                 calTotalWeight={calTotalWeight}
                 totalWeight={totalWeight}
-                totalWeightInput={totalWeightInput}
+                choiceWeight={choiceWeight}
+                setChoiceWeight={setChoiceWeight}
+                choiceTimes={choiceTimes}
+                setChoiceTimes={setChoiceTimes}
               />
               <PromoteActionOutsideZone
                 setPart={setPart}

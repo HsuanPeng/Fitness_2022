@@ -126,19 +126,25 @@ const Statistics = () => {
   async function writeBodyFat(index) {
     if (isLoggedIn) {
       try {
-        if (fatDateInput !== undefined && fatNumberInput !== undefined) {
-          const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
-          const data = {
-            measureDate: fatDateInput,
-            bodyFat: Number(fatNumberInput),
-            docID: docRef.id,
-          };
-          await setDoc(docRef, data);
-          setFatNumberInput('');
-          setFatDateInput('');
-        } else {
+        let re = /^[0-9]+.?[0-9]*$/;
+        if (!re.test(fatNumberInput)) {
           alertPop();
-          setContent('請填寫完整資料');
+          setContent('請輸入數字');
+        } else {
+          if (fatDateInput !== undefined && fatNumberInput !== undefined && fatDateInput !== '') {
+            const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
+            const data = {
+              measureDate: fatDateInput,
+              bodyFat: Number(fatNumberInput),
+              docID: docRef.id,
+            };
+            await setDoc(docRef, data);
+            setFatNumberInput('');
+            setFatDateInput('');
+          } else {
+            alertPop();
+            setContent('請填寫完整資料');
+          }
         }
       } catch (e) {
         console.log(e);
@@ -251,23 +257,31 @@ const Statistics = () => {
     }
   }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
+  console.log(weightNumberInput);
+
   //登錄資料
   async function writeBodyWeight(index) {
     if (isLoggedIn) {
       try {
-        if (weightDateInput !== undefined && weightNumberInput !== undefined) {
-          const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
-          const data = {
-            measureDate: weightDateInput,
-            bodyWeight: Number(weightNumberInput),
-            docID: docRef.id,
-          };
-          await setDoc(docRef, data);
-          setWeightNumberInput('');
-          setWeightDateInput('');
-        } else {
+        let re = /^[0-9]+.?[0-9]*$/;
+        if (!re.test(weightNumberInput)) {
           alertPop();
-          setContent('請填寫完整資料');
+          setContent('請填寫數字');
+        } else {
+          if (weightDateInput !== undefined && weightNumberInput !== undefined && weightDateInput !== '') {
+            const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
+            const data = {
+              measureDate: weightDateInput,
+              bodyWeight: Number(weightNumberInput),
+              docID: docRef.id,
+            };
+            await setDoc(docRef, data);
+            setWeightNumberInput('');
+            setWeightDateInput('');
+          } else {
+            alertPop();
+            setContent('請填寫完整資料');
+          }
         }
       } catch (e) {
         console.log(e);
