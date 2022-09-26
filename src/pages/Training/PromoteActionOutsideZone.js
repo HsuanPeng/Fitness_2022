@@ -1,5 +1,5 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -24,7 +24,7 @@ const PromoteActionOutsideZone = (props) => {
         </PartSelect>
       </PromoteTop>
       {props.promoteActions.map((item, index) => (
-        <PromoteListOutside key={uuidv4()}>
+        <PromoteListOutside>
           <AddIcon
             id={index}
             onClick={(e) => {
@@ -36,9 +36,11 @@ const PromoteActionOutsideZone = (props) => {
           <PromoteListPart>{item.bodyPart}</PromoteListPart>
           <PromoteLisName>{item.actionName}</PromoteLisName>
           <VideoTag
+            $isActive={index == props.playing}
             id={index}
             onClick={(e) => {
               props.openVideo(e);
+              props.setPlaying(e.target.id);
             }}
           >
             <FontAwesomeIcon icon={faVideo} style={{ pointerEvents: 'none' }} />
@@ -56,6 +58,23 @@ const PromoteActionOutside = styled.div`
   color: black;
   height: 400px;
   overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
   padding-left: 20px;
   @media screen and (max-width: 1279px) {
     width: 98%;
@@ -109,7 +128,7 @@ const PromoteListOutside = styled.div`
   margin-left: 10px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
-  background: #818a8e;
+  background: rgba(255, 255, 255, 0.5);
   color: black;
   @media screen and (max-width: 575px) {
     flex-wrap: wrap;
@@ -149,6 +168,7 @@ const PromoteLisName = styled.div`
 const VideoTag = styled.div`
   width: 10%;
   cursor: pointer;
+  color: ${(props) => (props.$isActive ? '#74c6cc' : 'black')};
   &:hover {
     color: #74c6cc;
   }

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //components
 import UserContext from '../../contexts/UserContext';
@@ -31,6 +30,8 @@ import trainingBanner from '../../images/Athlete-preparing-for-training-467612.j
 import { Blocks } from 'react-loader-spinner';
 
 const Statistics = () => {
+  ChartJS.defaults.font.size = 16;
+
   //UserContext拿資料
   const {
     isLoggedIn,
@@ -90,31 +91,35 @@ const Statistics = () => {
 
   //即時map出歷史資料
   useEffect(() => {
-    async function getFatRecord() {
-      const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
-      setLoading(true);
-      onSnapshot(docRef, (item) => {
-        const newData = [];
-        item.forEach((doc) => {
-          newData.push(doc.data());
+    if (isLoggedIn == false) {
+      setFatRecord([]);
+    } else {
+      async function getFatRecord() {
+        const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
+        // setLoading(true);
+        onSnapshot(docRef, (item) => {
+          const newData = [];
+          item.forEach((doc) => {
+            newData.push(doc.data());
+          });
           setFatRecord(newData);
-        });
-        const newFatNumberData = [];
-        item.forEach((doc) => {
-          newFatNumberData.push(doc.data().bodyFat);
+          const newFatNumberData = [];
+          item.forEach((doc) => {
+            newFatNumberData.push(doc.data().bodyFat);
+          });
           setFatNumberLine(newFatNumberData);
-        });
-        const newFatDateData = [];
-        item.forEach((doc) => {
-          newFatDateData.push(doc.data().measureDate);
+          const newFatDateData = [];
+          item.forEach((doc) => {
+            newFatDateData.push(doc.data().measureDate);
+          });
           setFatDateLine(newFatDateData);
         });
-      });
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+        // setTimeout(() => {
+        //   setLoading(false);
+        // }, 1000);
+      }
+      getFatRecord();
     }
-    getFatRecord();
   }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
   //登錄資料
@@ -129,6 +134,8 @@ const Statistics = () => {
             docID: docRef.id,
           };
           await setDoc(docRef, data);
+          setFatNumberInput('');
+          setFatDateInput('');
         } else {
           alertPop();
           setContent('請填寫完整資料');
@@ -171,8 +178,31 @@ const Statistics = () => {
         fill: true,
         backgroundColor: 'rgba(238,141,71,0.2)',
         borderColor: 'rgba(238,141,71,1)',
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 16,
+              },
+            },
+          },
+        },
       },
     ],
+  };
+
+  const bodyFatOptions = {
+    scales: {
+      y: {
+        ticks: {
+          padding: 15,
+          color: 'white',
+        },
+      },
+      x: {
+        ticks: { padding: 15, color: 'white' },
+      },
+    },
   };
 
   const dataNull = {
@@ -194,27 +224,31 @@ const Statistics = () => {
 
   //即時map出歷史資料
   useEffect(() => {
-    async function getWeightRecord() {
-      const docRef = await query(collection(db, 'users', uid, 'weightRecords'), orderBy('measureDate'));
-      onSnapshot(docRef, (item) => {
-        const newData = [];
-        item.forEach((doc) => {
-          newData.push(doc.data());
+    if (isLoggedIn == false) {
+      setWeightRecord([]);
+    } else {
+      async function getWeightRecord() {
+        const docRef = await query(collection(db, 'users', uid, 'weightRecords'), orderBy('measureDate'));
+        onSnapshot(docRef, (item) => {
+          const newData = [];
+          item.forEach((doc) => {
+            newData.push(doc.data());
+          });
           setWeightRecord(newData);
-        });
-        const newWeightNumberData = [];
-        item.forEach((doc) => {
-          newWeightNumberData.push(doc.data().bodyWeight);
+          const newWeightNumberData = [];
+          item.forEach((doc) => {
+            newWeightNumberData.push(doc.data().bodyWeight);
+          });
           setWeightNumberLine(newWeightNumberData);
-        });
-        const newWeightDateData = [];
-        item.forEach((doc) => {
-          newWeightDateData.push(doc.data().measureDate);
+          const newWeightDateData = [];
+          item.forEach((doc) => {
+            newWeightDateData.push(doc.data().measureDate);
+          });
           setWeightDateLine(newWeightDateData);
         });
-      });
+      }
+      getWeightRecord();
     }
-    getWeightRecord();
   }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
   //登錄資料
@@ -229,6 +263,8 @@ const Statistics = () => {
             docID: docRef.id,
           };
           await setDoc(docRef, data);
+          setWeightNumberInput('');
+          setWeightDateInput('');
         } else {
           alertPop();
           setContent('請填寫完整資料');
@@ -269,10 +305,33 @@ const Statistics = () => {
         label: '體重',
         data: weightNumberLine,
         fill: true,
-        backgroundColor: 'rgba(238,141,71,0.2)',
-        borderColor: 'rgba(238,141,71,1)',
+        backgroundColor: 'rgba(255,183,3,0.2)',
+        borderColor: 'rgba(255,183,3,1)',
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 16,
+              },
+            },
+          },
+        },
       },
     ],
+  };
+
+  const bodyWeightOptions = {
+    scales: {
+      y: {
+        ticks: {
+          padding: 15,
+          color: 'white',
+        },
+      },
+      x: {
+        ticks: { padding: 15, color: 'white' },
+      },
+    },
   };
 
   // ＝＝＝＝＝＝＝＝＝＝＝體重chart.js＝＝＝＝＝＝＝＝＝＝＝
@@ -293,7 +352,6 @@ const Statistics = () => {
 
   return (
     <>
-      {' '}
       <LoadingOutside $isActive={loading}>
         <LoadingBlocks>
           <Blocks
@@ -325,16 +383,18 @@ const Statistics = () => {
             <BodyFatZone>
               <BodyFatDataPage
                 setFatDateInput={setFatDateInput}
+                fatNumberInput={fatNumberInput}
                 setFatNumberInput={setFatNumberInput}
                 writeBodyFat={writeBodyFat}
                 fatRecord={fatRecord}
                 fatNumberLine={fatNumberLine}
                 deleteFatRecord={deleteFatRecord}
+                fatDateInput={fatDateInput}
               />
               <BodyFatLinePageZone>
                 <BodyFatLineOutside>
                   {fatRecord.length > 0 ? (
-                    <Line data={BodyFatData} options={{ color: 'white' }} />
+                    <Line data={BodyFatData} options={bodyFatOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
@@ -347,15 +407,17 @@ const Statistics = () => {
               <BodyWeightDataPage
                 setWeightDateInput={setWeightDateInput}
                 setWeightNumberInput={setWeightNumberInput}
+                weightNumberInput={weightNumberInput}
                 writeBodyWeight={writeBodyWeight}
                 weightRecord={weightRecord}
                 weightNumberLine={weightNumberLine}
                 deleteWeightRecord={deleteWeightRecord}
+                weightDateInput={weightDateInput}
               />
               <BodyWeightLinePageZone>
                 <BodyWeightLineOutside>
                   {weightRecord.length > 0 ? (
-                    <Line data={BodyWeightData} options={{ color: 'white' }} />
+                    <Line data={BodyWeightData} options={bodyWeightOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
@@ -375,7 +437,7 @@ const LoadingOutside = styled.div`
   position: absolute;
   z-index: 2000;
   top: 0%;
-  background: rgba(49, 50, 55, 1);
+  background: #475260;
   height: 100vh;
   width: 100vw;
   display: ${(props) => (props.$isActive ? 'block' : 'none')};
@@ -440,7 +502,7 @@ const BannerText = styled.div`
 `;
 
 const ChangeOutside = styled.div`
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0px auto 50px auto;
   @media screen and (max-width: 1279px) {
     padding: 0px 30px;
@@ -467,13 +529,12 @@ const GoBodyFatOutide = styled.div`
 const GoBodyFat = styled.div`
   cursor: pointer;
   padding: 5px 15px;
-  background: #313237;
   border-radius: 7px;
-  color: white;
-  font-size: 20px;
+  color: black;
+  font-size: 24px;
   letter-spacing: 2px;
-  font-weight: 500;
-  background: ${(props) => (props.$isActive ? '#74c6cc;' : '#313237;')};
+  font-weight: 600;
+  background: ${(props) => (props.$isActive ? '#74c6cc' : '#475260')};
   &:hover {
     background: #74c6cc;
   }
@@ -490,11 +551,11 @@ const GoBodyWeight = styled.div`
   cursor: pointer;
   padding: 5px 15px;
   border-radius: 7px;
-  color: white;
-  font-size: 20px;
+  color: black;
+  font-size: 24px;
   letter-spacing: 2px;
-  font-weight: 500;
-  background: ${(props) => (props.$isActive ? '#74c6cc;' : '#313237;')};
+  font-weight: 600;
+  background: ${(props) => (props.$isActive ? '#74c6cc' : '#475260')};
   &:hover {
     background: #74c6cc;
   }
@@ -510,7 +571,7 @@ const BodyFatZone = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #313237;
+  background: #475260;
   padding-bottom: 30px;
   margin-top: 20px;
   border-top: 0.5rem solid #74c6cc;
@@ -526,7 +587,7 @@ const BodyFatZone = styled.div`
 const BodyFatLinePageZone = styled.div``;
 
 const BodyFatLineOutside = styled.div`
-  width: 500px;
+  width: 600px;
   margin: 40px auto 0px auto;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;
@@ -558,7 +619,7 @@ const BodyWeightZone = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #313237;
+  background: #475260;
   padding-bottom: 30px;
   margin-top: 20px;
   border-top: 0.5rem solid #74c6cc;
@@ -574,7 +635,7 @@ const BodyWeightZone = styled.div`
 const BodyWeightLinePageZone = styled.div``;
 
 const BodyWeightLineOutside = styled.div`
-  width: 500px;
+  width: 600px;
   margin: 40px auto 0px auto;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;

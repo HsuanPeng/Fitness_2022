@@ -22,10 +22,13 @@ const CalculationShowZone = (props) => {
 export default CalculationShowZone;
 
 const PieOutside = styled.div`
-  width: 300px;
+  width: 475px;
   padding: 10px;
   margin: 0 auto;
   margin-top: 20px;
+  @media screen and (max-width: 575px) {
+    width: 300px;
+  }
 `;
 
 const CalculationShow = styled.div`

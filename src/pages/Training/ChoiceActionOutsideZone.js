@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -7,54 +6,84 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
+//beautiful-dnd
+import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
+
 const ChoiceActionOutsideZone = (props) => {
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const items = Array.from(props.choiceAction);
+    const [reorderData] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderData);
+    props.setChoiceAction(items);
+  };
+
   return (
     <ChoiceActionOutside>
       <TotalZone>
         <TotalWeightButtonOutside>
           <TotalWeightButton onClick={props.calTotalWeight}>計算總重量</TotalWeightButton>
         </TotalWeightButtonOutside>
-        <TotalWeight>總重量：{props.totalWeight} KG</TotalWeight>
-        <TotalActionNumbers>總動作數：{props.choiceAction.length} 個</TotalActionNumbers>
+        <TotalWeight $isActive={props.totalWeightInput}>總重量：{props.totalWeight} KG</TotalWeight>
+        <TotalActionNumbers>動作數：{props.choiceAction.length} 個</TotalActionNumbers>
       </TotalZone>
       {props.choiceAction.length > 0 ? (
-        <>
-          {props.choiceAction.map((item, index) => (
-            <ChoiceItemOutside id={index} key={uuidv4()}>
-              <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
-              <ChoiceItemName>{item.actionName}</ChoiceItemName>
-              <WeightOutside>
-                <Weight
-                  type="input"
-                  placeholder="0"
-                  onChange={(e) => {
-                    props.choiceAction[index].weight = e.target.value;
-                  }}
-                />{' '}
-                KG
-              </WeightOutside>
-              <TimesOutside>
-                <Times
-                  type="input"
-                  placeholder="0"
-                  onChange={(e) => {
-                    props.choiceAction[index].times = e.target.value;
-                  }}
-                />{' '}
-                次
-              </TimesOutside>
-              <Delete
-                onClick={() => {
-                  props.deleteItem(index);
-                }}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </Delete>
-            </ChoiceItemOutside>
-          ))}
-        </>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="list">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {props.choiceAction.map((item, index) => (
+                  <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
+                    {(provided, snapshot) => (
+                      <ChoiceItemOutside
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        style={{
+                          ...provided.draggableProps.style,
+                          border: snapshot.isDragging ? '2px solid #74c6cc' : 'none',
+                          borderStyle: snapshot.isDragging ? 'outset' : 'none',
+                          background: snapshot.isDragging ? '#74c6cc' : 'rgba(255, 255, 255, 0.5)',
+                        }}
+                      >
+                        <ChoiceItemPart>{item.bodyPart}</ChoiceItemPart>
+                        <ChoiceItemName>{item.actionName}</ChoiceItemName>
+                        <WeightOutside>
+                          <Weight
+                            onChange={(e) => {
+                              props.choiceAction[index].weight = e.target.value;
+                            }}
+                            maxLength={3}
+                          />{' '}
+                          KG
+                        </WeightOutside>
+                        <TimesOutside>
+                          <Times
+                            onChange={(e) => {
+                              props.choiceAction[index].times = e.target.value;
+                            }}
+                            maxLength={2}
+                          />{' '}
+                          次
+                        </TimesOutside>
+                        <Delete
+                          onClick={() => {
+                            props.deleteItem(index);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </Delete>
+                      </ChoiceItemOutside>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       ) : (
-        <NoAcitons>請加入動作</NoAcitons>
+        <NoAcitons>可拖曳調整動作順序</NoAcitons>
       )}
     </ChoiceActionOutside>
   );
@@ -63,10 +92,28 @@ const ChoiceActionOutsideZone = (props) => {
 export default ChoiceActionOutsideZone;
 
 const ChoiceActionOutside = styled.div`
-  width: 48%;
+  position: relative;
+  width: 50%;
   color: black;
   height: 400px;
   overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
   @media screen and (max-width: 1279px) {
     width: 98%;
     padding-left: 20px;
@@ -114,6 +161,22 @@ const TotalWeightButton = styled.div`
 `;
 
 const TotalWeight = styled.div`
+  color: ${(props) => (props.$isActive ? '#74c6cc' : 'white')};
+  scale: 1;
+  animation-name: ${(props) => (props.$isActive ? 'active' : null)};
+  animation-duration: 1s;
+  transition: ease-in-out;
+  @keyframes active {
+    0% {
+      scale: 1;
+    }
+    50% {
+      scale: 1.1;
+    }
+    100% {
+      scale: 1;
+    }
+  }
   @media screen and (max-width: 767px) {
     margin-bottom: 10px;
   }
@@ -143,7 +206,7 @@ const ChoiceItemOutside = styled.div`
   margin-left: 10px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
-  background: #818a8e;
+  background: rgba(255, 255, 255, 0.5);
   color: black;
   @media screen and (max-width: 575px) {
     flex-wrap: wrap;

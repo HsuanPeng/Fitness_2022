@@ -6,7 +6,14 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 //firebase
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  signOut,
+  onAuthStateChanged,
+  signInWithPopup,
+} from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 //components
@@ -45,6 +52,9 @@ const App = () => {
   //loading動畫
   const [loading, setLoading] = useState(false);
 
+  //控制header分頁變色
+  const [currentPage, setCurrentPgae] = useState();
+
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
   const firebaseConfig = {
@@ -72,25 +82,27 @@ const App = () => {
 
   //登入google視窗
   function signInWithGoogle() {
-    signInWithRedirect(auth, provider)
+    signInWithPopup(auth, provider)
       .then((result) => {
         if (result.operationType === 'signIn') {
-          setLoading(true);
           setIsLoggedIn(true);
+          setSignInPage(false);
         }
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000);
       })
       .catch((error) => console.log(error));
   }
 
   // 登出
   function userSignOut() {
-    signOut(auth);
-    setIsLoggedIn(false);
-    alertPop();
-    setContent('成功登出');
+    signOut(auth)
+      .then(() => {
+        setIsLoggedIn(false);
+        alertPop();
+        setContent('成功登出');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   //判斷有無登入或登出
@@ -136,6 +148,8 @@ const App = () => {
           signIn,
           alertPop,
           setContent,
+          currentPage,
+          setCurrentPgae,
         }}
       >
         <GlobalStyle />
@@ -231,7 +245,7 @@ const GlobalStyle = createGlobalStyle`
 const LoadingOutside = styled.div`
   position: fixed;
   z-index: 2000;
-  background: rgba(49, 50, 55, 1);
+  background: #475260;
   height: 100%;
   width: 100%;
   display: ${(props) => (props.$isActive ? 'block' : 'none')};
@@ -255,7 +269,6 @@ const AlertOutside = styled.div`
   background: #191a1e;
   top: 150px;
   left: -350px;
-  ${'' /* transform: translateX(-50%); */}
   z-index: 1000;
   padding: 40px 10px;
   color: white;
@@ -287,7 +300,7 @@ const AlertLine = styled.div`
   display: flex;
   justify-content: start;
   align-items: start;
-  height: 4px;
+  height: 5px;
   background: #008000;
   position: absolute;
   bottom: 0px;
@@ -305,7 +318,7 @@ const AlertLine = styled.div`
 `;
 
 const Check = styled.div`
-  font-size: 24px;
+  font-size: 30px;
   margin-right: 14px;
   color: #008000;
 `;
@@ -320,8 +333,8 @@ const SignInMenu = styled.div`
   z-index: 99;
   position: absolute;
   left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
+  top: 20%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;

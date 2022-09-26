@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 const HistoryZone = (props) => {
   return (
@@ -7,7 +6,6 @@ const HistoryZone = (props) => {
       {props.trainingData.map((item, index) => (
         <HistoryItemsOutside
           index={index}
-          key={uuidv4()}
           onClick={() => {
             props.openHistory(index);
           }}
@@ -43,6 +41,7 @@ const HistoryOutside = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   max-width: 1200px;
+  width: 95%;
   margin: 0 auto;
   @media screen and (max-width: 1279px) {
     max-width: 800px;
@@ -85,7 +84,7 @@ const HistoryItemsOutside = styled.div`
   justify-content: space-evenly;
   margin: 0px 25px 40px 25px;
   cursor: pointer;
-  background: #313237;
+  background: #475260;
   padding: 20px;
   font-size: 16px;
   width: 45%;
@@ -106,6 +105,7 @@ const HistoryItemsOutside = styled.div`
     justify-content: center;
     align-items: center;
     text-align: center;
+    width: 440px;
   }
 `;
 
@@ -113,7 +113,7 @@ const NoPicOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 250px;
+  width: 200px;
   height: 180px;
   border: 1px solid #818a8e;
   border-radius: 5%;
@@ -123,45 +123,55 @@ const NoPicOutside = styled.div`
 const NoPic = styled.div``;
 
 const HistoryPicOutside = styled.div`
-  width: 250px;
   height: 180px;
 `;
 
 const HistoryPic = styled.img`
-  object-fit: contain;
-  width: 250px;
+  border-radius: 12px;
+  object-fit: cover;
+  width: 200px;
   height: 180px;
+  border: 2px solid #74c6cc;
 `;
 
 const HistoryRight = styled.div`
+  width: 250px;
   color: white;
-  font-size: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
 `;
 
-const HistoryTitle = styled.div`
+const HistoryTitle = styled.span`
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #74c6cc;
+  font-size: 24px;
+  ${'' /* border: 2px double #74c6cc; */}
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryDate = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryWeight = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryTimes = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryComplete = styled.div`
+  font-size: 18px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }

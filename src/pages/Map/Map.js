@@ -11,7 +11,7 @@ import '@reach/combobox/styles.css';
 import mapStyles from './mapStyles';
 
 //icon
-import logo from '../../images/logo去背_黑色.png';
+import logo from '../../images/高畫質logo_黑色2.png';
 
 //components
 import UserContext from '../../contexts/UserContext';
@@ -42,7 +42,7 @@ const options = {
 export default function Map() {
   //最一開始load地圖
   const { isLoaded, loadError } = useLoadScript({
-    // googleMapsApiKey: process.env.REACT_APP_API_KEY,
+    googleMapsApiKey: process.env.REACT_APP_API_KEY,
     libraries,
   });
 
@@ -70,9 +70,12 @@ export default function Map() {
 
   //找出附近的健身房
   async function nearbyGymsMap({ lat, lng }) {
-    const res = await fetch();
-    // `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
+    const res = await fetch(
+      `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
+    );
+
     const json = await res.json();
+    console.log(json);
     setGyms(json.results);
   }
 
@@ -110,7 +113,7 @@ export default function Map() {
                 url: logo,
                 origin: new window.google.maps.Point(0, 0),
                 anchor: new window.google.maps.Point(20, 20),
-                scaledSize: new window.google.maps.Size(70, 40),
+                scaledSize: new window.google.maps.Size(80, 40),
               }}
             />
           ))}
@@ -205,7 +208,6 @@ function Search({ panTo }) {
   };
 
   //選擇搜尋出來的地點以後，清除下拉遠單
-
   const handleSelect = async (address) => {
     setValue(address, false);
     clearSuggestions();

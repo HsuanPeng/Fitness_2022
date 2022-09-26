@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -12,15 +11,20 @@ const BodyWeightDataPage = (props) => {
     <BodyWeightWriteDataZone>
       <Top>
         <Date>
-          <DateTitle>日期</DateTitle>
+          <DateTitle>日期：</DateTitle>
           <BodyWeightDateInput
             type="date"
             onChange={(e) => props.setWeightDateInput(e.target.value)}
+            value={props.weightDateInput}
           ></BodyWeightDateInput>
         </Date>
         <Weight>
           <WeightTitle>體重：</WeightTitle>
-          <BodyWeightInput onChange={(e) => props.setWeightNumberInput(e.target.value)}></BodyWeightInput>
+          <BodyWeightInput
+            onChange={(e) => props.setWeightNumberInput(e.target.value)}
+            value={props.weightNumberInput}
+            maxLength={3}
+          ></BodyWeightInput>
         </Weight>
         <BodyWeightInputButtonOutside>
           <BodyWeightInputButton onClick={props.writeBodyWeight}>新增</BodyWeightInputButton>
@@ -30,11 +34,11 @@ const BodyWeightDataPage = (props) => {
         {props.weightRecord.length > 0 ? (
           <>
             {props.weightRecord.map((item, index) => (
-              <BodyWeightHistoryOutside id={index} key={uuidv4()}>
+              <BodyWeightHistoryOutside id={index}>
                 <BodyWeightMeasureDate>日期：{item.measureDate}</BodyWeightMeasureDate>
                 <BodyWeightChange>
                   變化：
-                  {index > 0 ? props.weightNumberLine[index] - props.weightNumberLine[index - 1] : <span>--</span>}%
+                  {index > 0 ? props.weightNumberLine[index] - props.weightNumberLine[index - 1] : <span>--</span>}KG
                 </BodyWeightChange>
                 <BodyWeightResult>體重：{item.bodyWeight} KG</BodyWeightResult>
                 <BodyWeightDelete
@@ -147,7 +151,7 @@ const BodyWeightHistoryOutside = styled.div`
   margin-right: 30px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
-  background: #818a8e;
+  background: rgba(255, 255, 255, 0.5);
   color: black;
   display: flex;
   justify-content: space-between;
@@ -159,6 +163,23 @@ const BodyWeightHistoryOutside = styled.div`
 const Bottom = styled.div`
   height: 350px;
   overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
 `;
 
 const BodyWeightMeasureDate = styled.div`

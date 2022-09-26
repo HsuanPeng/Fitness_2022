@@ -1,18 +1,35 @@
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 //pic
 import HomePic from '../../images/Man-performs-dumbbell-rows-451139.jpg';
 
+//components
+import UserContext from '../../contexts/UserContext';
+
 const Home = () => {
   let navigate = useNavigate();
+
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    userSignOut,
+    signInWithGoogle,
+    uid,
+    displayName,
+    email,
+    signIn,
+    currentPage,
+    setCurrentPgae,
+  } = useContext(UserContext);
 
   return (
     <>
       <Wrapper>
         <MainPicZone>
           <HomeContentZone>
-            <HomeTitle>你的健身記錄小幫手</HomeTitle>
+            <HomeTitle>全力以赴 你會很酷</HomeTitle>
             <HomeContent>菜單規劃｜數據追蹤｜健身地圖</HomeContent>
             <HomeContentMobile>
               <Training>菜單規劃</Training>
@@ -25,7 +42,13 @@ const Home = () => {
               navigate('/training', { replace: true });
             }}
           >
-            <GoTrainingPage>開始我的紀錄！</GoTrainingPage>
+            <GoTrainingPage
+              onClick={() => {
+                setCurrentPgae('TrainingPage');
+              }}
+            >
+              開始我的紀錄！
+            </GoTrainingPage>
           </GoTrainingPageOutside>
         </MainPicZone>
       </Wrapper>

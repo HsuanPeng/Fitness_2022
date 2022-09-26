@@ -6,9 +6,7 @@ import styled from 'styled-components';
 import UserContext from '../../contexts/UserContext';
 
 //images
-import LogoBlue from '../../images/logo去背_藍色.png';
-import LogoWhite from '../../images/logo去背_白色.png';
-import CalendarPage from '../../pages/CalendarPage/CalendarPage';
+import LogoBlue from '../../images/高畫質logo_藍色2.png';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -16,8 +14,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
-  const { isLoggedIn, setIsLoggedIn, userSignOut, signInWithGoogle, uid, displayName, email, signIn } =
-    useContext(UserContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    userSignOut,
+    signInWithGoogle,
+    uid,
+    displayName,
+    email,
+    signIn,
+    currentPage,
+    setCurrentPgae,
+  } = useContext(UserContext);
 
   //控制手機版menu開關
   const [openMenu, setOpenMenu] = useState(false);
@@ -42,23 +50,55 @@ const Header = () => {
             </MenuIcon>
           </>
         )}
-        <LogoZone to="/">
+        <LogoZone
+          to="/"
+          onClick={() => {
+            setCurrentPgae('');
+          }}
+        >
           <Logo></Logo>
           <LogoTitle>健人網</LogoTitle>
         </LogoZone>
         <PageSelection openMenu={openMenu}>
-          <TrainingPage to="/training">
-            健菜單
+          <TrainingPage
+            to="/training"
+            onClick={() => {
+              setCurrentPgae('TrainingPage');
+            }}
+            $isActive={currentPage}
+          >
+            <TrainingPageTitle> 健菜單</TrainingPageTitle>
             <UnderLine></UnderLine>
           </TrainingPage>
-          <Calendar to="/calendar">
-            健日曆<UnderLine></UnderLine>
+          <Calendar
+            to="/calendar"
+            onClick={() => {
+              setCurrentPgae('Calendar');
+            }}
+            $isActive={currentPage}
+          >
+            <CalendarPageTitle>健日曆</CalendarPageTitle>
+            <UnderLine></UnderLine>
           </Calendar>
-          <StatisticsPage to="/statistics">
-            健數據<UnderLine></UnderLine>
+          <StatisticsPage
+            to="/statistics"
+            onClick={() => {
+              setCurrentPgae('StatisticsPage');
+            }}
+            $isActive={currentPage}
+          >
+            <StatisticsPageTitle> 健數據</StatisticsPageTitle>
+            <UnderLine></UnderLine>
           </StatisticsPage>
-          <MapPage to="/map">
-            健地圖<UnderLine></UnderLine>
+          <MapPage
+            to="/map"
+            onClick={() => {
+              setCurrentPgae('MapPage');
+            }}
+            $isActive={currentPage}
+          >
+            <MapPageTitle> 健地圖</MapPageTitle>
+            <UnderLine></UnderLine>
           </MapPage>
           {isLoggedIn ? (
             <>
@@ -67,7 +107,8 @@ const Header = () => {
                   userSignOut();
                 }}
               >
-                登出<UnderLine></UnderLine>
+                <LogoutTitle>登出</LogoutTitle>
+                <UnderLine></UnderLine>
               </Logout>
             </>
           ) : (
@@ -76,7 +117,8 @@ const Header = () => {
                 signIn();
               }}
             >
-              登入<UnderLine></UnderLine>
+              <LoginTitle> 登入</LoginTitle>
+              <UnderLine></UnderLine>
             </Login>
           )}
         </PageSelection>
@@ -121,14 +163,14 @@ const LogoZone = styled(Link)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 240px;
+  width: 260px;
   scale: 1;
   transition: ease-in-out 0.2s;
   &:hover {
     scale: 1.05;
   }
   @media screen and (max-width: 1279px) {
-    width: 200px;
+    width: 220px;
   }
   @media screen and (max-width: 767px) {
     margin: 0 auto;
@@ -139,11 +181,12 @@ const Logo = styled.div`
   color: white;
   background-image: url(${LogoBlue});
   background-size: cover;
-  width: 100px;
+  width: 115px;
   height: 50px;
+  margin-right: 10px;
   @media screen and (max-width: 1279px) {
-    width: 80px;
-    height: 40px;
+    width: 103px;
+    height: 45px;
   }
 `;
 
@@ -164,16 +207,18 @@ const PageSelection = styled.div`
   text-align: center;
   font-size: 24px;
   width: 580px;
-  letter-spacing: 4px;
-  ${'' /* transform: translatex(-100%); */}
+  letter-spacing: 7px;
+  font-weight: 600;
   @media screen and (max-width: 1279px) {
-    width: 480px;
+    width: 450px;
+    font-size: 22px;
+    letter-spacing: 5px;
   }
   @media screen and (max-width: 767px) {
     position: fixed;
     z-index: 30;
     left: 0%;
-    top: 8%;
+    top: 8.1%;
     transform: ${({ openMenu }) => (openMenu ? 'translateX(0)' : 'translateX(-100%)')};
     transition: ${({ openMenu }) => (openMenu ? 'all 0.3s' : 'all 0s')};
     flex-direction: column;
@@ -193,7 +238,7 @@ const UnderLine = styled.div`
 `;
 
 const TrainingPage = styled(Link)`
-  color: white;
+  color: ${(props) => (props.$isActive === 'TrainingPage' ? '#74c6cc' : 'white')};
   height: 40px;
   margin-top: 28px;
   display: flex;
@@ -202,10 +247,14 @@ const TrainingPage = styled(Link)`
   align-items: center;
   transition: ease-in-out 0.2s;
   cursor: pointer;
+  ${UnderLine} {
+    width: ${(props) => (props.$isActive === 'TrainingPage' ? '100%' : '0%')};
+    background-color: #74c6cc;
+  }
   &:hover {
     color: #74c6cc;
     height: 45px;
-    margin-top: 25px;
+    margin-top: 23px;
     ${UnderLine} {
       width: 100%;
       background-color: #74c6cc;
@@ -217,6 +266,11 @@ const TrainingPage = styled(Link)`
     letter-spacing: 5px;
     height: 60px;
     border: 0.5px solid rgba(255, 255, 255, 0.5);
+    color: ${(props) => (props.$isActive === 'TrainingPage' ? 'black' : null)};
+    background: ${(props) => (props.$isActive === 'TrainingPage' ? 'white' : null)};
+    ${UnderLine} {
+      width: 0%;
+    }
     &:hover {
       color: black;
       height: 60px;
@@ -228,10 +282,14 @@ const TrainingPage = styled(Link)`
       }
     }
   }
+`;
+
+const TrainingPageTitle = styled.div`
+  margin-left: 5px;
 `;
 
 const Calendar = styled(Link)`
-  color: white;
+  color: ${(props) => (props.$isActive === 'Calendar' ? '#74c6cc' : 'white')};
   height: 40px;
   margin-top: 28px;
   display: flex;
@@ -240,10 +298,14 @@ const Calendar = styled(Link)`
   align-items: center;
   transition: ease-in-out 0.2s;
   cursor: pointer;
+  ${UnderLine} {
+    width: ${(props) => (props.$isActive === 'Calendar' ? '100%' : '0%')};
+    background-color: #74c6cc;
+  }
   &:hover {
     color: #74c6cc;
     height: 45px;
-    margin-top: 25px;
+    margin-top: 23px;
     ${UnderLine} {
       width: 100%;
       background-color: #74c6cc;
@@ -255,6 +317,11 @@ const Calendar = styled(Link)`
     letter-spacing: 5px;
     height: 60px;
     border: 0.5px solid rgba(255, 255, 255, 0.5);
+    color: ${(props) => (props.$isActive === 'Calendar' ? 'black' : null)};
+    background: ${(props) => (props.$isActive === 'Calendar' ? 'white' : null)};
+    ${UnderLine} {
+      width: 0%;
+    }
     &:hover {
       color: black;
       height: 60px;
@@ -266,10 +333,14 @@ const Calendar = styled(Link)`
       }
     }
   }
+`;
+
+const CalendarPageTitle = styled.div`
+  margin-left: 5px;
 `;
 
 const StatisticsPage = styled(Link)`
-  color: white;
+  color: ${(props) => (props.$isActive === 'StatisticsPage' ? '#74c6cc' : 'white')};
   height: 40px;
   margin-top: 28px;
   display: flex;
@@ -278,10 +349,14 @@ const StatisticsPage = styled(Link)`
   align-items: center;
   transition: ease-in-out 0.2s;
   cursor: pointer;
+  ${UnderLine} {
+    width: ${(props) => (props.$isActive === 'StatisticsPage' ? '100%' : '0%')};
+    background-color: #74c6cc;
+  }
   &:hover {
     color: #74c6cc;
     height: 45px;
-    margin-top: 25px;
+    margin-top: 23px;
     ${UnderLine} {
       width: 100%;
       background-color: #74c6cc;
@@ -293,6 +368,11 @@ const StatisticsPage = styled(Link)`
     letter-spacing: 5px;
     height: 60px;
     border: 0.5px solid rgba(255, 255, 255, 0.5);
+    color: ${(props) => (props.$isActive === 'StatisticsPage' ? 'black' : null)};
+    background: ${(props) => (props.$isActive === 'StatisticsPage' ? 'white' : null)};
+    ${UnderLine} {
+      width: 0%;
+    }
     &:hover {
       color: black;
       height: 60px;
@@ -306,8 +386,12 @@ const StatisticsPage = styled(Link)`
   }
 `;
 
+const StatisticsPageTitle = styled.div`
+  margin-left: 5px;
+`;
+
 const MapPage = styled(Link)`
-  color: white;
+  color: ${(props) => (props.$isActive === 'MapPage' ? '#74c6cc' : 'white')};
   height: 40px;
   margin-top: 28px;
   display: flex;
@@ -316,10 +400,14 @@ const MapPage = styled(Link)`
   align-items: center;
   transition: ease-in-out 0.2s;
   cursor: pointer;
+  ${UnderLine} {
+    width: ${(props) => (props.$isActive === 'MapPage' ? '100%' : '0%')};
+    background-color: #74c6cc;
+  }
   &:hover {
     color: #74c6cc;
     height: 45px;
-    margin-top: 25px;
+    margin-top: 23px;
     ${UnderLine} {
       width: 100%;
       background-color: #74c6cc;
@@ -330,8 +418,12 @@ const MapPage = styled(Link)`
     width: 100%;
     letter-spacing: 5px;
     height: 60px;
-    border: 0.5px solid white;
     border: 0.5px solid rgba(255, 255, 255, 0.5);
+    color: ${(props) => (props.$isActive === 'MapPage' ? 'black' : null)};
+    background: ${(props) => (props.$isActive === 'MapPage' ? 'white' : null)};
+    ${UnderLine} {
+      width: 0%;
+    }
     &:hover {
       color: black;
       height: 60px;
@@ -343,6 +435,10 @@ const MapPage = styled(Link)`
       }
     }
   }
+`;
+
+const MapPageTitle = styled.div`
+  margin-left: 5px;
 `;
 
 const Logout = styled.div`
@@ -358,7 +454,7 @@ const Logout = styled.div`
   &:hover {
     color: #74c6cc;
     height: 45px;
-    margin-top: 25px;
+    margin-top: 23px;
     ${UnderLine} {
       width: 100%;
       background-color: #74c6cc;
@@ -384,6 +480,10 @@ const Logout = styled.div`
   }
 `;
 
+const LogoutTitle = styled.div`
+  margin-left: 5px;
+`;
+
 const Login = styled.div`
   color: white;
   height: 40px;
@@ -397,7 +497,7 @@ const Login = styled.div`
   &:hover {
     color: #74c6cc;
     height: 45px;
-    margin-top: 25px;
+    margin-top: 23px;
     ${UnderLine} {
       width: 100%;
       background-color: #74c6cc;
@@ -421,4 +521,8 @@ const Login = styled.div`
       }
     }
   }
+`;
+
+const LoginTitle = styled.div`
+  margin-left: 5px;
 `;

@@ -13,6 +13,7 @@ import {
   orderBy,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -23,6 +24,7 @@ import OpenHistoryZone from './OpenHistoryZone';
 import ChoiceActionOutsideZone from './ChoiceActionOutsideZone';
 import PromoteActionOutsideZone from './PromoteActionOutsideZone';
 import CalculationShowZone from './CalculationShowZone';
+import FavoritePage from './FavoritePage';
 
 //引入動作菜單
 import ACTIONS from './allActionsLists';
@@ -35,17 +37,28 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 //pic
 import trainingBanner from '../../images/Beautiful-woman-holding-heavy-604970.jpg';
-import remove from '../../images/remove.png';
 import pageOnePic from '../../images/Empty-gym-in-sunlight-397510.jpg';
+import logo from '../../images/高畫質logo_藍色2.png';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleArrowRight, faCircleArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleArrowRight,
+  faCircleArrowLeft,
+  faCircleXmark,
+  faCalendarDays,
+  faHandPointUp,
+  faDumbbell,
+} from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
 //loading animation
 import { Blocks } from 'react-loader-spinner';
+
+//uuid
+import { v4 as uuid } from 'uuid';
+import { anatomy } from '@chakra-ui/anatomy';
 
 //Dnd.js
 // import Dnd from './Dnd';
@@ -68,7 +81,7 @@ const Training = () => {
   } = useContext(UserContext);
 
   //抓到每筆菜單
-  const [trainingData, setTrainingData] = useState();
+  const [trainingData, setTrainingData] = useState([]);
 
   //建立菜單上下頁開關
   const [openTrainingInput, setOpenTrainingInput] = useState(false);
@@ -87,6 +100,7 @@ const Training = () => {
 
   //計算總重量
   const [totalWeight, setTotalWeight] = useState(0);
+  const [totalWeightInput, setTotalWeightInput] = useState(false);
 
   //身體部位佔比
   const [shoulderPercent, setShoulderPercent] = useState(0);
@@ -101,9 +115,10 @@ const Training = () => {
   const [showHistoryToggle, setShowHistoryToggle] = useState(false);
   const [showHistoryActions, setShowHistoryActions] = useState([]);
   const [showHistoryBackground, setShowHistoryBackground] = useState(false);
+  const [historyIndex, setHistoryIndex] = useState();
 
   //上傳照片
-  const [imageUpload, setImageUpload] = useState(null);
+  const [imageUpload, setImageUpload] = useState();
   const [imageList, setImageList] = useState('');
   const [pickHistory, setPickHistory] = useState();
   const [showPicture, setShowPicture] = useState(true);
@@ -111,9 +126,23 @@ const Training = () => {
   //點擊顯示影片
   const [videoUrl, setVideoUrl] = useState('');
   const [videoShow, setVideoShow] = useState(false);
+  const [playing, setPlaying] = useState();
 
   //loading動畫
   const [loading, setLoading] = useState(false);
+
+  //狀態感變
+  const [isComplete, setIsComplete] = useState(false);
+
+  //喜愛動作
+  const [favoriteTrainings, setFavoriteTrainings] = useState([]);
+  const [favoriteChoice, setFavoriteChoice] = useState(null);
+
+  //打開喜愛菜單
+  const [openFavorite, setOpenFavorite] = useState(false);
+  const [pickActions, setPickActions] = useState([]);
+  const [pickFavorite, setPickFavorite] = useState(null);
+  const [pickID, setPickID] = useState();
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -140,7 +169,7 @@ const Training = () => {
     datasets: [
       {
         data: [shoulderPercent, armPercent, chestPercent, backPercent, buttLegPercent, corePercent],
-        backgroundColor: ['#a8e8f9', '#00537a', '#013c58', '#f5a201', '#ffba42', '#ffd35b'],
+        backgroundColor: ['#f1f2f6', '#8ecae6', '#219ebc', '#74c6cc', '#ffb703', '#fb8500'],
         borderColor: [
           'rgba(0, 0, 0, 1)',
           'rgba(0, 0, 0, 1)',
@@ -149,7 +178,7 @@ const Training = () => {
           'rgba(0, 0, 0, 1)',
           'rgba(0, 0, 0, 1)',
         ],
-        borderWidth: 1,
+        borderWidth: 0,
       },
     ],
     labels: ['肩', '手臂', '胸', '背', '臀腿', '核心'],
@@ -161,7 +190,7 @@ const Training = () => {
         data: [1],
         backgroundColor: ['grey'],
         borderColor: ['rgba(0, 0, 0, 1)'],
-        borderWidth: 1,
+        borderWidth: 0,
       },
     ],
     labels: ['無資料'],
@@ -211,13 +240,17 @@ const Training = () => {
     setPart('肩');
   }
 
-  //點擊左上角XX
+  //點擊右上角XX
   function closeAddTraining() {
     setOpenTrainingInput(false);
     setOpenTrainingOne(false);
     setOpenTrainingTwo(false);
     setOpenCompleteSetting(false);
     setShowHistoryBackground(false);
+    setTitle('');
+    setDate('');
+    setDescription('');
+    setChoiceAction([]);
   }
 
   //點擊「完成本次鍛鍊」
@@ -235,6 +268,11 @@ const Training = () => {
         complete: '已完成',
       };
       await updateDoc(docRef, data);
+      trainingData[historyIndex].complete = '已完成';
+      setIsComplete(true);
+      setTimeout(() => {
+        setIsComplete(false);
+      }, 4000);
     } catch (e) {
       console.log(e);
     }
@@ -242,11 +280,13 @@ const Training = () => {
 
   //可以刪除菜單
   async function deleteTrainingItem() {
+    setLoading(true);
     try {
       const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
       await deleteDoc(docRef);
       setShowHistoryToggle(false);
       setShowHistoryBackground(false);
+      setLoading(false);
       alertPop();
       setContent('成功刪除菜單');
     } catch (e) {
@@ -278,9 +318,16 @@ const Training = () => {
 
   //從右邊加入左邊
   function addActionItem(e) {
-    const newArray = [...choiceAction];
-    newArray.push(promoteActions[e.target.id]);
-    setChoiceAction(newArray);
+    setChoiceAction((pre) => {
+      const addAction = { ...promoteActions[e.target.id] };
+      pre.forEach((action) => {
+        if (action.id === addAction.id) {
+          addAction.id = uuid();
+        }
+      });
+      const newArr = [...pre, addAction];
+      return newArr;
+    });
   }
 
   //左邊的可以刪除
@@ -295,6 +342,10 @@ const Training = () => {
   function calTotalWeight() {
     const total = choiceAction.reduce((prev, item) => prev + item.weight * item.times, 0);
     setTotalWeight(total);
+    setTotalWeightInput(true);
+    setTimeout(() => {
+      setTotalWeightInput(false);
+    }, 2000);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝加入動作＝＝＝＝＝＝＝＝＝＝＝
@@ -328,6 +379,9 @@ const Training = () => {
         setShowHistoryBackground(false);
         alertPop();
         setContent('完成菜單設定');
+        setTitle('');
+        setDate('');
+        setDescription('');
       } else if (title == '' || date == '' || description == '') {
         alertPop();
         setContent('請填寫完整資料');
@@ -345,21 +399,26 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝即時抓出每筆菜單資料＝＝＝＝＝＝＝＝＝＝＝
 
   useEffect(() => {
-    async function getTrainingTables() {
-      const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-      // setLoading(true);
-      onSnapshot(docRef, (item) => {
-        const newData = [];
-        item.forEach((doc) => {
-          newData.push(doc.data());
-          setTrainingData(newData);
+    if (isLoggedIn == false) {
+      setTrainingData([]);
+    } else {
+      async function getTrainingTables() {
+        const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
+        setLoading(true);
+        onSnapshot(docRef, (item) => {
+          const newData = [];
+          item.forEach((doc) => {
+            newData.push(doc.data());
+          });
+          const reverseNewData = newData.reverse();
+          setTrainingData(reverseNewData);
         });
-      });
-      // setTimeout(() => {
-      //   setLoading(false);
-      // }, 2000);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+      getTrainingTables();
     }
-    getTrainingTables();
   }, [isLoggedIn]);
 
   // ＝＝＝＝＝＝＝＝＝＝即時抓出每筆菜單資料＝＝＝＝＝＝＝＝＝＝＝
@@ -367,6 +426,8 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
 
   function openHistory(index) {
+    setLoading(true);
+    setHistoryIndex(index);
     setShowHistory(trainingData[index]);
     setShowHistoryActions(trainingData[index].actions);
     setShowHistoryToggle(true);
@@ -374,6 +435,9 @@ const Training = () => {
     setImageList(trainingData.picture);
     setShowPicture((prevShowPicture) => !prevShowPicture);
     setShowHistoryBackground(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝點擊個別菜單打開內容＝＝＝＝＝＝＝＝＝＝＝
@@ -403,6 +467,7 @@ const Training = () => {
         updateDoc(docRef, data);
         alertPop();
         setContent('照片上傳成功');
+        setImageUpload('');
       });
     });
   }
@@ -411,13 +476,9 @@ const Training = () => {
   useEffect(() => {
     const imageListRef = ref(storage, `${uid}/${pickHistory}`);
     if (imageListRef) {
-      // setLoading(true);
       getDownloadURL(imageListRef).then((url) => {
         setImageList(url);
       });
-      // setTimeout(() => {
-      //   setLoading(false);
-      // }, 2000);
     }
   }, [showPicture]);
 
@@ -449,9 +510,61 @@ const Training = () => {
 
   function closeVideo() {
     setVideoShow(false);
+    setPlaying(null);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝關閉影片＝＝＝＝＝＝＝＝＝＝＝
+
+  // ＝＝＝＝＝＝＝＝＝＝喜愛動作功能＝＝＝＝＝＝＝＝＝＝＝
+
+  //把喜愛動作資料從雲端抓下來
+  async function getFavoriteTrainings() {
+    if (isLoggedIn == false) {
+      setFavoriteTrainings([]);
+    } else {
+      const docRef = query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
+      onSnapshot(docRef, (item) => {
+        const newData = [];
+        item.forEach((doc) => {
+          newData.push(doc.data());
+        });
+        setFavoriteTrainings(newData);
+      });
+    }
+  }
+
+  //map出選到的喜愛動作
+  useEffect(() => {
+    const showFavoriteTrainings = async () => {
+      const docRef = doc(db, 'users', uid, 'favoriteTrainings', favoriteChoice);
+      const docSnap = await getDoc(docRef);
+      setTitle(docSnap.data().title);
+      setDescription(docSnap.data().description);
+      setChoiceAction(docSnap.data().actions);
+      alertPop();
+      setContent('成功套用喜愛菜單');
+    };
+    showFavoriteTrainings();
+  }, [favoriteChoice]);
+
+  //點擊管理喜愛菜單
+  async function manageFavoriteTraining() {
+    if (isLoggedIn) {
+      setOpenFavorite(true);
+      const docRef = await query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
+      onSnapshot(docRef, (item) => {
+        const newData = [];
+        item.forEach((doc) => {
+          newData.push(doc.data());
+        });
+        setFavoriteTrainings(newData);
+      });
+    } else {
+      signIn();
+    }
+  }
+
+  // ＝＝＝＝＝＝＝＝＝＝喜愛動作功能＝＝＝＝＝＝＝＝＝＝＝
 
   return (
     <>
@@ -473,14 +586,40 @@ const Training = () => {
             <BannerText>開始我的記錄！</BannerText>
           </Banner>
         </BannerOutside>
-        <AddTrainingTableOutside>
-          <AddTrainingTable onClick={addTraining}>建立菜單</AddTrainingTable>
-        </AddTrainingTableOutside>
-        {trainingData ? (
-          <HistoryZone trainingData={trainingData} openHistory={openHistory} />
-        ) : (
-          <NoHistory>尚未建立菜單</NoHistory>
-        )}
+        <TrainingZone>
+          <TrainingButtons>
+            <AddTrainingTableOutside>
+              <AddTrainingTable
+                onClick={() => {
+                  addTraining();
+                  getFavoriteTrainings();
+                }}
+              >
+                建立菜單
+              </AddTrainingTable>
+            </AddTrainingTableOutside>
+            <ManageFavoriteTrainingOutside>
+              <ManageFavoriteTraining onClick={manageFavoriteTraining}>喜愛菜單</ManageFavoriteTraining>
+            </ManageFavoriteTrainingOutside>
+          </TrainingButtons>
+          <FavoritePage
+            openFavorite={openFavorite}
+            setOpenFavorite={setOpenFavorite}
+            favoriteTrainings={favoriteTrainings}
+            setFavoriteTrainings={setFavoriteTrainings}
+            pickFavorite={pickFavorite}
+            setPickFavorite={setPickFavorite}
+            pickActions={pickActions}
+            setPickActions={setPickActions}
+            pickID={pickID}
+            setPickID={setPickID}
+          />
+          {trainingData.length > 0 ? (
+            <HistoryZone trainingData={trainingData} openHistory={openHistory} />
+          ) : (
+            <NoHistory>尚未建立菜單</NoHistory>
+          )}
+        </TrainingZone>
         <OpenHistoryZone
           showHistory={showHistory}
           openHistory={openHistory}
@@ -499,34 +638,79 @@ const Training = () => {
           deleteTrainingItem={deleteTrainingItem}
           choiceAction={choiceAction}
           data={data}
+          isComplete={isComplete}
         />
         <TrainingOutside $isHide={openTrainingInput} $isActive={pageTwo}>
           <TrainingOutsideOne $isHide={openTrainingOne}>
             <PageOneDetail>
-              <Close onClick={closeAddTraining} src={remove} />
+              <Close onClick={closeAddTraining}>
+                <FontAwesomeIcon icon={faCircleXmark} />
+              </Close>
               <form ref={form}>
                 <PageOneDetailContent>
                   <TitleInputText>
-                    主題
+                    <FavoriteTitle>
+                      <Title>
+                        <FaDumbbell>
+                          <FontAwesomeIcon icon={faDumbbell} />
+                        </FaDumbbell>
+                        主題
+                      </Title>
+                      <FavoriteSelectOutside onChange={(e) => setFavoriteChoice(e.target.value)} defaultValue={null}>
+                        {favoriteTrainings.length > 0 ? (
+                          <>
+                            <option disabled selected>
+                              套用喜愛菜單
+                            </option>
+                            {favoriteTrainings.map((item, index) => (
+                              <option index={index} value={item.docID}>
+                                {item.title}
+                              </option>
+                            ))}
+                          </>
+                        ) : (
+                          <option disabled selected>
+                            無喜愛菜單
+                          </option>
+                        )}
+                      </FavoriteSelectOutside>
+                    </FavoriteTitle>
                     <TitleInputLine />
-                    <TitleInput onChange={(e) => setTitle(e.target.value)} name="to_title"></TitleInput>
+                    <TitleInput
+                      onChange={(e) => setTitle(e.target.value)}
+                      name="to_title"
+                      value={title}
+                      maxLength={10}
+                    ></TitleInput>
                   </TitleInputText>
                   <DateInputText>
-                    日期
+                    <DateInputTop>
+                      <FaCalendarDays>
+                        <FontAwesomeIcon icon={faCalendarDays} />
+                      </FaCalendarDays>
+                      日期
+                    </DateInputTop>
                     <DateInputLine />
                     <DateInput
                       type="date"
                       onChange={(e) => setDate(e.target.value)}
-                      // min={new Date().toISOString().split('T')[0]}
                       name="to_date"
+                      value={date}
                     ></DateInput>
                   </DateInputText>
                   <DescriptionText>
-                    本次訓練重點
+                    <DescriptionTop>
+                      <FaHandPointUp>
+                        <FontAwesomeIcon icon={faHandPointUp} />
+                      </FaHandPointUp>
+                      本次訓練重點
+                    </DescriptionTop>
                     <DescriptionLine />
                     <DescriptionInput
                       name="to_description"
                       onChange={(e) => setDescription(e.target.value)}
+                      value={description}
+                      maxLength={30}
                     ></DescriptionInput>
                   </DescriptionText>
                   <ToName name="to_name" defaultValue={displayName}></ToName>
@@ -544,9 +728,16 @@ const Training = () => {
             </TurnOutside>
           </TrainingOutsideOne>
           <TrainingOutsideTwo $isHide={openTrainingTwo}>
-            <Close onClick={closeAddTraining} src={remove} />
+            <Close onClick={closeAddTraining}>
+              <FontAwesomeIcon icon={faCircleXmark} />
+            </Close>
             <ActionText>
-              加入菜單動作
+              <ActionTop>
+                <ActionPicOutside>
+                  <ActionPic src={logo} />
+                </ActionPicOutside>
+                <ActionTitle> 加入菜單動作</ActionTitle>
+              </ActionTop>
               <ActionLine />
             </ActionText>
             <ActionOutside>
@@ -556,12 +747,15 @@ const Training = () => {
                 deleteItem={deleteItem}
                 calTotalWeight={calTotalWeight}
                 totalWeight={totalWeight}
+                totalWeightInput={totalWeightInput}
               />
               <PromoteActionOutsideZone
                 setPart={setPart}
                 promoteActions={promoteActions}
                 addActionItem={addActionItem}
                 openVideo={openVideo}
+                playing={playing}
+                setPlaying={setPlaying}
               />
             </ActionOutside>
             <TrainingOutsideTwoBottom>
@@ -574,7 +768,9 @@ const Training = () => {
               />
               {videoShow ? (
                 <VideoZone $isHide={videoShow}>
-                  <CloseVideo onClick={closeVideo} src={remove} />
+                  <CloseVideo onClick={closeVideo}>
+                    <FontAwesomeIcon icon={faCircleXmark} />
+                  </CloseVideo>
                   <video autoPlay loop width="100%" controls src={videoUrl}></video>
                 </VideoZone>
               ) : (
@@ -601,9 +797,6 @@ const Training = () => {
             </TurnOutside>
           </TrainingOutsideTwo>
         </TrainingOutside>
-        {/* <Dnd />
-      <Dnd2 />
-      <BeautifulDnD /> */}
         <TrainingBackground $isHide={showHistoryBackground} />
       </Wrapper>
     </>
@@ -615,7 +808,7 @@ export default Training;
 const LoadingOutside = styled.div`
   position: fixed;
   z-index: 2000;
-  background: rgba(49, 50, 55, 1);
+  background: #475260;
   height: 100%;
   width: 100%;
   display: ${(props) => (props.$isActive ? 'block' : 'none')};
@@ -638,16 +831,16 @@ const Wrapper = styled.div`
   padding-top: 90px;
 `;
 
-const Close = styled.img`
+const Close = styled.div`
   cursor: pointer;
   width: 30px;
-  height: 30px;
-  z-index: 90;
   position: absolute;
   right: 20px;
-  top: 17px;
+  top: 10px;
   scale: 1;
   transition: 0.3s;
+  font-size: 30px;
+  color: #c14e4f;
   &:hover {
     scale: 1.2;
   }
@@ -699,17 +892,30 @@ const BannerText = styled.div`
   }
 `;
 
+const TrainingZone = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+`;
+
+const TrainingButtons = styled.div`
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
 const AddTrainingTableOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background: #74c6cc;
-  width: 150px;
-  margin: 40px auto 40px auto;
+  width: 180px;
+  margin: 40px 40px 40px 20px;
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;
-  animation-name: light;
+  ${'' /* animation-name: light; */}
   animation-duration: 2.5s;
   animation-iteration-count: infinite;
   &:hover {
@@ -727,6 +933,10 @@ const AddTrainingTableOutside = styled.div`
       box-shadow: 0px 0px 0px white;
     }
   }
+  @media screen and (max-width: 767px) {
+    width: 120px;
+    margin: 40px 20px 40px 0px;
+  }
 `;
 
 const AddTrainingTable = styled.div`
@@ -734,6 +944,52 @@ const AddTrainingTable = styled.div`
   font-size: 25px;
   letter-spacing: 2px;
   font-weight: 600;
+  @media screen and (max-width: 767px) {
+    font-size: 18px;
+  }
+`;
+
+const ManageFavoriteTrainingOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 200px;
+  margin: 40px auto 40px auto;
+  color: black;
+  cursor: pointer;
+  transition: ease-in-out 0.2s;
+  ${'' /* animation-name: light; */}
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  &:hover {
+    background: white;
+    color: black;
+  }
+  @keyframes light {
+    0% {
+      box-shadow: 0px 0px 0px white;
+    }
+    50% {
+      box-shadow: 0px 0px 20px white;
+    }
+    100% {
+      box-shadow: 0px 0px 0px white;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    width: 120px;
+  }
+`;
+
+const ManageFavoriteTraining = styled.div`
+  padding: 10px;
+  font-size: 25px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  @media screen and (max-width: 767px) {
+    font-size: 18px;
+  }
 `;
 
 const NoHistory = styled.div`
@@ -753,21 +1009,29 @@ const NoHistory = styled.div`
 
 const TrainingOutside = styled.div`
   position: absolute;
-  left: 50%;
-  top: 15%;
-  transform: translate(-50%, -5%);
-  z-index: 10;
+  left: ${(props) => (props.$isActive ? 'calc(50% - 500px)' : 'calc(50% - 280px)')};
+  top: ${(props) => (props.$isActive ? '7%' : '10%')};
+  z-index: 20;
   display: ${(props) => (props.$isHide ? 'block' : 'none')};
-  background: #313237;
+  background: #475260;
   max-width: ${(props) => (props.$isActive ? '1000px' : '700px')};
-  margin-bottom: 40px;
+  margin-bottom: 100px;
+  margin-top: 100px;
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
-    top: 11.5%;
+    left: ${(props) => (props.$isActive ? 'calc(50% - 350px)' : 'calc(50% - 280px)')};
+    top: ${(props) => (props.$isActive ? '4%' : '5%')};
   }
   @media screen and (max-width: 767px) {
-    top: 7.1%;
+    left: ${(props) => (props.$isActive ? 'calc(50% - 275px)' : 'calc(50% - 220px)')};
+    top: ${(props) => (props.$isActive ? '2%' : '2%')};
+  }
+  @media screen and (max-width: 575px) {
+    left: ${(props) => (props.$isActive ? 'calc(50% - 165px)' : 'calc(50% - 220px)')};
+  }
+  @media screen and (max-width: 500px) {
+    left: ${(props) => (props.$isActive ? 'calc(50% - 165px)' : 'calc(50% - 170px)')};
   }
 `;
 
@@ -788,12 +1052,47 @@ const PageOneDetail = styled.div`
 
 const PageOneDetailContent = styled.div``;
 
-const TitleInputText = styled.div`
-  margin-top: 10px;
+const FavoriteSelectOutside = styled.select`
+  width: 25%;
+  height: 30px;
+  background: white;
+  color: gray;
+  padding-left: 5px;
+  font-size: 14px;
+  border-radius: 6px;
+  option {
+    color: black;
+    background: white;
+    display: flex;
+    white-space: pre;
+    min-height: 20px;
+  }
+  @media screen and (max-width: 575px) {
+    width: 30%;
+  }
+`;
+
+const Title = styled.div`
+  font-weight: 600;
+  letter-spacing: 3px;
+  margin-right: 20px;
+  display: flex;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
 `;
+
+const FaDumbbell = styled.div`
+  margin-right: 10px;
+`;
+
+const FavoriteTitle = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const TitleInputText = styled.div``;
 
 const TitleInputLine = styled.div`
   border-bottom: 2px solid #74c6cc;
@@ -818,7 +1117,7 @@ const TitleInput = styled.input`
     margin-top: 0px;
     width: 400px;
   }
-  @media screen and (max-width: 525px) {
+  @media screen and (max-width: 500px) {
     height: 30px;
     margin-top: 0px;
     width: 300px;
@@ -827,9 +1126,20 @@ const TitleInput = styled.input`
 
 const DateInputText = styled.div`
   margin-top: 25px;
+  font-weight: 600;
+  letter-spacing: 3px;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
+`;
+
+const DateInputTop = styled.div`
+  display: flex;
+`;
+
+const FaCalendarDays = styled.div`
+  margin-right: 15px;
+  margin-left: 3px;
 `;
 
 const DateInputLine = styled.div`
@@ -858,9 +1168,20 @@ const DateInput = styled.input`
 
 const DescriptionText = styled.div`
   margin-top: 25px;
+  font-weight: 600;
+  letter-spacing: 3px;
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
+`;
+
+const DescriptionTop = styled.div`
+  display: flex;
+`;
+
+const FaHandPointUp = styled.div`
+  margin-right: 15px;
+  margin-left: 3px;
 `;
 
 const DescriptionLine = styled.div`
@@ -932,10 +1253,28 @@ const ActionText = styled.div`
   padding-bottom: 20px;
   color: #74c6cc;
   font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 3px;
+
   @media screen and (max-width: 767px) {
     padding-bottom: 0px;
   }
 `;
+
+const ActionTop = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ActionPicOutside = styled.div``;
+
+const ActionPic = styled.img`
+  width: 70px;
+  margin-right: 15px;
+  padding-top: 10px;
+`;
+
+const ActionTitle = styled.div``;
 
 const ActionLine = styled.div`
   border-bottom: 2px solid #74c6cc;
@@ -962,15 +1301,16 @@ const ActionOutside = styled.div`
   }
 `;
 
-const CloseVideo = styled.img`
+const CloseVideo = styled.div`
   cursor: pointer;
   width: 30px;
   height: 30px;
   z-index: 90;
   position: absolute;
   scale: 1;
-  top: 10px;
   right: 50px;
+  color: #c14e4f;
+  font-size: 30px;
   &:hover {
     scale: 1.2;
   }
@@ -1066,6 +1406,7 @@ const TrainingBackground = styled.div`
   background: black;
   top: 0;
   opacity: 50%;
+  z-index: 11;
   position: fixed;
   width: 100vw;
   height: 100vh;

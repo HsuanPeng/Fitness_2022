@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -13,11 +12,19 @@ const BodyFatDataPage = (props) => {
       <Top>
         <Date>
           <DateTitle>日期：</DateTitle>
-          <BodyFatDateInput type="date" onChange={(e) => props.setFatDateInput(e.target.value)}></BodyFatDateInput>
+          <BodyFatDateInput
+            type="date"
+            onChange={(e) => props.setFatDateInput(e.target.value)}
+            value={props.fatDateInput}
+          ></BodyFatDateInput>
         </Date>
         <Fat>
           <FatTitle>體脂肪率：</FatTitle>
-          <BodyFatInput onChange={(e) => props.setFatNumberInput(e.target.value)}></BodyFatInput>
+          <BodyFatInput
+            onChange={(e) => props.setFatNumberInput(e.target.value)}
+            value={props.fatNumberInput}
+            maxLength={2}
+          ></BodyFatInput>
         </Fat>
         <BodyFatInputButtonOutside>
           <BodyFatInputButton onClick={props.writeBodyFat}>新增</BodyFatInputButton>
@@ -27,7 +34,7 @@ const BodyFatDataPage = (props) => {
         {props.fatRecord.length > 0 ? (
           <>
             {props.fatRecord.map((item, index) => (
-              <BodyFatHistoryOutside id={index} key={uuidv4()}>
+              <BodyFatHistoryOutside id={index}>
                 <BodyFatMeasureDate>日期：{item.measureDate}</BodyFatMeasureDate>
                 <BodyFatChange>
                   變化：
@@ -144,7 +151,7 @@ const BodyFatHistoryOutside = styled.div`
   margin-right: 30px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
-  background: #818a8e;
+  background: rgba(255, 255, 255, 0.5);
   color: black;
   display: flex;
   justify-content: space-between;
@@ -156,6 +163,23 @@ const BodyFatHistoryOutside = styled.div`
 const Bottom = styled.div`
   height: 350px;
   overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
 `;
 
 const BodyFatMeasureDate = styled.div`
