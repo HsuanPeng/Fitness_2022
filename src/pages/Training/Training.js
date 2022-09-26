@@ -24,6 +24,7 @@ import OpenHistoryZone from './OpenHistoryZone';
 import ChoiceActionOutsideZone from './ChoiceActionOutsideZone';
 import PromoteActionOutsideZone from './PromoteActionOutsideZone';
 import CalculationShowZone from './CalculationShowZone';
+import FavoritePage from './FavoritePage';
 
 //引入動作菜單
 import ACTIONS from './allActionsLists';
@@ -36,7 +37,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 //pic
 import trainingBanner from '../../images/Beautiful-woman-holding-heavy-604970.jpg';
-import remove from '../../images/remove.png';
 import pageOnePic from '../../images/Empty-gym-in-sunlight-397510.jpg';
 
 //FontAwesomeIcon
@@ -129,8 +129,11 @@ const Training = () => {
   const [favoriteTrainings, setFavoriteTrainings] = useState([]);
   const [favoriteChoice, setFavoriteChoice] = useState(null);
 
-  //判斷菜單是否加入過
-  const [exists, setExists] = useState(false);
+  //打開喜愛菜單
+  const [openFavorite, setOpenFavorite] = useState(false);
+  const [pickActions, setPickActions] = useState([]);
+  const [pickFavorite, setPickFavorite] = useState(null);
+  const [pickID, setPickID] = useState();
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -228,13 +231,17 @@ const Training = () => {
     setPart('肩');
   }
 
-  //點擊左上角XX
+  //點擊右上角XX
   function closeAddTraining() {
     setOpenTrainingInput(false);
     setOpenTrainingOne(false);
     setOpenTrainingTwo(false);
     setOpenCompleteSetting(false);
     setShowHistoryBackground(false);
+    setTitle('');
+    setDate('');
+    setDescription('');
+    setChoiceAction([]);
   }
 
   //點擊「完成本次鍛鍊」
@@ -394,7 +401,8 @@ const Training = () => {
           item.forEach((doc) => {
             newData.push(doc.data());
           });
-          setTrainingData(newData);
+          const reverseNewData = newData.reverse();
+          setTrainingData(reverseNewData);
         });
         // setTimeout(() => {
         //   setLoading(false);
@@ -502,14 +510,18 @@ const Training = () => {
 
   //把喜愛動作資料從雲端抓下來
   async function getFavoriteTrainings() {
-    const docRef = query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
-    onSnapshot(docRef, (item) => {
-      const newData = [];
-      item.forEach((doc) => {
-        newData.push(doc.data());
+    if (isLoggedIn == false) {
+      setFavoriteTrainings([]);
+    } else {
+      const docRef = query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
+      onSnapshot(docRef, (item) => {
+        const newData = [];
+        item.forEach((doc) => {
+          newData.push(doc.data());
+        });
+        setFavoriteTrainings(newData);
       });
-      setFavoriteTrainings(newData);
-    });
+    }
   }
 
   //map出選到的喜愛動作
@@ -525,6 +537,23 @@ const Training = () => {
     };
     showFavoriteTrainings();
   }, [favoriteChoice]);
+
+  //點擊管理喜愛菜單
+  async function manageFavoriteTraining() {
+    if (isLoggedIn) {
+      setOpenFavorite(true);
+      const docRef = await query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
+      onSnapshot(docRef, (item) => {
+        const newData = [];
+        item.forEach((doc) => {
+          newData.push(doc.data());
+        });
+        setFavoriteTrainings(newData);
+      });
+    } else {
+      signIn();
+    }
+  }
 
   // ＝＝＝＝＝＝＝＝＝＝喜愛動作功能＝＝＝＝＝＝＝＝＝＝＝
 
@@ -548,21 +577,40 @@ const Training = () => {
             <BannerText>開始我的記錄！</BannerText>
           </Banner>
         </BannerOutside>
-        <AddTrainingTableOutside>
-          <AddTrainingTable
-            onClick={() => {
-              addTraining();
-              getFavoriteTrainings();
-            }}
-          >
-            建立菜單
-          </AddTrainingTable>
-        </AddTrainingTableOutside>
-        {trainingData.length > 0 ? (
-          <HistoryZone trainingData={trainingData} openHistory={openHistory} />
-        ) : (
-          <NoHistory>尚未建立菜單</NoHistory>
-        )}
+        <TrainingZone>
+          <TrainingButtons>
+            <AddTrainingTableOutside>
+              <AddTrainingTable
+                onClick={() => {
+                  addTraining();
+                  getFavoriteTrainings();
+                }}
+              >
+                建立菜單
+              </AddTrainingTable>
+            </AddTrainingTableOutside>
+            <ManageFavoriteTrainingOutside>
+              <ManageFavoriteTraining onClick={manageFavoriteTraining}>喜愛菜單</ManageFavoriteTraining>
+            </ManageFavoriteTrainingOutside>
+          </TrainingButtons>
+          <FavoritePage
+            openFavorite={openFavorite}
+            setOpenFavorite={setOpenFavorite}
+            favoriteTrainings={favoriteTrainings}
+            setFavoriteTrainings={setFavoriteTrainings}
+            pickFavorite={pickFavorite}
+            setPickFavorite={setPickFavorite}
+            pickActions={pickActions}
+            setPickActions={setPickActions}
+            pickID={pickID}
+            setPickID={setPickID}
+          />
+          {trainingData.length > 0 ? (
+            <HistoryZone trainingData={trainingData} openHistory={openHistory} />
+          ) : (
+            <NoHistory>尚未建立菜單</NoHistory>
+          )}
+        </TrainingZone>
         <OpenHistoryZone
           showHistory={showHistory}
           openHistory={openHistory}
@@ -593,7 +641,7 @@ const Training = () => {
                 <PageOneDetailContent>
                   <TitleInputText>
                     <FavoriteTitle>
-                      <Title> 主題</Title>
+                      <Title>主題</Title>
                       <FavoriteSelectOutside onChange={(e) => setFavoriteChoice(e.target.value)}>
                         {favoriteTrainings.length > 0 ? (
                           <>
@@ -614,7 +662,12 @@ const Training = () => {
                       </FavoriteSelectOutside>
                     </FavoriteTitle>
                     <TitleInputLine />
-                    <TitleInput onChange={(e) => setTitle(e.target.value)} name="to_title" value={title}></TitleInput>
+                    <TitleInput
+                      onChange={(e) => setTitle(e.target.value)}
+                      name="to_title"
+                      value={title}
+                      maxLength={10}
+                    ></TitleInput>
                   </TitleInputText>
                   <DateInputText>
                     日期
@@ -634,6 +687,7 @@ const Training = () => {
                       name="to_description"
                       onChange={(e) => setDescription(e.target.value)}
                       value={description}
+                      maxLength={30}
                     ></DescriptionInput>
                   </DescriptionText>
                   <ToName name="to_name" defaultValue={displayName}></ToName>
@@ -715,9 +769,6 @@ const Training = () => {
             </TurnOutside>
           </TrainingOutsideTwo>
         </TrainingOutside>
-        {/* <Dnd />
-      <Dnd2 />
-      <BeautifulDnD /> */}
         <TrainingBackground $isHide={showHistoryBackground} />
       </Wrapper>
     </>
@@ -750,7 +801,6 @@ const Wrapper = styled.div`
   font-size: 20px;
   position: relative;
   padding-top: 90px;
-  ${'' /* margin-bottom: 100px; */}
 `;
 
 const Close = styled.div`
@@ -814,17 +864,30 @@ const BannerText = styled.div`
   }
 `;
 
+const TrainingZone = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+`;
+
+const TrainingButtons = styled.div`
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
 const AddTrainingTableOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background: #74c6cc;
-  width: 150px;
-  margin: 40px auto 40px auto;
+  width: 180px;
+  margin: 40px 40px 40px 20px;
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;
-  animation-name: light;
+  ${'' /* animation-name: light; */}
   animation-duration: 2.5s;
   animation-iteration-count: infinite;
   &:hover {
@@ -842,6 +905,10 @@ const AddTrainingTableOutside = styled.div`
       box-shadow: 0px 0px 0px white;
     }
   }
+  @media screen and (max-width: 767px) {
+    width: 120px;
+    margin: 40px 20px 40px 0px;
+  }
 `;
 
 const AddTrainingTable = styled.div`
@@ -849,6 +916,52 @@ const AddTrainingTable = styled.div`
   font-size: 25px;
   letter-spacing: 2px;
   font-weight: 600;
+  @media screen and (max-width: 767px) {
+    font-size: 18px;
+  }
+`;
+
+const ManageFavoriteTrainingOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 200px;
+  margin: 40px auto 40px auto;
+  color: black;
+  cursor: pointer;
+  transition: ease-in-out 0.2s;
+  ${'' /* animation-name: light; */}
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  &:hover {
+    background: white;
+    color: black;
+  }
+  @keyframes light {
+    0% {
+      box-shadow: 0px 0px 0px white;
+    }
+    50% {
+      box-shadow: 0px 0px 20px white;
+    }
+    100% {
+      box-shadow: 0px 0px 0px white;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    width: 120px;
+  }
+`;
+
+const ManageFavoriteTraining = styled.div`
+  padding: 10px;
+  font-size: 25px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  @media screen and (max-width: 767px) {
+    font-size: 18px;
+  }
 `;
 
 const NoHistory = styled.div`
@@ -869,7 +982,7 @@ const NoHistory = styled.div`
 const TrainingOutside = styled.div`
   position: absolute;
   left: ${(props) => (props.$isActive ? 'calc(50% - 500px)' : 'calc(50% - 280px)')};
-  top: ${(props) => (props.$isActive ? '7%' : '15%')};
+  top: ${(props) => (props.$isActive ? '7%' : '10%')};
   z-index: 20;
   display: ${(props) => (props.$isHide ? 'block' : 'none')};
   background: #475260;
@@ -880,11 +993,17 @@ const TrainingOutside = styled.div`
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
     left: ${(props) => (props.$isActive ? 'calc(50% - 350px)' : 'calc(50% - 280px)')};
-    top: ${(props) => (props.$isActive ? '7%' : '8%')};
+    top: ${(props) => (props.$isActive ? '4%' : '5%')};
   }
   @media screen and (max-width: 767px) {
-    left: ${(props) => (props.$isActive ? 'calc(50% - 237.5px)' : 'calc(50% - 220px)')};
-    top: ${(props) => (props.$isActive ? '4%' : '4%')};
+    left: ${(props) => (props.$isActive ? 'calc(50% - 275px)' : 'calc(50% - 220px)')};
+    top: ${(props) => (props.$isActive ? '2%' : '2%')};
+  }
+  @media screen and (max-width: 575px) {
+    left: ${(props) => (props.$isActive ? 'calc(50% - 165px)' : 'calc(50% - 220px)')};
+  }
+  @media screen and (max-width: 500px) {
+    left: ${(props) => (props.$isActive ? 'calc(50% - 165px)' : 'calc(50% - 170px)')};
   }
 `;
 
@@ -965,7 +1084,7 @@ const TitleInput = styled.input`
     margin-top: 0px;
     width: 400px;
   }
-  @media screen and (max-width: 525px) {
+  @media screen and (max-width: 500px) {
     height: 30px;
     margin-top: 0px;
     width: 300px;

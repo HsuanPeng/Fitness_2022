@@ -26,6 +26,9 @@ const PieOutside = styled.div`
   padding: 10px;
   margin: 0 auto;
   margin-top: 20px;
+  @media screen and (max-width: 575px) {
+    width: 300px;
+  }
 `;
 
 const CalculationShow = styled.div`

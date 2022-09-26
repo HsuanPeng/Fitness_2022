@@ -11,7 +11,7 @@ const BodyWeightDataPage = (props) => {
     <BodyWeightWriteDataZone>
       <Top>
         <Date>
-          <DateTitle>日期</DateTitle>
+          <DateTitle>日期：</DateTitle>
           <BodyWeightDateInput
             type="date"
             onChange={(e) => props.setWeightDateInput(e.target.value)}
@@ -23,6 +23,7 @@ const BodyWeightDataPage = (props) => {
           <BodyWeightInput
             onChange={(e) => props.setWeightNumberInput(e.target.value)}
             value={props.weightNumberInput}
+            maxLength={3}
           ></BodyWeightInput>
         </Weight>
         <BodyWeightInputButtonOutside>
@@ -37,7 +38,7 @@ const BodyWeightDataPage = (props) => {
                 <BodyWeightMeasureDate>日期：{item.measureDate}</BodyWeightMeasureDate>
                 <BodyWeightChange>
                   變化：
-                  {index > 0 ? props.weightNumberLine[index] - props.weightNumberLine[index - 1] : <span>--</span>}%
+                  {index > 0 ? props.weightNumberLine[index] - props.weightNumberLine[index - 1] : <span>--</span>}KG
                 </BodyWeightChange>
                 <BodyWeightResult>體重：{item.bodyWeight} KG</BodyWeightResult>
                 <BodyWeightDelete

@@ -105,6 +105,7 @@ const HistoryItemsOutside = styled.div`
     justify-content: center;
     align-items: center;
     text-align: center;
+    width: 440px;
   }
 `;
 
@@ -122,17 +123,19 @@ const NoPicOutside = styled.div`
 const NoPic = styled.div``;
 
 const HistoryPicOutside = styled.div`
-  width: 250px;
   height: 180px;
 `;
 
 const HistoryPic = styled.img`
-  object-fit: contain;
+  border-radius: 12px;
+  object-fit: cover;
   width: 200px;
   height: 180px;
+  border: 2px solid #74c6cc;
 `;
 
 const HistoryRight = styled.div`
+  width: 250px;
   color: white;
   display: flex;
   flex-direction: column;
@@ -144,6 +147,7 @@ const HistoryTitle = styled.span`
   letter-spacing: 2px;
   color: #74c6cc;
   font-size: 24px;
+  ${'' /* border: 2px double #74c6cc; */}
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }

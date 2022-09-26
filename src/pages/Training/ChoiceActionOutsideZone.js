@@ -53,6 +53,7 @@ const ChoiceActionOutsideZone = (props) => {
                             onChange={(e) => {
                               props.choiceAction[index].weight = e.target.value;
                             }}
+                            maxLength={3}
                           />{' '}
                           KG
                         </WeightOutside>
@@ -61,6 +62,7 @@ const ChoiceActionOutsideZone = (props) => {
                             onChange={(e) => {
                               props.choiceAction[index].times = e.target.value;
                             }}
+                            maxLength={2}
                           />{' '}
                           次
                         </TimesOutside>
@@ -145,14 +147,14 @@ const TotalWeight = styled.div`
   color: ${(props) => (props.$isActive ? '#74c6cc' : 'white')};
   scale: 1;
   animation-name: ${(props) => (props.$isActive ? 'active' : null)};
-  animation-duration: 2s;
+  animation-duration: 1s;
   transition: ease-in-out;
   @keyframes active {
     0% {
       scale: 1;
     }
     50% {
-      scale: 1.2;
+      scale: 1.1;
     }
     100% {
       scale: 1;

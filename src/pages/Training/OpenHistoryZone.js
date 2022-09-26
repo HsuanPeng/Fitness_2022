@@ -328,9 +328,7 @@ const OpenHistoryZone = (props) => {
           return (
             <HistoryActions>
               <BodyPart>
-                <BodyPartPicOutside>
-                  <BodyPartPic src={armMuscle} />
-                </BodyPartPicOutside>
+                <BodyPartPic src={armMuscle} />
                 部位：{item.bodyPart}
               </BodyPart>
               <ActionName>
@@ -458,7 +456,6 @@ const OpenHistory = styled.div`
 `;
 
 const HistoryTop = styled.div`
-  margin-top: 40px;
   @media screen and (max-width: 1279px) {
     display: flex;
     flex-direction: column;
@@ -549,11 +546,9 @@ const Detail = styled.div`
 const DescriptionComplete = styled.div`
   display: flex;
   justify-content: space-between;
-  ${'' /* flex-direction: column; */}
+  flex-wrap: wrap;
   @media screen and (max-width: 1279px) {
     width: 100%;
-    ${'' /* justify-content: center; */}
-    ${'' /* align-items: start; */}
   }
   @media screen and (max-width: 767px) {
     flex-direction: column;
@@ -652,8 +647,6 @@ const BodyPart = styled.div`
   }
 `;
 
-const BodyPartPicOutside = styled.div``;
-
 const BodyPartPic = styled.img`
   object: fit;
   width: 25px;
@@ -744,6 +737,7 @@ const HistoryImageOutside = styled.div`
   margin-right: 10px;
   margin-left: 10px;
   margin-top: 10px;
+
   @media screen and (max-width: 767px) {
     width: 300px;
     margin: 0 auto;
@@ -751,9 +745,11 @@ const HistoryImageOutside = styled.div`
 `;
 
 const HistoryImage = styled.img`
-  object-fit: contain;
+  object-fit: cover;
+  border-radius: 12px;
   width: 350px;
   height: 280px;
+  border: 5px solid #74c6cc;
   @media screen and (max-width: 767px) {
     width: 300px;
     margin: 0 auto;

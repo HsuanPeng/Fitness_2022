@@ -23,6 +23,7 @@ const BodyFatDataPage = (props) => {
           <BodyFatInput
             onChange={(e) => props.setFatNumberInput(e.target.value)}
             value={props.fatNumberInput}
+            maxLength={2}
           ></BodyFatInput>
         </Fat>
         <BodyFatInputButtonOutside>
