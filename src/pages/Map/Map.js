@@ -244,7 +244,7 @@ function Search({ panTo }) {
             setFocus(false);
           }}
           disabled={!ready}
-          placeholder="找出目標地附近的健身房"
+          placeholder="輸入地點找尋健身房"
           style={{
             width: '280px',
             borderRadius: '5px',
