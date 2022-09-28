@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 //FontAwesomeIcon
@@ -24,13 +25,14 @@ const BodyFatDataPage = (props) => {
           <BodyFatInput
             onChange={(e) => props.setFatNumberInput(e.target.value)}
             value={props.fatNumberInput}
-            maxLength={2}
+            maxLength={5}
           ></BodyFatInput>
-        </Fat>
+        </Fat>{' '}
         <BodyFatInputButtonOutside>
           <BodyFatInputButton onClick={props.writeBodyFat}>新增</BodyFatInputButton>
         </BodyFatInputButtonOutside>
-      </Top>
+      </Top>{' '}
+      <FatRemind>＊體脂肪率請輸入阿拉伯數字，最多5字</FatRemind>
       <Bottom>
         {props.fatRecord.length > 0 ? (
           <>
@@ -39,7 +41,12 @@ const BodyFatDataPage = (props) => {
                 <BodyFatMeasureDate>日期：{item.measureDate}</BodyFatMeasureDate>
                 <BodyFatChange>
                   變化：
-                  {index > 0 ? props.fatNumberLine[index] - props.fatNumberLine[index - 1] : <span>--</span>}%
+                  {index > 0 ? (
+                    (props.fatNumberLine[index] - props.fatNumberLine[index - 1]).toFixed(1)
+                  ) : (
+                    <span>--</span>
+                  )}
+                  %
                 </BodyFatChange>
                 <BodyFatResult>體脂肪率：{item.bodyFat}%</BodyFatResult>
                 <BodyFatDelete
@@ -96,6 +103,13 @@ const DateTitle = styled.div`
 const BodyFatDateInput = styled.input`
   border-radius: 7px;
   font-size: 20px;
+`;
+
+const FatRemind = styled.div`
+  color: #cd5c5c;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-top: -12px;
 `;
 
 const Fat = styled.div`
@@ -206,7 +220,7 @@ const BodyFatChange = styled.div`
 
 const BodyFatResult = styled.div`
   margin-left: 15px;
-  width: 150px;
+  width: 158px;
   @media screen and (max-width: 580px) {
     margin-right: 0px;
     margin-top: 10px;

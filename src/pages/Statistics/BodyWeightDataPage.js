@@ -24,13 +24,14 @@ const BodyWeightDataPage = (props) => {
           <BodyWeightInput
             onChange={(e) => props.setWeightNumberInput(e.target.value)}
             value={props.weightNumberInput}
-            maxLength={3}
+            maxLength={6}
           ></BodyWeightInput>
         </Weight>
         <BodyWeightInputButtonOutside>
           <BodyWeightInputButton onClick={props.writeBodyWeight}>新增</BodyWeightInputButton>
         </BodyWeightInputButtonOutside>
       </Top>
+      <WeightRemind>＊體重請輸入阿拉伯數字，最多6字</WeightRemind>
       <Bottom>
         {props.weightRecord.length > 0 ? (
           <>
@@ -39,7 +40,12 @@ const BodyWeightDataPage = (props) => {
                 <BodyWeightMeasureDate>日期：{item.measureDate}</BodyWeightMeasureDate>
                 <BodyWeightChange>
                   變化：
-                  {index > 0 ? props.weightNumberLine[index] - props.weightNumberLine[index - 1] : <span>--</span>}KG
+                  {index > 0 ? (
+                    (props.weightNumberLine[index] - props.weightNumberLine[index - 1]).toFixed(1)
+                  ) : (
+                    <span>--</span>
+                  )}
+                  KG
                 </BodyWeightChange>
                 <BodyWeightResult>體重：{item.bodyWeight} KG</BodyWeightResult>
                 <BodyWeightDelete
@@ -139,6 +145,13 @@ const BodyWeightInputButtonOutside = styled.div`
   }
 `;
 
+const WeightRemind = styled.div`
+  color: #cd5c5c;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-top: -12px;
+`;
+
 const BodyWeightInputButton = styled.div`
   font-size: 22px;
   letter-spacing: 2px;
@@ -198,7 +211,7 @@ const BodyWeightMeasureDate = styled.div`
 const BodyWeightChange = styled.div`
   margin: 0px 10px;
   text-align: start;
-  width: 130px;
+  width: 138px;
   @media screen and (max-width: 767px) {
     display: none;
   }

@@ -96,7 +96,6 @@ const Statistics = () => {
     } else {
       async function getFatRecord() {
         const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
-        // setLoading(true);
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
@@ -114,9 +113,6 @@ const Statistics = () => {
           });
           setFatDateLine(newFatDateData);
         });
-        // setTimeout(() => {
-        //   setLoading(false);
-        // }, 1000);
       }
       getFatRecord();
     }
@@ -126,7 +122,7 @@ const Statistics = () => {
   async function writeBodyFat(index) {
     if (isLoggedIn) {
       try {
-        let re = /^[0-9]*$/;
+        let re = /^[0-9]+.?[0-9]*$/;
         if (!re.test(fatNumberInput)) {
           alertPop();
           setContent('請輸入數字');
@@ -135,7 +131,7 @@ const Statistics = () => {
             const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
             const data = {
               measureDate: fatDateInput,
-              bodyFat: Number(fatNumberInput),
+              bodyFat: Number(fatNumberInput).toFixed(1),
               docID: docRef.id,
             };
             await setDoc(docRef, data);
@@ -261,7 +257,7 @@ const Statistics = () => {
   async function writeBodyWeight(index) {
     if (isLoggedIn) {
       try {
-        let re = /^[0-9]*$/;
+        let re = /^[0-9]+.?[0-9]*$/;
         if (!re.test(weightNumberInput)) {
           alertPop();
           setContent('請填寫數字');
@@ -270,7 +266,7 @@ const Statistics = () => {
             const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
             const data = {
               measureDate: weightDateInput,
-              bodyWeight: Number(weightNumberInput),
+              bodyWeight: Number(weightNumberInput).toFixed(1),
               docID: docRef.id,
             };
             await setDoc(docRef, data);

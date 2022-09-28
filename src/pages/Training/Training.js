@@ -50,6 +50,7 @@ import {
   faCalendarDays,
   faHandPointUp,
   faDumbbell,
+  faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
@@ -59,11 +60,6 @@ import { Blocks } from 'react-loader-spinner';
 //uuid
 import { v4 as uuid } from 'uuid';
 import { anatomy } from '@chakra-ui/anatomy';
-
-//Dnd.js
-// import Dnd from './Dnd';
-// import Dnd2 from './Dnd2';
-// import BeautifulDnD from './BeautifulDnD';
 
 const Training = () => {
   //UserContext拿資料
@@ -132,9 +128,6 @@ const Training = () => {
   //loading動畫
   const [loading, setLoading] = useState(false);
 
-  //狀態感變
-  const [isComplete, setIsComplete] = useState(false);
-
   //喜愛動作
   const [favoriteTrainings, setFavoriteTrainings] = useState([]);
   const [favoriteChoice, setFavoriteChoice] = useState(null);
@@ -144,6 +137,9 @@ const Training = () => {
   const [pickActions, setPickActions] = useState([]);
   const [pickFavorite, setPickFavorite] = useState(null);
   const [pickID, setPickID] = useState();
+
+  //確認刪除
+  const [deleteAlert, setDeleteAlert] = useState(false);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -276,10 +272,6 @@ const Training = () => {
       };
       await updateDoc(docRef, data);
       trainingData[historyIndex].complete = '已完成';
-      setIsComplete(true);
-      setTimeout(() => {
-        setIsComplete(false);
-      }, 4000);
     } catch (e) {
       console.log(e);
     }
@@ -287,6 +279,10 @@ const Training = () => {
 
   //可以刪除菜單
   async function deleteTrainingItem() {
+    setDeleteAlert(true);
+  }
+
+  async function confirmDeleteTrainingItem() {
     setLoading(true);
     try {
       const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
@@ -296,6 +292,7 @@ const Training = () => {
       setLoading(false);
       alertPop();
       setContent('成功刪除菜單');
+      setDeleteAlert(false);
     } catch (e) {
       console.log(e);
     }
@@ -353,7 +350,7 @@ const Training = () => {
       alertPop();
       setContent('請輸入數字');
     } else {
-      setTotalWeight(total);
+      setTotalWeight(total.toFixed(1));
     }
   }, [choiceAction, choiceWeight, choiceTimes]);
 
@@ -364,7 +361,7 @@ const Training = () => {
   //點擊完成菜單設定，寫入菜單
   async function compeleteTrainingSetting() {
     try {
-      if (title !== '' && date !== '' && description !== '' && totalWeight !== 0) {
+      if (totalWeight !== 0.0 && choiceAction.length > 0) {
         const docRef = doc(collection(db, 'users', uid, 'trainingTables'));
         const data = {
           docID: docRef.id,
@@ -391,12 +388,12 @@ const Training = () => {
         setTitle('');
         setDate('');
         setDescription('');
-      } else if (title == '' || date == '' || description == '') {
+      } else if (!choiceAction.length > 0) {
         alertPop();
-        setContent('請填寫完整資料');
-      } else if (totalWeight == 0) {
+        setContent('請加入動作');
+      } else {
         alertPop();
-        setContent('請計算總重量');
+        setContent('請輸入數字');
       }
     } catch (e) {
       console.log(e);
@@ -575,6 +572,8 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝喜愛動作功能＝＝＝＝＝＝＝＝＝＝＝
 
+  console.log(deleteAlert);
+
   return (
     <>
       <LoadingOutside $isActive={loading}>
@@ -589,6 +588,31 @@ const Training = () => {
           />
         </LoadingBlocks>
       </LoadingOutside>
+      {deleteAlert && (
+        <>
+          <DeleteAlertOutside>
+            <DeleteContent>
+              <DeletePic>
+                <FontAwesomeIcon icon={faTriangleExclamation} />
+              </DeletePic>
+              確定執行刪除？
+            </DeleteContent>
+            <DeleteButton>
+              <YesOutside onClick={confirmDeleteTrainingItem}>
+                <Yes>YES</Yes>
+              </YesOutside>
+              <NoOutside
+                onClick={() => {
+                  setDeleteAlert(false);
+                }}
+              >
+                <No>NO</No>
+              </NoOutside>
+            </DeleteButton>
+          </DeleteAlertOutside>
+          <DeleteBackground />
+        </>
+      )}
       <Wrapper>
         <BannerOutside>
           <Banner>
@@ -647,169 +671,177 @@ const Training = () => {
           deleteTrainingItem={deleteTrainingItem}
           choiceAction={choiceAction}
           data={data}
-          isComplete={isComplete}
         />
-        <TrainingOutside $isHide={openTrainingInput} $isActive={pageTwo}>
-          <TrainingOutsideOne $isHide={openTrainingOne}>
-            <PageOneDetail>
-              <Close onClick={closeAddTraining}>
-                <FontAwesomeIcon icon={faCircleXmark} />
-              </Close>
-              <form ref={form}>
-                <PageOneDetailContent>
-                  <TitleInputText>
-                    <FavoriteTitle>
-                      <Title>
-                        <FaDumbbell>
-                          <FontAwesomeIcon icon={faDumbbell} />
-                        </FaDumbbell>
-                        主題
-                      </Title>
-                      <FavoriteSelectOutside onChange={(e) => setFavoriteChoice(e.target.value)} defaultValue={null}>
-                        {favoriteTrainings.length > 0 ? (
-                          <>
-                            <option disabled selected>
-                              套用喜愛菜單
-                            </option>
-                            {favoriteTrainings.map((item, index) => (
-                              <option index={index} value={item.docID}>
-                                {item.title}
-                              </option>
-                            ))}
-                          </>
-                        ) : (
-                          <option disabled selected>
-                            無喜愛菜單
-                          </option>
-                        )}
-                      </FavoriteSelectOutside>
-                    </FavoriteTitle>
-                    <TitleInputLine />
-                    <TitleInput
-                      onChange={(e) => setTitle(e.target.value)}
-                      name="to_title"
-                      value={title}
-                      maxLength={10}
-                    ></TitleInput>
-                  </TitleInputText>
-                  <DateInputText>
-                    <DateInputTop>
-                      <FaCalendarDays>
-                        <FontAwesomeIcon icon={faCalendarDays} />
-                      </FaCalendarDays>
-                      日期
-                    </DateInputTop>
-                    <DateInputLine />
-                    <DateInput
-                      type="date"
-                      onChange={(e) => setDate(e.target.value)}
-                      name="to_date"
-                      value={date}
-                    ></DateInput>
-                  </DateInputText>
-                  <DescriptionText>
-                    <DescriptionTop>
-                      <FaHandPointUp>
-                        <FontAwesomeIcon icon={faHandPointUp} />
-                      </FaHandPointUp>
-                      本次訓練重點
-                    </DescriptionTop>
-                    <DescriptionLine />
-                    <DescriptionInput
-                      name="to_description"
-                      onChange={(e) => setDescription(e.target.value)}
-                      value={description}
-                      maxLength={30}
-                    ></DescriptionInput>
-                  </DescriptionText>
-                  <ToName name="to_name" defaultValue={displayName}></ToName>
-                  <ToEmail name="to_email" defaultValue={email}></ToEmail>
-                </PageOneDetailContent>
-              </form>
-            </PageOneDetail>
-            <PageOnePicOutside>
-              <PageOnePic />
-            </PageOnePicOutside>
-            <TurnOutside>
-              <TurnRight onClick={getPageTwo}>
-                <FontAwesomeIcon icon={faCircleArrowRight} />
-              </TurnRight>
-            </TurnOutside>
-          </TrainingOutsideOne>
-          <TrainingOutsideTwo $isHide={openTrainingTwo}>
-            <Close onClick={closeAddTraining}>
-              <FontAwesomeIcon icon={faCircleXmark} />
-            </Close>
-            <ActionText>
-              <ActionTop>
-                <ActionPicOutside>
-                  <ActionPic src={logo} />
-                </ActionPicOutside>
-                <ActionTitle> 加入菜單動作</ActionTitle>
-              </ActionTop>
-              <ActionLine />
-            </ActionText>
-            <ActionOutside>
-              <ChoiceActionOutsideZone
-                choiceAction={choiceAction}
-                setChoiceAction={setChoiceAction}
-                deleteItem={deleteItem}
-                // calTotalWeight={calTotalWeight}
-                totalWeight={totalWeight}
-                choiceWeight={choiceWeight}
-                setChoiceWeight={setChoiceWeight}
-                choiceTimes={choiceTimes}
-                setChoiceTimes={setChoiceTimes}
-              />
-              <PromoteActionOutsideZone
-                setPart={setPart}
-                promoteActions={promoteActions}
-                addActionItem={addActionItem}
-                openVideo={openVideo}
-                playing={playing}
-                setPlaying={setPlaying}
-              />
-            </ActionOutside>
-            <TrainingOutsideTwoBottom>
-              <CalculationShowZone
-                choiceAction={choiceAction}
-                data={data}
-                dataNull={dataNull}
-                compeleteTrainingSetting={compeleteTrainingSetting}
-                sendEmail={sendEmail}
-              />
-              {videoShow ? (
-                <VideoZone $isHide={videoShow}>
-                  <CloseVideo onClick={closeVideo}>
+        {openTrainingInput && (
+          <>
+            <TrainingOutside $isHide={openTrainingInput} $isActive={pageTwo}>
+              <TrainingOutsideOne $isHide={openTrainingOne}>
+                <PageOneDetail>
+                  <Close onClick={closeAddTraining}>
                     <FontAwesomeIcon icon={faCircleXmark} />
-                  </CloseVideo>
-                  <video autoPlay loop width="100%" controls src={videoUrl}></video>
-                </VideoZone>
-              ) : (
-                <NoVideo>
-                  <NoVideoTitle>範例影片播放區</NoVideoTitle>
-                </NoVideo>
-              )}
-            </TrainingOutsideTwoBottom>
-            <CompeleteTrainingSettingOutside>
-              <CompeleteTrainingSetting
-                type="button"
-                value="submit"
-                onClick={() => {
-                  compeleteTrainingSetting();
-                }}
-              >
-                完成菜單設定
-              </CompeleteTrainingSetting>
-            </CompeleteTrainingSettingOutside>
-            <TurnOutside>
-              <TurnLeft onClick={getPageOne}>
-                <FontAwesomeIcon icon={faCircleArrowLeft} />
-              </TurnLeft>
-            </TurnOutside>
-          </TrainingOutsideTwo>
-        </TrainingOutside>
-        <TrainingBackground $isHide={showHistoryBackground} />
+                  </Close>
+                  <form ref={form}>
+                    <PageOneDetailContent>
+                      <TitleInputText>
+                        <FavoriteTitle>
+                          <Title>
+                            <FaDumbbell>
+                              <FontAwesomeIcon icon={faDumbbell} />
+                            </FaDumbbell>
+                            主題
+                          </Title>
+
+                          <FavoriteSelectOutside
+                            onChange={(e) => setFavoriteChoice(e.target.value)}
+                            defaultValue={null}
+                          >
+                            {favoriteTrainings.length > 0 ? (
+                              <>
+                                <option disabled selected>
+                                  套用喜愛菜單
+                                </option>
+                                {favoriteTrainings.map((item, index) => (
+                                  <option index={index} value={item.docID}>
+                                    {item.title}
+                                  </option>
+                                ))}
+                              </>
+                            ) : (
+                              <option disabled selected>
+                                無喜愛菜單
+                              </option>
+                            )}
+                          </FavoriteSelectOutside>
+                        </FavoriteTitle>
+                        <TitleInputLine />
+                        <TitleInput
+                          onChange={(e) => setTitle(e.target.value)}
+                          name="to_title"
+                          value={title}
+                          maxLength={10}
+                        ></TitleInput>
+                      </TitleInputText>
+                      <TitleRemind>＊最多輸入10字</TitleRemind>
+                      <DateInputText>
+                        <DateInputTop>
+                          <FaCalendarDays>
+                            <FontAwesomeIcon icon={faCalendarDays} />
+                          </FaCalendarDays>
+                          日期
+                        </DateInputTop>
+                        <DateInputLine />
+                        <DateInput
+                          type="date"
+                          onChange={(e) => setDate(e.target.value)}
+                          name="to_date"
+                          value={date}
+                        ></DateInput>
+                      </DateInputText>
+                      <DescriptionText>
+                        <DescriptionTop>
+                          <FaHandPointUp>
+                            <FontAwesomeIcon icon={faHandPointUp} />
+                          </FaHandPointUp>
+                          本次訓練重點
+                        </DescriptionTop>
+                        <DescriptionLine />
+                        <DescriptionInput
+                          name="to_description"
+                          onChange={(e) => setDescription(e.target.value)}
+                          value={description}
+                          maxLength={30}
+                        ></DescriptionInput>
+                      </DescriptionText>
+                      <DescriptionRemind>＊最多輸入30字</DescriptionRemind>
+                      <ToName name="to_name" defaultValue={displayName}></ToName>
+                      <ToEmail name="to_email" defaultValue={email}></ToEmail>
+                    </PageOneDetailContent>
+                  </form>
+                </PageOneDetail>
+                <PageOnePicOutside>
+                  <PageOnePic />
+                </PageOnePicOutside>
+                <TurnOutside>
+                  <TurnRight onClick={getPageTwo}>
+                    <FontAwesomeIcon icon={faCircleArrowRight} />
+                  </TurnRight>
+                </TurnOutside>
+              </TrainingOutsideOne>
+              <TrainingOutsideTwo $isHide={openTrainingTwo}>
+                <Close onClick={closeAddTraining}>
+                  <FontAwesomeIcon icon={faCircleXmark} />
+                </Close>
+                <ActionText>
+                  <ActionTop>
+                    <ActionPicOutside>
+                      <ActionPic src={logo} />
+                    </ActionPicOutside>
+                    <ActionTitle> 加入菜單動作</ActionTitle>
+                  </ActionTop>
+                  <ActionLine />
+                </ActionText>
+                <ActionOutside>
+                  <ChoiceActionOutsideZone
+                    choiceAction={choiceAction}
+                    setChoiceAction={setChoiceAction}
+                    deleteItem={deleteItem}
+                    totalWeight={totalWeight}
+                    choiceWeight={choiceWeight}
+                    setChoiceWeight={setChoiceWeight}
+                    choiceTimes={choiceTimes}
+                    setChoiceTimes={setChoiceTimes}
+                  />
+                  <PromoteActionOutsideZone
+                    setPart={setPart}
+                    promoteActions={promoteActions}
+                    addActionItem={addActionItem}
+                    openVideo={openVideo}
+                    playing={playing}
+                    setPlaying={setPlaying}
+                  />
+                </ActionOutside>
+                <TrainingOutsideTwoBottom>
+                  <CalculationShowZone
+                    choiceAction={choiceAction}
+                    data={data}
+                    dataNull={dataNull}
+                    compeleteTrainingSetting={compeleteTrainingSetting}
+                    sendEmail={sendEmail}
+                  />
+                  {videoShow ? (
+                    <VideoZone $isHide={videoShow}>
+                      <CloseVideo onClick={closeVideo}>
+                        <FontAwesomeIcon icon={faCircleXmark} />
+                      </CloseVideo>
+                      <video autoPlay loop width="100%" controls src={videoUrl}></video>
+                    </VideoZone>
+                  ) : (
+                    <NoVideo>
+                      <NoVideoTitle>範例影片播放區</NoVideoTitle>
+                    </NoVideo>
+                  )}
+                </TrainingOutsideTwoBottom>
+                <CompeleteTrainingSettingOutside>
+                  <CompeleteTrainingSetting
+                    type="button"
+                    value="submit"
+                    onClick={() => {
+                      compeleteTrainingSetting();
+                    }}
+                  >
+                    完成菜單設定
+                  </CompeleteTrainingSetting>
+                </CompeleteTrainingSettingOutside>
+                <TurnOutside>
+                  <TurnLeft onClick={getPageOne}>
+                    <FontAwesomeIcon icon={faCircleArrowLeft} />
+                  </TurnLeft>
+                </TurnOutside>
+              </TrainingOutsideTwo>
+            </TrainingOutside>
+            <TrainingBackground $isHide={showHistoryBackground} />
+          </>
+        )}
       </Wrapper>
     </>
   );
@@ -832,6 +864,103 @@ const LoadingBlocks = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+const DeleteAlertOutside = styled.div`
+  display: flex;
+  padding: 15px;
+  width: 400px;
+  background: #475260;
+  border: 5px solid #74c6cc;
+  border-radius: 20px;
+  position: absolute;
+  top: calc(20% - 85px);
+  left: calc(50% - 200px);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const DeletePic = styled.div`
+  color: #ffd700;
+  font-size: 40px;
+  margin-right: 20px;
+`;
+
+const DeleteContent = styled.div`
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 30px;
+  margin-top: 10px;
+  letter-spacing: 6px;
+`;
+const DeleteButton = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
+`;
+
+const YesOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 50px;
+  color: black;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-right: 30px;
+  &:hover {
+    background: red;
+    color: black;
+  }
+`;
+
+const Yes = styled.div`
+  padding: 3px;
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-weight: 600;
+`;
+
+const NoOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 50px;
+  color: black;
+  cursor: pointer;
+  border-radius: 10px;
+  &:hover {
+    background: white;
+    color: black;
+  }
+  @media screen and (max-width: 767px) {
+    width: 120px;
+    margin: 40px 20px 40px 0px;
+  }
+`;
+
+const No = styled.div`
+  padding: 3px;
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-weight: 600;
+`;
+
+const DeleteBackground = styled.div`
+  background: black;
+  top: 0;
+  opacity: 50%;
+  z-index: 60;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
 `;
 
 const Wrapper = styled.div`
@@ -927,7 +1056,6 @@ const AddTrainingTableOutside = styled.div`
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;
-  ${'' /* animation-name: light; */}
   animation-duration: 2.5s;
   animation-iteration-count: infinite;
   &:hover {
@@ -971,7 +1099,6 @@ const ManageFavoriteTrainingOutside = styled.div`
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;
-  ${'' /* animation-name: light; */}
   animation-duration: 2.5s;
   animation-iteration-count: infinite;
   &:hover {
@@ -1094,6 +1221,13 @@ const Title = styled.div`
   }
 `;
 
+const TitleRemind = styled.div`
+  color: #cd5c5c;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-top: 4px;
+`;
+
 const FaDumbbell = styled.div`
   margin-right: 10px;
 `;
@@ -1185,6 +1319,13 @@ const DescriptionText = styled.div`
   @media screen and (max-width: 767px) {
     font-size: 20px;
   }
+`;
+
+const DescriptionRemind = styled.div`
+  color: #cd5c5c;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-top: -3px;
 `;
 
 const DescriptionTop = styled.div`
@@ -1422,7 +1563,7 @@ const TrainingBackground = styled.div`
   position: fixed;
   width: 100vw;
   height: 100vh;
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
+  display: ${(props) => (props.$isHide ? 'block' : 'none')};
 `;
 
 const CompeleteTrainingSettingOutside = styled.div`

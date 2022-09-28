@@ -56,7 +56,7 @@ const ChoiceActionOutsideZone = (props) => {
                                   newArray[index] = newObject;
                                   props.setChoiceAction(newArray);
                                 }}
-                                maxLength={3}
+                                maxLength={5}
                                 defaultValue={item.weight}
                                 placeholder="0"
                               />
@@ -72,7 +72,7 @@ const ChoiceActionOutsideZone = (props) => {
                                   newArray[index] = newObject;
                                   props.setChoiceAction(newArray);
                                 }}
-                                maxLength={3}
+                                maxLength={5}
                                 placeholder="0"
                               />
                               KG
@@ -125,12 +125,16 @@ const ChoiceActionOutsideZone = (props) => {
                   </Draggable>
                 ))}
                 {provided.placeholder}
+                <ChoiceActionRemind>＊請輸入阿拉伯數字</ChoiceActionRemind>
               </div>
             )}
           </Droppable>
         </DragDropContext>
       ) : (
-        <NoAcitons>可拖曳調整動作順序</NoAcitons>
+        <>
+          {' '}
+          <NoAcitons>可拖曳調整動作順序</NoAcitons>
+        </>
       )}
     </ChoiceActionOutside>
   );
@@ -182,31 +186,6 @@ const TotalZone = styled.div`
   }
 `;
 
-// const TotalWeightButtonOutside = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   background: #74c6cc;
-//   width: 120px;
-//   color: black;
-//   cursor: pointer;
-//   &:hover {
-//     background: white;
-//     color: black;
-//   }
-//   @media screen and (max-width: 767px) {
-//     margin-bottom: 10px;
-//   }
-// `;
-
-// const TotalWeightButton = styled.div`
-//   cursor: pointer;
-//   padding: 5px;
-//   font-size: 18px;
-//   letter-spacing: 1.2px;
-//   font-weight: 600;
-// `;
-
 const TotalWeight = styled.div`
   color: ${(props) => (props.$isActive ? '#74c6cc' : 'white')};
   scale: 1;
@@ -241,6 +220,14 @@ const NoAcitons = styled.div`
   border: 1px solid #818a8e;
   padding: 20px 10px 20px 10px;
   color: white;
+`;
+
+const ChoiceActionRemind = styled.div`
+  color: #cd5c5c;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-top: -3px;
+  margin-left: 9px;
 `;
 
 const ChoiceItemOutside = styled.div`

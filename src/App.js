@@ -321,7 +321,7 @@ const AlertLine = styled.div`
   justify-content: start;
   align-items: start;
   height: 5px;
-  background: #219ebc;
+  background: #74c6cc;
   position: absolute;
   bottom: 0px;
   left: 0px;
@@ -340,7 +340,7 @@ const AlertLine = styled.div`
 const Check = styled.div`
   font-size: 30px;
   margin-right: 14px;
-  color: #219ebc;
+  color: #74c6cc;
 `;
 
 const SignInOutside = styled.div``;

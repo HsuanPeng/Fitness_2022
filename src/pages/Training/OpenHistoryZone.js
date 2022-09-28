@@ -58,9 +58,6 @@ const OpenHistoryZone = (props) => {
     setContent,
   } = useContext(UserContext);
 
-  //點擊過完成鍛鍊後，該按鈕消失
-  // const [showCompleteTrainingButton, setShowCompleteTrainingButton] = useState(true);
-
   //從useScript拿
   const API = useScript('https://apis.google.com/js/api.js');
   const Accounts = useScript('https://accounts.google.com/gsi/client');
@@ -321,7 +318,7 @@ const OpenHistoryZone = (props) => {
           </Detail>
           <DescriptionComplete>
             <Description>本次訓練重點：{props.showHistory.description}</Description>
-            <Complete $isComplete={props.isComplete}>狀態：{props.showHistory.complete}</Complete>
+            <Complete>狀態：{props.showHistory.complete}</Complete>
           </DescriptionComplete>
         </HistoryTop>
         {props.showHistoryActions.map((item) => {
