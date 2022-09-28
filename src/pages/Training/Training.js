@@ -345,21 +345,8 @@ const Training = () => {
     setChoiceAction(newNextChoiceAction);
   }
 
-  // console.log(choiceWeight);
-
   //加總每個動作的重量
-  // useEffect(() => {
-  //   let re = /^[0-9]+.?[0-9]*$/;
-  //   const total = choiceAction.reduce((prev, item) => prev + item.weight * item.times, 0);
-  //   if (!re.test(total)) {
-  //     alertPop();
-  //     setContent('請輸入數字');
-  //   } else {
-  //     setTotalWeight(total);
-  //   }
-  // }, [choiceAction, choiceWeight, choiceTimes]);
-
-  function calTotalWeight() {
+  useEffect(() => {
     let re = /^[0-9]+.?[0-9]*$/;
     const total = choiceAction.reduce((prev, item) => prev + item.weight * item.times, 0);
     if (!re.test(total)) {
@@ -368,7 +355,7 @@ const Training = () => {
     } else {
       setTotalWeight(total);
     }
-  }
+  }, [choiceAction, choiceWeight, choiceTimes]);
 
   // ＝＝＝＝＝＝＝＝＝＝加入動作＝＝＝＝＝＝＝＝＝＝＝
 
@@ -767,7 +754,7 @@ const Training = () => {
                 choiceAction={choiceAction}
                 setChoiceAction={setChoiceAction}
                 deleteItem={deleteItem}
-                calTotalWeight={calTotalWeight}
+                // calTotalWeight={calTotalWeight}
                 totalWeight={totalWeight}
                 choiceWeight={choiceWeight}
                 setChoiceWeight={setChoiceWeight}

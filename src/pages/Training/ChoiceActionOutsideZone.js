@@ -21,9 +21,6 @@ const ChoiceActionOutsideZone = (props) => {
   return (
     <ChoiceActionOutside>
       <TotalZone>
-        <TotalWeightButtonOutside>
-          <TotalWeightButton onClick={props.calTotalWeight}>計算總重量</TotalWeightButton>
-        </TotalWeightButtonOutside>
         <TotalWeight>總重量：{props.totalWeight} KG</TotalWeight>
         <TotalActionNumbers>動作數：{props.choiceAction.length} 個</TotalActionNumbers>
       </TotalZone>
@@ -53,8 +50,11 @@ const ChoiceActionOutsideZone = (props) => {
                             <>
                               <Weight
                                 onChange={(e) => {
-                                  props.choiceAction[index].weight = e.target.value;
-                                  props.setChoiceWeight(e.target.value);
+                                  const newObject = { ...props.choiceAction[index] };
+                                  const newArray = [...props.choiceAction];
+                                  newObject.weight = e.target.value;
+                                  newArray[index] = newObject;
+                                  props.setChoiceAction(newArray);
                                 }}
                                 maxLength={3}
                                 defaultValue={item.weight}
@@ -66,8 +66,11 @@ const ChoiceActionOutsideZone = (props) => {
                             <>
                               <Weight
                                 onChange={(e) => {
-                                  props.choiceAction[index].weight = e.target.value;
-                                  props.setChoiceWeight(e.target.value);
+                                  const newObject = { ...props.choiceAction[index] };
+                                  const newArray = [...props.choiceAction];
+                                  newObject.weight = e.target.value;
+                                  newArray[index] = newObject;
+                                  props.setChoiceAction(newArray);
                                 }}
                                 maxLength={3}
                                 placeholder="0"
@@ -81,8 +84,11 @@ const ChoiceActionOutsideZone = (props) => {
                             <>
                               <Times
                                 onChange={(e) => {
-                                  props.choiceAction[index].times = e.target.value;
-                                  props.setChoiceTimes(e.target.value);
+                                  const newObject = { ...props.choiceAction[index] };
+                                  const newArray = [...props.choiceAction];
+                                  newObject.times = e.target.value;
+                                  newArray[index] = newObject;
+                                  props.setChoiceAction(newArray);
                                 }}
                                 maxLength={2}
                                 defaultValue={item.times}
@@ -94,8 +100,11 @@ const ChoiceActionOutsideZone = (props) => {
                             <>
                               <Times
                                 onChange={(e) => {
-                                  props.choiceAction[index].times = e.target.value;
-                                  props.setChoiceTimes(e.target.value);
+                                  const newObject = { ...props.choiceAction[index] };
+                                  const newArray = [...props.choiceAction];
+                                  newObject.times = e.target.value;
+                                  newArray[index] = newObject;
+                                  props.setChoiceAction(newArray);
                                 }}
                                 maxLength={2}
                                 placeholder="0"
@@ -162,7 +171,7 @@ const TotalZone = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 15px 10px;
+  margin: 17px 10px 15px 10px;
   color: white;
   margin-right: 30px;
   @media screen and (max-width: 767px) {
@@ -173,30 +182,30 @@ const TotalZone = styled.div`
   }
 `;
 
-const TotalWeightButtonOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #74c6cc;
-  width: 120px;
-  color: black;
-  cursor: pointer;
-  &:hover {
-    background: white;
-    color: black;
-  }
-  @media screen and (max-width: 767px) {
-    margin-bottom: 10px;
-  }
-`;
+// const TotalWeightButtonOutside = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   background: #74c6cc;
+//   width: 120px;
+//   color: black;
+//   cursor: pointer;
+//   &:hover {
+//     background: white;
+//     color: black;
+//   }
+//   @media screen and (max-width: 767px) {
+//     margin-bottom: 10px;
+//   }
+// `;
 
-const TotalWeightButton = styled.div`
-  cursor: pointer;
-  padding: 5px;
-  font-size: 18px;
-  letter-spacing: 1.2px;
-  font-weight: 600;
-`;
+// const TotalWeightButton = styled.div`
+//   cursor: pointer;
+//   padding: 5px;
+//   font-size: 18px;
+//   letter-spacing: 1.2px;
+//   font-weight: 600;
+// `;
 
 const TotalWeight = styled.div`
   color: ${(props) => (props.$isActive ? '#74c6cc' : 'white')};

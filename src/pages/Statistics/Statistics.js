@@ -126,7 +126,7 @@ const Statistics = () => {
   async function writeBodyFat(index) {
     if (isLoggedIn) {
       try {
-        let re = /^[0-9]+.?[0-9]*$/;
+        let re = /^[0-9]*$/;
         if (!re.test(fatNumberInput)) {
           alertPop();
           setContent('請輸入數字');
@@ -257,13 +257,11 @@ const Statistics = () => {
     }
   }, [isLoggedIn, showFatRecord, showWeightRecord]);
 
-  console.log(weightNumberInput);
-
   //登錄資料
   async function writeBodyWeight(index) {
     if (isLoggedIn) {
       try {
-        let re = /^[0-9]+.?[0-9]*$/;
+        let re = /^[0-9]*$/;
         if (!re.test(weightNumberInput)) {
           alertPop();
           setContent('請填寫數字');

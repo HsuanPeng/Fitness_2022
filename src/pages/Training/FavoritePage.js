@@ -197,6 +197,7 @@ const FavoritePage = (props) => {
                           $isClick={index == pickName}
                           onChange={(e) => setNewName(e.target.value)}
                           defaultValue={item.title}
+                          maxLength={10}
                         />
                         <UpdateName
                           index={index}

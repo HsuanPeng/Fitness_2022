@@ -16,6 +16,7 @@ const BodyWeightDataPage = (props) => {
             type="date"
             onChange={(e) => props.setWeightDateInput(e.target.value)}
             value={props.weightDateInput}
+            max={new window.Date().toISOString().split('T')[0]}
           ></BodyWeightDateInput>
         </Date>
         <Weight>

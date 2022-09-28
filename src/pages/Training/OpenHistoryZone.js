@@ -377,7 +377,7 @@ const OpenHistoryZone = (props) => {
                   }}
                 >
                   選擇檔案
-                  <input type="file" style={{ display: 'none' }} />
+                  <input type="file" accept=".png,.jpg,.JPG,.jpeg" style={{ display: 'none' }} />
                 </AddPhotoInput>
               )}
             </AddPhotoOutside>
