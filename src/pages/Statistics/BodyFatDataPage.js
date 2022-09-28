@@ -16,6 +16,7 @@ const BodyFatDataPage = (props) => {
             type="date"
             onChange={(e) => props.setFatDateInput(e.target.value)}
             value={props.fatDateInput}
+            max={new window.Date().toISOString().split('T')[0]}
           ></BodyFatDateInput>
         </Date>
         <Fat>

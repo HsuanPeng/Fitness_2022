@@ -89,7 +89,7 @@ const PromoteActionOutside = styled.div`
 const PromoteTop = styled.div`
   display: flex;
   justify-content: start;
-  margin: 18px 15px;
+  margin: 15px 15px;
 `;
 
 const PartTitle = styled.div`
@@ -126,7 +126,6 @@ const PromoteListOutside = styled.div`
   margin: 10px 0px;
   margin-right: 20px;
   margin-left: 10px;
-  border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
   background: rgba(255, 255, 255, 0.5);
   color: black;

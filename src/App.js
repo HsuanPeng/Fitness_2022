@@ -223,7 +223,6 @@ export default App;
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
-    ${'' /* outline:solid 1px #74c6cc; */}
   }
 
   body {
@@ -236,10 +235,31 @@ const GlobalStyle = createGlobalStyle`
     text-decoration:none;
   }
 
+  input{
+    outline:none;
+    border:none;
+  }
+
+  button{
+    outline:none;
+    border:none;
+  }
+
+  textarea{
+    &:focus {
+    outline: none;
+  }
+  }
+
   #root {
     min-height: 100vh;
     position: relative;
   }
+
+  ::placeholder {
+    color:#DCDCDC;
+    font-family: 'Noto Sans TC', sans-serif;
+}
 `;
 
 const LoadingOutside = styled.div`
