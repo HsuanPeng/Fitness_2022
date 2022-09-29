@@ -266,12 +266,15 @@ const Training = () => {
   //改變狀態
   async function changeCompleteCondition() {
     try {
-      const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
+      const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
       const data = {
         complete: '已完成',
       };
       await updateDoc(docRef, data);
-      trainingData[historyIndex].complete = '已完成';
+      const newArr = [...trainingData];
+      newArr[historyIndex].complete = '已完成';
+      setTrainingData(newArr);
+      setShowHistory(newArr[historyIndex]);
     } catch (e) {
       console.log(e);
     }
@@ -282,6 +285,7 @@ const Training = () => {
     setDeleteAlert(true);
   }
 
+  //真的刪除
   async function confirmDeleteTrainingItem() {
     setLoading(true);
     try {
@@ -350,7 +354,7 @@ const Training = () => {
       alertPop();
       setContent('請輸入數字');
     } else {
-      setTotalWeight(total.toFixed(1));
+      setTotalWeight(Number(total.toFixed(1)));
     }
   }, [choiceAction, choiceWeight, choiceTimes]);
 
@@ -460,10 +464,11 @@ const Training = () => {
   // ＝＝＝＝＝＝＝＝＝＝上傳照片、顯示照片、個別對應＝＝＝＝＝＝＝＝＝＝＝
 
   //上傳後即時顯示
-  async function uploadImage(e) {
+  useEffect(() => {
+    console.log(imageUpload);
     if (imageUpload == null) return;
-    const imageRef = await ref(storage, `${uid}/${pickHistory}`);
-    await uploadBytes(imageRef, imageUpload).then((snapshot) => {
+    const imageRef = ref(storage, `${uid}/${pickHistory}`);
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
         setImageList(url);
         const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
@@ -473,20 +478,9 @@ const Training = () => {
         updateDoc(docRef, data);
         alertPop();
         setContent('照片上傳成功');
-        setImageUpload('');
       });
     });
-  }
-
-  //點到哪個菜單就顯示誰的照片
-  useEffect(() => {
-    const imageListRef = ref(storage, `${uid}/${pickHistory}`);
-    if (imageListRef) {
-      getDownloadURL(imageListRef).then((url) => {
-        setImageList(url);
-      });
-    }
-  }, [showPicture]);
+  }, [imageUpload]);
 
   function closeHistory() {
     setShowHistoryToggle(false);
@@ -572,8 +566,6 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝喜愛動作功能＝＝＝＝＝＝＝＝＝＝＝
 
-  console.log(deleteAlert);
-
   return (
     <>
       <LoadingOutside $isActive={loading}>
@@ -613,6 +605,7 @@ const Training = () => {
           <DeleteBackground />
         </>
       )}
+      {/* <Center /> */}
       <Wrapper>
         <BannerOutside>
           <Banner>
@@ -647,11 +640,13 @@ const Training = () => {
             pickID={pickID}
             setPickID={setPickID}
           />
-          {trainingData.length > 0 ? (
-            <HistoryZone trainingData={trainingData} openHistory={openHistory} />
-          ) : (
-            <NoHistory>尚未建立菜單</NoHistory>
-          )}
+          <HistoryZoneOutside>
+            {trainingData.length > 0 ? (
+              <HistoryZone trainingData={trainingData} openHistory={openHistory} />
+            ) : (
+              <NoHistory>尚未建立菜單</NoHistory>
+            )}
+          </HistoryZoneOutside>
         </TrainingZone>
         <OpenHistoryZone
           showHistory={showHistory}
@@ -667,7 +662,6 @@ const Training = () => {
           setImageUpload={setImageUpload}
           completeTraining={completeTraining}
           setOpenCompleteSetting={setOpenCompleteSetting}
-          uploadImage={uploadImage}
           deleteTrainingItem={deleteTrainingItem}
           choiceAction={choiceAction}
           data={data}
@@ -849,6 +843,40 @@ const Training = () => {
 
 export default Training;
 
+const Center = styled.div`
+  width: 1px;
+  height: 200px;
+  margin: 0 auto;
+  background: red;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 300;
+`;
+
+const HistoryZoneOutside = styled.div`
+  max-height: 800px;
+  overflow-y: scroll;
+  margin: 0 auto;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: transparent;
+  }
+`;
+
 const LoadingOutside = styled.div`
   position: fixed;
   z-index: 2000;
@@ -874,12 +902,17 @@ const DeleteAlertOutside = styled.div`
   border: 5px solid #74c6cc;
   border-radius: 20px;
   position: absolute;
-  top: calc(20% - 85px);
+  top: 35%;
   left: calc(50% - 200px);
   z-index: 100;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  @media screen and (max-width: 767px) {
+    padding: 10px;
+    width: 300px;
+    left: calc(50% - 150px);
+  }
 `;
 
 const DeletePic = styled.div`
@@ -895,6 +928,11 @@ const DeleteContent = styled.div`
   font-size: 30px;
   margin-top: 10px;
   letter-spacing: 6px;
+  @media screen and (max-width: 767px) {
+    margin-top: 0px;
+    font-size: 25px;
+    letter-spacing: 4px;
+  }
 `;
 const DeleteButton = styled.div`
   display: flex;
@@ -939,10 +977,6 @@ const NoOutside = styled.div`
   &:hover {
     background: white;
     color: black;
-  }
-  @media screen and (max-width: 767px) {
-    width: 120px;
-    margin: 40px 20px 40px 0px;
   }
 `;
 
@@ -1052,7 +1086,7 @@ const AddTrainingTableOutside = styled.div`
   align-items: center;
   background: #74c6cc;
   width: 180px;
-  margin: 40px 40px 40px 20px;
+  margin: 40px 20px 40px auto;
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;
@@ -1094,8 +1128,8 @@ const ManageFavoriteTrainingOutside = styled.div`
   justify-content: center;
   align-items: center;
   background: #74c6cc;
-  width: 200px;
-  margin: 40px auto 40px auto;
+  width: 180px;
+  margin: 40px auto 40px 20px;
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;

@@ -41,7 +41,6 @@ const HistoryOutside = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   max-width: 1200px;
-  width: 95%;
   margin: 0 auto;
   @media screen and (max-width: 1279px) {
     max-width: 800px;
@@ -87,7 +86,6 @@ const HistoryItemsOutside = styled.div`
   background: #475260;
   padding: 20px;
   font-size: 16px;
-  width: 45%;
   border-top: 0.5rem solid #74c6cc;
   &:hover {
     ${Mask} {
@@ -96,9 +94,6 @@ const HistoryItemsOutside = styled.div`
     ${MaskText} {
       opacity: 100%;
     }
-  }
-  @media screen and (max-width: 1279px) {
-    width: 540px;
   }
   @media screen and (max-width: 767px) {
     flex-direction: column;
@@ -124,6 +119,7 @@ const NoPic = styled.div``;
 
 const HistoryPicOutside = styled.div`
   height: 180px;
+  width: 200px;
 `;
 
 const HistoryPic = styled.img`
@@ -135,11 +131,11 @@ const HistoryPic = styled.img`
 `;
 
 const HistoryRight = styled.div`
-  width: 250px;
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  margin-left: 18px;
 `;
 
 const HistoryTitle = styled.span`
@@ -153,25 +149,25 @@ const HistoryTitle = styled.span`
   }
 `;
 const HistoryDate = styled.div`
-  font-size: 18px;
+  font-size: 20px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryWeight = styled.div`
-  font-size: 18px;
+  font-size: 20px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryTimes = styled.div`
-  font-size: 18px;
+  font-size: 20px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }
 `;
 const HistoryComplete = styled.div`
-  font-size: 18px;
+  font-size: 20px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }

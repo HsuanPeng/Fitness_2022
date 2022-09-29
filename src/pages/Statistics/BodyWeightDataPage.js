@@ -25,6 +25,7 @@ const BodyWeightDataPage = (props) => {
             onChange={(e) => props.setWeightNumberInput(e.target.value)}
             value={props.weightNumberInput}
             maxLength={6}
+            placeholder="0"
           ></BodyWeightInput>
         </Weight>
         <BodyWeightInputButtonOutside>
@@ -211,7 +212,7 @@ const BodyWeightMeasureDate = styled.div`
 const BodyWeightChange = styled.div`
   margin: 0px 10px;
   text-align: start;
-  width: 138px;
+  width: 148px;
   @media screen and (max-width: 767px) {
     display: none;
   }
@@ -219,7 +220,7 @@ const BodyWeightChange = styled.div`
 
 const BodyWeightResult = styled.div`
   margin-left: 15px;
-  width: 150px;
+  width: 160px;
   @media screen and (max-width: 580px) {
     margin-right: 0px;
     margin-top: 10px;
@@ -233,7 +234,7 @@ const BodyWeightDelete = styled.div`
   cursor: pointer;
   text-align: center;
   color: black;
-  width: 50px;
+  width: 30px;
   &:hover {
     color: red;
   }

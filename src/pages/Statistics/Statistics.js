@@ -126,8 +126,13 @@ const Statistics = () => {
         if (!re.test(fatNumberInput)) {
           alertPop();
           setContent('請輸入數字');
+        } else if (fatNumberInput > 99 || fatNumberInput == 0) {
+          alertPop();
+          setContent('數據不實');
         } else {
           if (fatDateInput !== undefined && fatNumberInput !== undefined && fatDateInput !== '') {
+            setFatNumberInput('');
+            setFatDateInput('');
             const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
             const data = {
               measureDate: fatDateInput,
@@ -135,8 +140,6 @@ const Statistics = () => {
               docID: docRef.id,
             };
             await setDoc(docRef, data);
-            setFatNumberInput('');
-            setFatDateInput('');
           } else {
             alertPop();
             setContent('請填寫完整資料');
@@ -261,8 +264,13 @@ const Statistics = () => {
         if (!re.test(weightNumberInput)) {
           alertPop();
           setContent('請填寫數字');
+        } else if (weightNumberInput > 999 || weightNumberInput == 0) {
+          alertPop();
+          setContent('數據不實');
         } else {
           if (weightDateInput !== undefined && weightNumberInput !== undefined && weightDateInput !== '') {
+            setWeightNumberInput('');
+            setWeightDateInput('');
             const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
             const data = {
               measureDate: weightDateInput,
@@ -270,8 +278,6 @@ const Statistics = () => {
               docID: docRef.id,
             };
             await setDoc(docRef, data);
-            setWeightNumberInput('');
-            setWeightDateInput('');
           } else {
             alertPop();
             setContent('請填寫完整資料');
@@ -597,6 +603,7 @@ const BodyFatLinePageZone = styled.div``;
 const BodyFatLineOutside = styled.div`
   width: 600px;
   margin: 40px auto 0px auto;
+  pointer-events: none;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;
     margin-right: 55px;
@@ -645,6 +652,7 @@ const BodyWeightLinePageZone = styled.div``;
 const BodyWeightLineOutside = styled.div`
   width: 600px;
   margin: 40px auto 0px auto;
+  pointer-events: none;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;
     margin-right: 55px;

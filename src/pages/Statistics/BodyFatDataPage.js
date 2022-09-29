@@ -25,14 +25,15 @@ const BodyFatDataPage = (props) => {
           <BodyFatInput
             onChange={(e) => props.setFatNumberInput(e.target.value)}
             value={props.fatNumberInput}
-            maxLength={5}
+            maxLength={4}
+            placeholder="0"
           ></BodyFatInput>
         </Fat>{' '}
         <BodyFatInputButtonOutside>
           <BodyFatInputButton onClick={props.writeBodyFat}>新增</BodyFatInputButton>
         </BodyFatInputButtonOutside>
       </Top>{' '}
-      <FatRemind>＊體脂肪率請輸入阿拉伯數字，最多5字</FatRemind>
+      <FatRemind>＊體脂肪率請輸入阿拉伯數字，最多4字</FatRemind>
       <Bottom>
         {props.fatRecord.length > 0 ? (
           <>

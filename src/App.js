@@ -257,8 +257,9 @@ const GlobalStyle = createGlobalStyle`
   }
 
   ::placeholder {
-    color:#DCDCDC;
+    color:#D3D3D3;
     font-family: 'Noto Sans TC', sans-serif;
+    letter-spacing:3px;
 }
 `;
 

@@ -318,6 +318,7 @@ const OpenHistoryZone = (props) => {
           </Detail>
           <DescriptionComplete>
             <Description>本次訓練重點：{props.showHistory.description}</Description>
+
             <Complete>狀態：{props.showHistory.complete}</Complete>
           </DescriptionComplete>
         </HistoryTop>
@@ -359,24 +360,14 @@ const OpenHistoryZone = (props) => {
           </PieOutside>
           <HistoryMiddleRight>
             <AddPhotoOutside>
-              {props.imageUpload ? (
-                <UploadButton
-                  onClick={(e) => {
-                    props.uploadImage(e);
-                  }}
-                >
-                  點擊上傳
-                </UploadButton>
-              ) : (
-                <AddPhotoInput
-                  onChange={(event) => {
-                    props.setImageUpload(event.target.files[0]);
-                  }}
-                >
-                  選擇檔案
-                  <input type="file" accept=".png,.jpg,.JPG,.jpeg" style={{ display: 'none' }} />
-                </AddPhotoInput>
-              )}
+              <AddPhotoInput
+                onChange={(event) => {
+                  props.setImageUpload(event.target.files[0]);
+                }}
+              >
+                選擇檔案
+                <input type="file" accept=".png,.jpg,.JPG,.jpeg" style={{ display: 'none' }} />
+              </AddPhotoInput>
             </AddPhotoOutside>
             {props.imageList ? (
               <HistoryImageOutside>
