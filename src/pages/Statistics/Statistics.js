@@ -11,7 +11,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, collection, onSnapshot, query, orderBy, deleteDoc } from 'firebase/firestore';
 
 //chart.js
-import { Line } from 'react-chartjs-2';
+import { Chart, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -174,6 +174,8 @@ const Statistics = () => {
 
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+  ChartJS.defaults.font.size = 20;
+
   const BodyFatData = {
     labels: fatDateLine,
     datasets: [
@@ -183,11 +185,12 @@ const Statistics = () => {
         fill: true,
         backgroundColor: 'rgba(238,141,71,0.2)',
         borderColor: 'rgba(238,141,71,1)',
+        borderWidth: '5',
         plugins: {
           legend: {
             labels: {
               font: {
-                size: 16,
+                size: 20,
               },
             },
           },
@@ -203,6 +206,7 @@ const Statistics = () => {
           padding: 15,
           color: 'white',
         },
+        min: 0,
       },
       x: {
         ticks: { padding: 15, color: 'white' },
@@ -321,6 +325,7 @@ const Statistics = () => {
         fill: true,
         backgroundColor: 'rgba(255,183,3,0.2)',
         borderColor: 'rgba(255,183,3,1)',
+        borderWidth: '5',
         plugins: {
           legend: {
             labels: {

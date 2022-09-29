@@ -318,7 +318,6 @@ const OpenHistoryZone = (props) => {
           </Detail>
           <DescriptionComplete>
             <Description>本次訓練重點：{props.showHistory.description}</Description>
-
             <Complete>狀態：{props.showHistory.complete}</Complete>
           </DescriptionComplete>
         </HistoryTop>
@@ -381,6 +380,9 @@ const OpenHistoryZone = (props) => {
           </HistoryMiddleRight>
         </HistoryMiddle>
         <HistoryBottom>
+          <EditTrainingItemOutside onClick={props.editTraining}>
+            <EditTrainingItem>編輯菜單</EditTrainingItem>
+          </EditTrainingItemOutside>
           {props.showHistory.complete === '已完成' ? null : (
             <CompleteTrainingOutside>
               <CompleteTraining onClick={props.completeTraining} $isHide={props.showCompleteTrainingButton}>
@@ -432,11 +434,11 @@ const OpenHistory = styled.div`
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
-    top: 10%;
+    top: 14%;
     max-width: 700px;
   }
   @media screen and (max-width: 767px) {
-    top: 6%;
+    top: 13%;
     max-width: 320px;
     padding-left: 15px;
     padding-right: 15px;
@@ -759,9 +761,7 @@ const HistoryNoOutside = styled.div`
   }
 `;
 
-const HistoryNo = styled.div`
-  ${'' /* width: 350px; */}
-`;
+const HistoryNo = styled.div``;
 
 const AddPhotoOutside = styled.div`
   display: flex;
@@ -789,45 +789,33 @@ const AddPhotoInput = styled.label`
   }
 `;
 
-const UploadButton = styled.div`
-  text-align: center;
+const HistoryBottom = styled.div`
+  display: flex;
+  margin: 0 auto;
+  max-width: 500px;
+`;
+
+const EditTrainingItemOutside = styled.div`
+  display: flex;
   justify-content: center;
   align-items: center;
   background: #74c6cc;
   width: 120px;
-  margin: 20px 14px;
+  margin: 20px auto;
   color: black;
+  cursor: pointer;
+  &:hover {
+    background: white;
+    color: black;
+  }
+`;
+
+const EditTrainingItem = styled.div`
   cursor: pointer;
   padding: 8px;
   font-size: 18px;
   letter-spacing: 1.2px;
   font-weight: 600;
-  border-radius: 20px;
-  scale: 1;
-  animation-name: scale;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  &:hover {
-    background: white;
-    color: black;
-  }
-  @keyframes scale {
-    0% {
-      scale: 1;
-    }
-    50% {
-      scale: 1.1;
-    }
-    100% {
-      scale: 1;
-    }
-  }
-`;
-
-const HistoryBottom = styled.div`
-  display: flex;
-  margin: 0 auto;
-  max-width: 500px;
 `;
 
 const CompleteTrainingOutside = styled.div`

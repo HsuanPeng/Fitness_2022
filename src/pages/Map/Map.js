@@ -42,7 +42,7 @@ const options = {
 export default function Map() {
   //最一開始load地圖
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_API_KEY,
+    // googleMapsApiKey: process.env.REACT_APP_API_KEY,
     libraries,
   });
 
@@ -70,9 +70,8 @@ export default function Map() {
 
   //找出附近的健身房
   async function nearbyGymsMap({ lat, lng }) {
-    const res = await fetch(
-      `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
-    );
+    const res = await fetch();
+    // `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
 
     const json = await res.json();
     console.log(json);
@@ -153,8 +152,18 @@ export default function Map() {
 //找出我在哪
 function Locate({ panTo }) {
   //UserContext拿資料
-  const { isLoggedIn, setIsLoggedIn, userSignOut, signInWithGoogle, uid, displayName, email, signIn } =
-    useContext(UserContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    userSignOut,
+    signInWithGoogle,
+    uid,
+    displayName,
+    email,
+    signIn,
+    setContent,
+    alertPop,
+  } = useContext(UserContext);
 
   return (
     <>
@@ -177,6 +186,8 @@ function Locate({ panTo }) {
                       () => null
                     )
                   : signIn();
+                alertPop();
+                setContent('請開啟瀏覽器存取權');
               }
             }}
           >

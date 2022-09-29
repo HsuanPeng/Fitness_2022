@@ -132,7 +132,6 @@ const ChoiceActionOutsideZone = (props) => {
         </DragDropContext>
       ) : (
         <>
-          {' '}
           <NoAcitons>可拖曳調整動作順序</NoAcitons>
         </>
       )}
