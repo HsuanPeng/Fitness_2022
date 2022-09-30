@@ -38,8 +38,10 @@ import {
   orderBy,
   updateDoc,
   deleteDoc,
-  where,
+  getDoc,
   getDocs,
+  startAfter,
+  limit,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -72,9 +74,6 @@ const OpenHistoryZone = (props) => {
 
   //判斷日曆狀態
   const [alreadyLoad, setAlreadyLoad] = useState(false);
-
-  //判斷菜單是否加入過
-  const [exists, setExists] = useState(false);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -370,7 +369,8 @@ const OpenHistoryZone = (props) => {
             </AddPhotoOutside>
             {props.imageList ? (
               <HistoryImageOutside>
-                <HistoryImage src={props.imageList} />
+                {props.uploadSkeleton && <UploadSkeleton />}
+                {!props.uploadSkeleton && <HistoryImage src={props.imageList} />}
               </HistoryImageOutside>
             ) : (
               <HistoryNoOutside>
@@ -726,7 +726,6 @@ const HistoryImageOutside = styled.div`
   margin-right: 10px;
   margin-left: 10px;
   margin-top: 10px;
-
   @media screen and (max-width: 767px) {
     width: 300px;
     margin: 0 auto;
@@ -739,6 +738,37 @@ const HistoryImage = styled.img`
   width: 350px;
   height: 280px;
   border: 5px solid #74c6cc;
+  @media screen and (max-width: 767px) {
+    width: 300px;
+    margin: 0 auto;
+  }
+`;
+
+const UploadSkeleton = styled.div`
+  width: 350px;
+  height: 280px;
+  border: 5px solid #74c6cc;
+  border-radius: 12px;
+  background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 80%
+    ),
+    #dcdcdc;
+  background-repeat: repeat-y;
+  background-size: 50px 500px;
+  background-position: 0 0;
+  animation: shine 1s infinite;
+  @keyframes shine {
+    to {
+      background-position: 100% 0;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    margin-left: 0px;
+    margin-top: 12px;
+  }
   @media screen and (max-width: 767px) {
     width: 300px;
     margin: 0 auto;

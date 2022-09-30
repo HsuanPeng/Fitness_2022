@@ -36,20 +36,6 @@ const HistoryZone = (props) => {
 
 export default HistoryZone;
 
-const HistoryOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
-  @media screen and (max-width: 1279px) {
-    max-width: 800px;
-  }
-  @media screen and (max-width: 767px) {
-    max-width: 350px;
-  }
-`;
-
 const MaskText = styled.div`
   color: white;
   font-size: 30px;
@@ -75,6 +61,20 @@ const Mask = styled.div`
   background-color: black;
   opacity: 60%;
   z-index: 5;
+`;
+
+const HistoryOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  @media screen and (max-width: 1279px) {
+    max-width: 800px;
+  }
+  @media screen and (max-width: 767px) {
+    max-width: 350px;
+  }
 `;
 
 const HistoryItemsOutside = styled.div`
@@ -143,7 +143,6 @@ const HistoryTitle = styled.span`
   letter-spacing: 2px;
   color: #74c6cc;
   font-size: 24px;
-  ${'' /* border: 2px double #74c6cc; */}
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }

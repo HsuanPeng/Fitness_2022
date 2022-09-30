@@ -14,6 +14,8 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
+  startAfter,
+  limit,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -25,6 +27,7 @@ import ChoiceActionOutsideZone from './ChoiceActionOutsideZone';
 import PromoteActionOutsideZone from './PromoteActionOutsideZone';
 import CalculationShowZone from './CalculationShowZone';
 import FavoritePage from './FavoritePage';
+import SkeletonPage from './SkeletonPage';
 
 //引入動作菜單
 import ACTIONS from './allActionsLists';
@@ -127,6 +130,7 @@ const Training = () => {
   //loading動畫
   const [loading, setLoading] = useState(false);
   const [skeleton, setSkeleton] = useState(false);
+  const [uploadSkeleton, setUploadSkeleton] = useState(false);
 
   //喜愛動作
   const [favoriteTrainings, setFavoriteTrainings] = useState([]);
@@ -219,6 +223,7 @@ const Training = () => {
       setPageTwo(false);
       if (openTrainingOne !== true && openTrainingTwo !== true && openCompleteSetting !== true)
         setOpenTrainingOne(true);
+      setImageList('');
     } else {
       signIn();
     }
@@ -466,6 +471,7 @@ const Training = () => {
   //上傳後即時顯示
   useEffect(() => {
     if (imageUpload == null) return;
+    setUploadSkeleton(true);
     const imageRef = ref(storage, `${uid}/${pickHistory}`);
     uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
@@ -477,6 +483,9 @@ const Training = () => {
         updateDoc(docRef, data);
         alertPop();
         setContent('照片上傳成功');
+        setTimeout(() => {
+          setUploadSkeleton(false);
+        }, 1500);
       });
     });
   }, [imageUpload]);
@@ -658,88 +667,7 @@ const Training = () => {
           />
           {skeleton && (
             <>
-              <SkeletonOutside>
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>{' '}
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>{' '}
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>{' '}
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>{' '}
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>{' '}
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>{' '}
-                <SkeletonItem>
-                  <SkeletonLeft />
-                  <SkeletonRight>
-                    <SkeletonRightOne />
-                    <SkeletonRightTwo />
-                    <SkeletonRightThree />
-                    <SkeletonRightFour />
-                    <SkeletonRightFive />
-                  </SkeletonRight>
-                </SkeletonItem>
-              </SkeletonOutside>
+              <SkeletonPage />
             </>
           )}
           {trainingData.length > 0 ? (
@@ -754,7 +682,6 @@ const Training = () => {
             <NoHistory>尚未建立菜單</NoHistory>
           )}
         </TrainingZone>
-
         <OpenHistoryZone
           showHistory={showHistory}
           openHistory={openHistory}
@@ -773,6 +700,8 @@ const Training = () => {
           choiceAction={choiceAction}
           data={data}
           editTraining={editTraining}
+          uploadSkeleton={uploadSkeleton}
+          setUploadSkeleton={setUploadSkeleton}
         />
         {openTrainingInput && (
           <>
@@ -977,166 +906,6 @@ const LoadingBlocks = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-`;
-
-const SkeletonOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const SkeletonItem = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  margin: 0px 25px 40px 25px;
-  width: 460px;
-  height: 228px;
-  border: 1px solid white;
-  border-top: 0.5rem solid #74c6cc;
-  background: #a9a9a9;
-`;
-
-const SkeletonLeft = styled.div`
-  height: 180px;
-  width: 200px;
-  border-radius: 5%;
-  margin-left: 5px;
-  background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0) 80%
-    ),
-    #dcdcdc;
-  background-repeat: repeat-y;
-  background-size: 50px 500px;
-  background-position: 0 0;
-  animation: shine 1s infinite;
-  @keyframes shine {
-    to {
-      background-position: 100% 0;
-    }
-  }
-`;
-
-const SkeletonRight = styled.div`
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  margin-left: 10px;
-  margin-right: 8px;
-  height: 180px;
-`;
-
-const SkeletonRightOne = styled.div`
-  width: 202px;
-  height: 34px;
-  border-radius: 15px;
-  background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0) 80%
-    ),
-    #dcdcdc;
-  background-repeat: repeat-y;
-  background-size: 50px 500px;
-  background-position: 0 0;
-  animation: shine 1s infinite;
-  @keyframes shine {
-    to {
-      background-position: 100% 0;
-    }
-  }
-`;
-
-const SkeletonRightTwo = styled.div`
-  width: 202px;
-  height: 27px;
-  background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0) 80%
-    ),
-    #dcdcdc;
-  background-repeat: repeat-y;
-  background-size: 50px 500px;
-  background-position: 0 0;
-  animation: shine 1s infinite;
-  @keyframes shine {
-    to {
-      background-position: 100% 0;
-    }
-  }
-  border-radius: 15px;
-`;
-const SkeletonRightThree = styled.div`
-  width: 202px;
-  height: 27px;
-  background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0) 80%
-    ),
-    #dcdcdc;
-  background-repeat: repeat-y;
-  background-size: 50px 500px;
-  background-position: 0 0;
-  animation: shine 1s infinite;
-  @keyframes shine {
-    to {
-      background-position: 100% 0;
-    }
-  }
-  border-radius: 15px;
-`;
-const SkeletonRightFour = styled.div`
-  width: 202px;
-  height: 27px;
-  background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0) 80%
-    ),
-    #dcdcdc;
-  background-repeat: repeat-y;
-  background-size: 50px 500px;
-  background-position: 0 0;
-  animation: shine 1s infinite;
-  @keyframes shine {
-    to {
-      background-position: 100% 0;
-    }
-  }
-  border-radius: 15px;
-`;
-const SkeletonRightFive = styled.div`
-  width: 202px;
-  height: 27px;
-  background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0) 80%
-    ),
-    #dcdcdc;
-  background-repeat: repeat-y;
-  background-size: 50px 500px;
-  background-position: 0 0;
-  animation: shine 1s infinite;
-  @keyframes shine {
-    to {
-      background-position: 100% 0;
-    }
-  }
-  border-radius: 15px;
 `;
 
 const DeleteAlertOutside = styled.div`
