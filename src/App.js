@@ -287,7 +287,7 @@ const AlertOutside = styled.div`
   width: 350px;
   position: fixed;
   height: 60px;
-  background: #475260;
+  background: #191a1e;
   top: 150px;
   left: -350px;
   z-index: 1000;
