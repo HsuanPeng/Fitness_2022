@@ -257,8 +257,9 @@ const GlobalStyle = createGlobalStyle`
   }
 
   ::placeholder {
-    color:#DCDCDC;
+    color:#D3D3D3;
     font-family: 'Noto Sans TC', sans-serif;
+    letter-spacing:3px;
 }
 `;
 
@@ -286,7 +287,7 @@ const AlertOutside = styled.div`
   width: 350px;
   position: fixed;
   height: 60px;
-  background: #191a1e;
+  background: #475260;
   top: 150px;
   left: -350px;
   z-index: 1000;
@@ -321,7 +322,7 @@ const AlertLine = styled.div`
   justify-content: start;
   align-items: start;
   height: 5px;
-  background: #219ebc;
+  background: #74c6cc;
   position: absolute;
   bottom: 0px;
   left: 0px;
@@ -340,7 +341,7 @@ const AlertLine = styled.div`
 const Check = styled.div`
   font-size: 30px;
   margin-right: 14px;
-  color: #219ebc;
+  color: #74c6cc;
 `;
 
 const SignInOutside = styled.div``;

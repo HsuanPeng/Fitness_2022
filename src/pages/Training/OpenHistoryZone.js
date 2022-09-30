@@ -38,8 +38,10 @@ import {
   orderBy,
   updateDoc,
   deleteDoc,
-  where,
+  getDoc,
   getDocs,
+  startAfter,
+  limit,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -58,9 +60,6 @@ const OpenHistoryZone = (props) => {
     setContent,
   } = useContext(UserContext);
 
-  //點擊過完成鍛鍊後，該按鈕消失
-  // const [showCompleteTrainingButton, setShowCompleteTrainingButton] = useState(true);
-
   //從useScript拿
   const API = useScript('https://apis.google.com/js/api.js');
   const Accounts = useScript('https://accounts.google.com/gsi/client');
@@ -75,9 +74,6 @@ const OpenHistoryZone = (props) => {
 
   //判斷日曆狀態
   const [alreadyLoad, setAlreadyLoad] = useState(false);
-
-  //判斷菜單是否加入過
-  const [exists, setExists] = useState(false);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -321,7 +317,7 @@ const OpenHistoryZone = (props) => {
           </Detail>
           <DescriptionComplete>
             <Description>本次訓練重點：{props.showHistory.description}</Description>
-            <Complete $isComplete={props.isComplete}>狀態：{props.showHistory.complete}</Complete>
+            <Complete>狀態：{props.showHistory.complete}</Complete>
           </DescriptionComplete>
         </HistoryTop>
         {props.showHistoryActions.map((item) => {
@@ -362,28 +358,19 @@ const OpenHistoryZone = (props) => {
           </PieOutside>
           <HistoryMiddleRight>
             <AddPhotoOutside>
-              {props.imageUpload ? (
-                <UploadButton
-                  onClick={(e) => {
-                    props.uploadImage(e);
-                  }}
-                >
-                  點擊上傳
-                </UploadButton>
-              ) : (
-                <AddPhotoInput
-                  onChange={(event) => {
-                    props.setImageUpload(event.target.files[0]);
-                  }}
-                >
-                  選擇檔案
-                  <input type="file" accept=".png,.jpg,.JPG,.jpeg" style={{ display: 'none' }} />
-                </AddPhotoInput>
-              )}
+              <AddPhotoInput
+                onChange={(event) => {
+                  props.setImageUpload(event.target.files[0]);
+                }}
+              >
+                選擇檔案
+                <input type="file" accept=".png,.jpg,.JPG,.jpeg" style={{ display: 'none' }} />
+              </AddPhotoInput>
             </AddPhotoOutside>
             {props.imageList ? (
               <HistoryImageOutside>
-                <HistoryImage src={props.imageList} />
+                {props.uploadSkeleton && <UploadSkeleton />}
+                {!props.uploadSkeleton && <HistoryImage src={props.imageList} />}
               </HistoryImageOutside>
             ) : (
               <HistoryNoOutside>
@@ -393,6 +380,9 @@ const OpenHistoryZone = (props) => {
           </HistoryMiddleRight>
         </HistoryMiddle>
         <HistoryBottom>
+          <EditTrainingItemOutside onClick={props.editTraining}>
+            <EditTrainingItem>編輯菜單</EditTrainingItem>
+          </EditTrainingItemOutside>
           {props.showHistory.complete === '已完成' ? null : (
             <CompleteTrainingOutside>
               <CompleteTraining onClick={props.completeTraining} $isHide={props.showCompleteTrainingButton}>
@@ -444,11 +434,11 @@ const OpenHistory = styled.div`
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
-    top: 10%;
+    top: 14%;
     max-width: 700px;
   }
   @media screen and (max-width: 767px) {
-    top: 6%;
+    top: 13%;
     max-width: 320px;
     padding-left: 15px;
     padding-right: 15px;
@@ -736,7 +726,6 @@ const HistoryImageOutside = styled.div`
   margin-right: 10px;
   margin-left: 10px;
   margin-top: 10px;
-
   @media screen and (max-width: 767px) {
     width: 300px;
     margin: 0 auto;
@@ -749,6 +738,37 @@ const HistoryImage = styled.img`
   width: 350px;
   height: 280px;
   border: 5px solid #74c6cc;
+  @media screen and (max-width: 767px) {
+    width: 300px;
+    margin: 0 auto;
+  }
+`;
+
+const UploadSkeleton = styled.div`
+  width: 350px;
+  height: 280px;
+  border: 5px solid #74c6cc;
+  border-radius: 12px;
+  background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 80%
+    ),
+    #dcdcdc;
+  background-repeat: repeat-y;
+  background-size: 50px 500px;
+  background-position: 0 0;
+  animation: shine 1s infinite;
+  @keyframes shine {
+    to {
+      background-position: 100% 0;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    margin-left: 0px;
+    margin-top: 12px;
+  }
   @media screen and (max-width: 767px) {
     width: 300px;
     margin: 0 auto;
@@ -771,9 +791,7 @@ const HistoryNoOutside = styled.div`
   }
 `;
 
-const HistoryNo = styled.div`
-  ${'' /* width: 350px; */}
-`;
+const HistoryNo = styled.div``;
 
 const AddPhotoOutside = styled.div`
   display: flex;
@@ -801,45 +819,33 @@ const AddPhotoInput = styled.label`
   }
 `;
 
-const UploadButton = styled.div`
-  text-align: center;
+const HistoryBottom = styled.div`
+  display: flex;
+  margin: 0 auto;
+  max-width: 500px;
+`;
+
+const EditTrainingItemOutside = styled.div`
+  display: flex;
   justify-content: center;
   align-items: center;
   background: #74c6cc;
   width: 120px;
-  margin: 20px 14px;
+  margin: 20px auto;
   color: black;
+  cursor: pointer;
+  &:hover {
+    background: white;
+    color: black;
+  }
+`;
+
+const EditTrainingItem = styled.div`
   cursor: pointer;
   padding: 8px;
   font-size: 18px;
   letter-spacing: 1.2px;
   font-weight: 600;
-  border-radius: 20px;
-  scale: 1;
-  animation-name: scale;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  &:hover {
-    background: white;
-    color: black;
-  }
-  @keyframes scale {
-    0% {
-      scale: 1;
-    }
-    50% {
-      scale: 1.1;
-    }
-    100% {
-      scale: 1;
-    }
-  }
-`;
-
-const HistoryBottom = styled.div`
-  display: flex;
-  margin: 0 auto;
-  max-width: 500px;
 `;
 
 const CompleteTrainingOutside = styled.div`

@@ -22,7 +22,7 @@ import trainingBanner from '../../images/Equipment-rack-in-gym-563854.JPG';
 //FontAwesomeIcon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlassLocation } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlassLocation, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 const libraries = ['places'];
 
@@ -42,7 +42,7 @@ const options = {
 export default function Map() {
   //最一開始load地圖
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_API_KEY,
+    // googleMapsApiKey: process.env.REACT_APP_API_KEY,
     libraries,
   });
 
@@ -70,9 +70,8 @@ export default function Map() {
 
   //找出附近的健身房
   async function nearbyGymsMap({ lat, lng }) {
-    const res = await fetch(
-      `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
-    );
+    const res = await fetch();
+    // `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
 
     const json = await res.json();
     console.log(json);
@@ -89,9 +88,10 @@ export default function Map() {
           <BannerText>找出離你最近的健身房！</BannerText>
         </Banner>
       </BannerOutside>
-
-      <Locate panTo={panTo} />
-      <Search panTo={panTo} />
+      <ButtonOutside>
+        <Locate panTo={panTo} />
+        <Search panTo={panTo} />
+      </ButtonOutside>
       <GoogleMapOutside>
         <GoogleMap
           id="map"
@@ -152,31 +152,50 @@ export default function Map() {
 //找出我在哪
 function Locate({ panTo }) {
   //UserContext拿資料
-  const { isLoggedIn, setIsLoggedIn, userSignOut, signInWithGoogle, uid, displayName, email, signIn } =
-    useContext(UserContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    userSignOut,
+    signInWithGoogle,
+    uid,
+    displayName,
+    email,
+    signIn,
+    setContent,
+    alertPop,
+  } = useContext(UserContext);
 
   return (
-    <LocateButtonOutside>
-      <LocateButton
-        onClick={() => {
-          {
-            isLoggedIn
-              ? navigator.geolocation.getCurrentPosition(
-                  (position) => {
-                    panTo({
-                      lat: position.coords.latitude,
-                      lng: position.coords.longitude,
-                    });
-                  },
-                  () => null
-                )
-              : signIn();
-          }
-        }}
-      >
-        找出我附近的健身房
-      </LocateButton>
-    </LocateButtonOutside>
+    <>
+      <LocationOutside>
+        <LocatePic>
+          <FontAwesomeIcon icon={faMapLocationDot} />
+        </LocatePic>
+        <LocateButtonOutside>
+          <LocateButton
+            onClick={() => {
+              {
+                isLoggedIn
+                  ? navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        panTo({
+                          lat: position.coords.latitude,
+                          lng: position.coords.longitude,
+                        });
+                      },
+                      () => null
+                    )
+                  : signIn();
+                alertPop();
+                setContent('請開啟瀏覽器存取權');
+              }
+            }}
+          >
+            找出我附近的健身房
+          </LocateButton>
+        </LocateButtonOutside>
+      </LocationOutside>
+    </>
   );
 }
 
@@ -246,11 +265,13 @@ function Search({ panTo }) {
           disabled={!ready}
           placeholder="輸入地點找尋健身房"
           style={{
-            width: '280px',
+            width: '240px',
+            textAlign: 'center',
             borderRadius: '5px',
             height: '40px',
             border: 'none',
             paddingLeft: '5px',
+            paddingTop: '2px',
             fontSize: '20px',
             border: '2px solid black',
             letterSpacing: '1px',
@@ -321,10 +342,15 @@ const BannerText = styled.div`
   }
 `;
 
-const GoogleMapOutside = styled.div`
+const ButtonOutside = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 80px;
+  align-items: center;
+  max-width: 800px;
+  margin: 40px auto;
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+  }
 `;
 
 const LocateButtonOutside = styled.div`
@@ -333,28 +359,27 @@ const LocateButtonOutside = styled.div`
   align-items: center;
   background: #74c6cc;
   width: 260px;
-  margin: 40px auto 40px auto;
+  margin-right: 20px;
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;
-  animation-name: light;
-  animation-duration: 2.5s;
-  animation-iteration-count: infinite;
   &:hover {
     background: white;
     color: black;
   }
-  @keyframes light {
-    0% {
-      box-shadow: 0px 0px 0px white;
-    }
-    50% {
-      box-shadow: 0px 0px 20px white;
-    }
-    100% {
-      box-shadow: 0px 0px 0px white;
-    }
+  @media screen and (max-width: 767px) {
+    margin-right: 0px;
   }
+`;
+
+const LocationOutside = styled.div`
+  display: flex;
+`;
+
+const LocatePic = styled.div`
+  color: #74c6cc;
+  font-size: 30px;
+  margin-right: 20px;
 `;
 
 const LocateButton = styled.div`
@@ -362,6 +387,37 @@ const LocateButton = styled.div`
   font-size: 23px;
   letter-spacing: 2px;
   font-weight: 600;
+`;
+
+const ComboboxOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  @media screen and (max-width: 767px) {
+    margin-top: 30px;
+  }
+`;
+
+const ComboboxPic = styled.div`
+  font-size: 30px;
+  color: ${(props) => (props.$focus ? '#74c6cc' : 'white')};
+  margin-right: 10px;
+  scale: 1;
+  animation-name: ${(props) => (props.$focus ? 'zoom' : null)};
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  @keyframes zoom {
+    0% {
+      scale: 1;
+    }
+    50% {
+      scale: 1.5;
+    }
+    100% {
+      scale: 1;
+    }
+  }
 `;
 
 const InfoOutside = styled.div`
@@ -397,30 +453,8 @@ const InfoOpening = styled.div`
   }
 `;
 
-const ComboboxOutside = styled.div`
+const GoogleMapOutside = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
-  align-items: center;
-`;
-
-const ComboboxPic = styled.div`
-  font-size: 30px;
-  color: ${(props) => (props.$focus ? '#74c6cc' : 'white')};
-  margin-right: 20px;
-  scale: 1;
-  animation-name: ${(props) => (props.$focus ? 'zoom' : null)};
-  animation-duration: 2.5s;
-  animation-iteration-count: infinite;
-  @keyframes zoom {
-    0% {
-      scale: 1;
-    }
-    50% {
-      scale: 1.5;
-    }
-    100% {
-      scale: 1;
-    }
-  }
+  margin-bottom: 80px;
 `;

@@ -11,7 +11,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, collection, onSnapshot, query, orderBy, deleteDoc } from 'firebase/firestore';
 
 //chart.js
-import { Line } from 'react-chartjs-2';
+import { Chart, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -96,7 +96,6 @@ const Statistics = () => {
     } else {
       async function getFatRecord() {
         const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
-        // setLoading(true);
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
@@ -114,9 +113,6 @@ const Statistics = () => {
           });
           setFatDateLine(newFatDateData);
         });
-        // setTimeout(() => {
-        //   setLoading(false);
-        // }, 1000);
       }
       getFatRecord();
     }
@@ -126,21 +122,24 @@ const Statistics = () => {
   async function writeBodyFat(index) {
     if (isLoggedIn) {
       try {
-        let re = /^[0-9]*$/;
+        let re = /^[0-9]+.?[0-9]*$/;
         if (!re.test(fatNumberInput)) {
           alertPop();
           setContent('請輸入數字');
+        } else if (fatNumberInput > 99 || fatNumberInput == 0) {
+          alertPop();
+          setContent('數據不實');
         } else {
           if (fatDateInput !== undefined && fatNumberInput !== undefined && fatDateInput !== '') {
+            setFatNumberInput('');
+            setFatDateInput('');
             const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
             const data = {
               measureDate: fatDateInput,
-              bodyFat: Number(fatNumberInput),
+              bodyFat: Number(fatNumberInput).toFixed(1),
               docID: docRef.id,
             };
             await setDoc(docRef, data);
-            setFatNumberInput('');
-            setFatDateInput('');
           } else {
             alertPop();
             setContent('請填寫完整資料');
@@ -175,6 +174,8 @@ const Statistics = () => {
 
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+  ChartJS.defaults.font.size = 20;
+
   const BodyFatData = {
     labels: fatDateLine,
     datasets: [
@@ -184,11 +185,12 @@ const Statistics = () => {
         fill: true,
         backgroundColor: 'rgba(238,141,71,0.2)',
         borderColor: 'rgba(238,141,71,1)',
+        borderWidth: '5',
         plugins: {
           legend: {
             labels: {
               font: {
-                size: 16,
+                size: 20,
               },
             },
           },
@@ -204,6 +206,7 @@ const Statistics = () => {
           padding: 15,
           color: 'white',
         },
+        min: 0,
       },
       x: {
         ticks: { padding: 15, color: 'white' },
@@ -261,21 +264,24 @@ const Statistics = () => {
   async function writeBodyWeight(index) {
     if (isLoggedIn) {
       try {
-        let re = /^[0-9]*$/;
+        let re = /^[0-9]+.?[0-9]*$/;
         if (!re.test(weightNumberInput)) {
           alertPop();
           setContent('請填寫數字');
+        } else if (weightNumberInput > 999 || weightNumberInput == 0) {
+          alertPop();
+          setContent('數據不實');
         } else {
           if (weightDateInput !== undefined && weightNumberInput !== undefined && weightDateInput !== '') {
+            setWeightNumberInput('');
+            setWeightDateInput('');
             const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
             const data = {
               measureDate: weightDateInput,
-              bodyWeight: Number(weightNumberInput),
+              bodyWeight: Number(weightNumberInput).toFixed(1),
               docID: docRef.id,
             };
             await setDoc(docRef, data);
-            setWeightNumberInput('');
-            setWeightDateInput('');
           } else {
             alertPop();
             setContent('請填寫完整資料');
@@ -319,6 +325,7 @@ const Statistics = () => {
         fill: true,
         backgroundColor: 'rgba(255,183,3,0.2)',
         borderColor: 'rgba(255,183,3,1)',
+        borderWidth: '5',
         plugins: {
           legend: {
             labels: {
@@ -601,6 +608,7 @@ const BodyFatLinePageZone = styled.div``;
 const BodyFatLineOutside = styled.div`
   width: 600px;
   margin: 40px auto 0px auto;
+  pointer-events: none;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;
     margin-right: 55px;
@@ -649,6 +657,7 @@ const BodyWeightLinePageZone = styled.div``;
 const BodyWeightLineOutside = styled.div`
   width: 600px;
   margin: 40px auto 0px auto;
+  pointer-events: none;
   @media screen and (max-width: 1279px) {
     margin: 50px auto;
     margin-right: 55px;

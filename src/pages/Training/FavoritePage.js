@@ -33,6 +33,7 @@ import {
   faPenToSquare,
   faXmark,
   faHeartCirclePlus,
+  faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 import {} from '@fortawesome/free-brands-svg-icons';
 
@@ -59,6 +60,10 @@ const FavoritePage = (props) => {
   const [pickName, setPickName] = useState(null);
   const [newName, setNewName] = useState('');
 
+  //刪除功能
+  const [deleteAlert, setDeleteAlert] = useState(false);
+  const [deleteItem, setDeleteItem] = useState();
+
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
   const firebaseConfig = {
@@ -83,14 +88,21 @@ const FavoritePage = (props) => {
     props.setPickID(props.favoriteTrainings[index].docID);
   }
 
-  //刪除該主題
+  //刪除該主題通知跳出
   async function deletePick(index) {
+    setDeleteAlert(true);
+    setDeleteItem(index);
+  }
+
+  //刪除該主題
+  async function confirmDeletePick(index) {
     try {
       const docRef = await doc(db, 'users', uid, 'favoriteTrainings', props.favoriteTrainings[index].docID);
       await deleteDoc(docRef);
       alertPop();
       setContent('成功刪除喜愛菜單');
       props.setPickFavorite(null);
+      setDeleteAlert(false);
     } catch (e) {
       console.log(e);
     }
@@ -136,6 +148,35 @@ const FavoritePage = (props) => {
 
   return (
     <>
+      {deleteAlert && (
+        <>
+          <DeleteAlertOutside>
+            <DeleteContent>
+              <DeletePic>
+                <FontAwesomeIcon icon={faTriangleExclamation} />
+              </DeletePic>
+              確定執行刪除？
+            </DeleteContent>
+            <DeleteButton>
+              <YesOutside
+                onClick={() => {
+                  confirmDeletePick(deleteItem);
+                }}
+              >
+                <Yes>YES</Yes>
+              </YesOutside>
+              <NoOutside
+                onClick={() => {
+                  setDeleteAlert(false);
+                }}
+              >
+                <No>NO</No>
+              </NoOutside>
+            </DeleteButton>
+          </DeleteAlertOutside>
+          <DeleteBackground />
+        </>
+      )}
       <Wrapper $isActive={props.openFavorite}>
         <Close
           onClick={() => {
@@ -149,7 +190,6 @@ const FavoritePage = (props) => {
         </Close>
         <Top>
           <Title>
-            {' '}
             <FaHeartCirclePlus>
               <FontAwesomeIcon icon={faHeartCirclePlus} />
             </FaHeartCirclePlus>
@@ -218,6 +258,7 @@ const FavoritePage = (props) => {
                       </NameDelete>
                     </NameContentListOustide>
                   ))}
+                  <NameRemind>＊修改最多輸入10字</NameRemind>
                 </NameContent>
               </NameZone>
               <ActionZone>
@@ -286,6 +327,103 @@ const FavoritePage = (props) => {
     </>
   );
 };
+
+const DeleteAlertOutside = styled.div`
+  display: flex;
+  padding: 15px;
+  width: 400px;
+  background: #475260;
+  border: 5px solid #74c6cc;
+  border-radius: 20px;
+  position: absolute;
+  top: calc(20% - 85px);
+  left: calc(50% - 200px);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const DeletePic = styled.div`
+  color: #ffd700;
+  font-size: 40px;
+  margin-right: 20px;
+`;
+
+const DeleteContent = styled.div`
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 30px;
+  margin-top: 10px;
+  letter-spacing: 6px;
+`;
+const DeleteButton = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
+`;
+
+const YesOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 50px;
+  color: black;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-right: 30px;
+  &:hover {
+    background: red;
+    color: black;
+  }
+`;
+
+const Yes = styled.div`
+  padding: 3px;
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-weight: 600;
+`;
+
+const NoOutside = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #74c6cc;
+  width: 50px;
+  color: black;
+  cursor: pointer;
+  border-radius: 10px;
+  &:hover {
+    background: white;
+    color: black;
+  }
+  @media screen and (max-width: 767px) {
+    width: 120px;
+    margin: 40px 20px 40px 0px;
+  }
+`;
+
+const No = styled.div`
+  padding: 3px;
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-weight: 600;
+`;
+
+const DeleteBackground = styled.div`
+  background: black;
+  top: 0;
+  opacity: 50%;
+  z-index: 60;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+`;
 
 const Wrapper = styled.div`
   display: ${(props) => (props.$isActive ? 'block;' : 'none;')};
@@ -408,6 +546,13 @@ const NameContent = styled.div`
   @media screen and (max-width: 767px) {
     margin-bottom: 50px;
   }
+`;
+
+const NameRemind = styled.div`
+  color: #cd5c5c;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-top: -6px;
 `;
 
 const NameContentListOustide = styled.div`
