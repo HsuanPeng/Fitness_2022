@@ -336,12 +336,33 @@ const DeleteAlertOutside = styled.div`
   border: 5px solid #74c6cc;
   border-radius: 20px;
   position: absolute;
-  top: calc(20% - 85px);
+  top: 25%;
   left: calc(50% - 200px);
   z-index: 100;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  animation-name: deletefadein;
+  animation-duration: 0.8s;
+  @keyframes deletefadein {
+    0% {
+      transform: translateY(-10%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 100%;
+    }
+  }
+  @media screen and (max-width: 1279px) {
+    top: 16.5%;
+  }
+  @media screen and (max-width: 767px) {
+    padding: 10px;
+    width: 300px;
+    left: calc(50% - 150px);
+    top: 9.2%;
+  }
 `;
 
 const DeletePic = styled.div`
@@ -357,6 +378,11 @@ const DeleteContent = styled.div`
   font-size: 30px;
   margin-top: 10px;
   letter-spacing: 6px;
+  @media screen and (max-width: 767px) {
+    margin-top: 0px;
+    font-size: 25px;
+    letter-spacing: 4px;
+  }
 `;
 const DeleteButton = styled.div`
   display: flex;
@@ -427,7 +453,6 @@ const DeleteBackground = styled.div`
 
 const Wrapper = styled.div`
   display: ${(props) => (props.$isActive ? 'block;' : 'none;')};
-  max-width: 1200px;
   margin: 0 auto;
   position: absolute;
   top: 15%;

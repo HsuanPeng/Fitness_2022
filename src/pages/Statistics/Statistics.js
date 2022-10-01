@@ -26,9 +26,6 @@ import {
 //pic
 import trainingBanner from '../../images/Athlete-preparing-for-training-467612.jpg';
 
-//loading animation
-import { Blocks } from 'react-loader-spinner';
-
 const Statistics = () => {
   ChartJS.defaults.font.size = 16;
 
@@ -67,9 +64,6 @@ const Statistics = () => {
   //體重率折線圖
   const [weightDateLine, setWeightDateLine] = useState([]);
   const [weightNumberLine, setWeightNumberLine] = useState([]);
-
-  //loading動畫
-  const [loading, setLoading] = useState(false);
 
   // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
 
@@ -371,18 +365,6 @@ const Statistics = () => {
 
   return (
     <>
-      <LoadingOutside $isActive={loading}>
-        <LoadingBlocks>
-          <Blocks
-            visible={true}
-            height="260"
-            width="260"
-            ariaLabel="blocks-loading"
-            wrapperStyle={{}}
-            wrapperClass="blocks-wrapper"
-          />
-        </LoadingBlocks>
-      </LoadingOutside>
       <Wrapper>
         <BannerOutside>
           <Banner>
@@ -451,23 +433,6 @@ const Statistics = () => {
 };
 
 export default Statistics;
-
-const LoadingOutside = styled.div`
-  position: absolute;
-  z-index: 2000;
-  top: 0%;
-  background: #475260;
-  height: 100vh;
-  width: 100vw;
-  display: ${(props) => (props.$isActive ? 'block' : 'none')};
-`;
-
-const LoadingBlocks = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
 
 const Wrapper = styled.div`
   margin: 0 auto;

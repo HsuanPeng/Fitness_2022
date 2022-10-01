@@ -174,35 +174,33 @@ const App = () => {
         </AlertOutside>
         {signInPage ? (
           <>
-            <SignInOutside>
-              <SignInMenu>
-                <Close
-                  onClick={() => {
-                    setSignInPage(false);
-                  }}
-                  src={remove}
-                ></Close>
-                <Close />
-                <SignInPicture signInPic={signInPic} />
-                <SignInContent>
-                  <SignInQuestion>
-                    準備好開始你的
-                    <br />
-                    健身記錄了嗎？
-                  </SignInQuestion>
-                  <SignInGoogle onClick={signInWithGoogle}>
-                    <FaGooglePlus>
-                      <FontAwesomeIcon icon={faGooglePlusG} />
-                    </FaGooglePlus>
-                    <SignInGoogleText>使用google登入</SignInGoogleText>
-                  </SignInGoogle>
-                  <SignInTest>
-                    <SignInTestText>測試用帳號：seaturtlerace@gmail.com</SignInTestText>
-                    <SignInTestPassword>測試用密碼：seaturtle</SignInTestPassword>
-                  </SignInTest>
-                </SignInContent>
-              </SignInMenu>
-            </SignInOutside>
+            <SignInMenu>
+              <Close
+                onClick={() => {
+                  setSignInPage(false);
+                }}
+                src={remove}
+              ></Close>
+              <Close />
+              <SignInPicture signInPic={signInPic} />
+              <SignInContent>
+                <SignInQuestion>
+                  準備好開始你的
+                  <br />
+                  健身記錄了嗎？
+                </SignInQuestion>
+                <SignInGoogle onClick={signInWithGoogle}>
+                  <FaGooglePlus>
+                    <FontAwesomeIcon icon={faGooglePlusG} />
+                  </FaGooglePlus>
+                  <SignInGoogleText>使用google登入</SignInGoogleText>
+                </SignInGoogle>
+                <SignInTest>
+                  <SignInTestText>測試用帳號：seaturtlerace@gmail.com</SignInTestText>
+                  <SignInTestPassword>測試用密碼：seaturtle</SignInTestPassword>
+                </SignInTest>
+              </SignInContent>
+            </SignInMenu>
             <SignInMenuBackground />
             <Header />
             <Outlet />
@@ -344,8 +342,6 @@ const Check = styled.div`
   color: #74c6cc;
 `;
 
-const SignInOutside = styled.div``;
-
 const SignInMenu = styled.div`
   margin: 0 auto;
   width: 632px;
@@ -359,6 +355,18 @@ const SignInMenu = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  animation-name: signinfadein;
+  animation-duration: 0.6s;
+  @keyframes signinfadein {
+    0% {
+      transform: translate(-50%, -6%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translate(-50%, 0%);
+      opacity: 100%;
+    }
+  }
   @media screen and (max-width: 1279px) {
     width: 500px;
   }
@@ -382,7 +390,7 @@ const Close = styled.img`
   }
 `;
 
-const SignInPicture = styled.img`
+const SignInPicture = styled.div`
   width: 300px;
   height: 608px;
   background-image: url(${signInPic});

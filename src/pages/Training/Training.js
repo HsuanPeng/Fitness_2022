@@ -307,6 +307,7 @@ const Training = () => {
       alertPop();
       setContent('成功刪除菜單');
       setDeleteAlert(false);
+      setCurrentPgae(1);
     } catch (e) {
       console.log(e);
     }
@@ -1031,6 +1032,18 @@ const DeleteAlertOutside = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  animation-name: deletefadein;
+  animation-duration: 0.8s;
+  @keyframes deletefadein {
+    0% {
+      transform: translateY(-10%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 100%;
+    }
+  }
   @media screen and (max-width: 767px) {
     padding: 10px;
     width: 300px;
@@ -1076,7 +1089,7 @@ const YesOutside = styled.div`
   border-radius: 10px;
   margin-right: 30px;
   &:hover {
-    background: red;
+    background: #c14e4f;
     color: black;
   }
 `;
