@@ -118,7 +118,7 @@ const SkeletonItem = styled.div`
     align-items: center;
     text-align: center;
     width: 300px;
-    height: 455px;
+    height: 453px;
   }
 `;
 

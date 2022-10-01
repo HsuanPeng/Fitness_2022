@@ -1328,6 +1328,18 @@ const TrainingOutside = styled.div`
   margin-top: 100px;
   color: white;
   border-top: 0.5rem solid #74c6cc;
+  animation-name: favoritefadein;
+  animation-duration: 0.5s;
+  @keyframes favoritefadein {
+    0% {
+      transform: translateY(-2%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 100%;
+    }
+  }
   @media screen and (max-width: 1279px) {
     left: ${(props) => (props.$isActive ? 'calc(50% - 350px)' : 'calc(50% - 280px)')};
     top: ${(props) => (props.$isActive ? '4%' : '5%')};

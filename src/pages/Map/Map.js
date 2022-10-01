@@ -113,7 +113,7 @@ export default function Map() {
                 url: logo,
                 origin: new window.google.maps.Point(0, 0),
                 anchor: new window.google.maps.Point(20, 20),
-                scaledSize: new window.google.maps.Size(80, 40),
+                scaledSize: new window.google.maps.Size(90, 40),
               }}
             />
           ))}

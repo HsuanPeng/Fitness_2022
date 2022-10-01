@@ -462,6 +462,18 @@ const Wrapper = styled.div`
   max-width: 1000px;
   color: white;
   border-top: 0.5rem solid #74c6cc;
+  animation-name: favoritefadein;
+  animation-duration: 0.5s;
+  @keyframes favoritefadein {
+    0% {
+      transform: translateY(-2%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 100%;
+    }
+  }
   @media screen and (max-width: 1279px) {
     top: 10%;
   }
@@ -485,6 +497,7 @@ const Close = styled.div`
   transition: 0.3s;
   font-size: 30px;
   color: #c14e4f;
+  margin-bottom: 15px;
   &:hover {
     scale: 1.2;
   }
@@ -492,6 +505,7 @@ const Close = styled.div`
 
 const Top = styled.div`
   padding: 0px 30px;
+  margin-top: 40px;
   @media screen and (max-width: 500px) {
     padding: 0px 10px;
   }

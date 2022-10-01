@@ -221,6 +221,18 @@ const DetailOutside = styled.div`
   color: white;
   border-top: 0.5rem solid #74c6cc;
   z-index: 20;
+  animation-name: detailfadein;
+  animation-duration: 0.5s;
+  @keyframes detailfadein {
+    0% {
+      transform: translateY(-2%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 100%;
+    }
+  }
   @media screen and (max-width: 767px) {
     max-width: 320px;
     left: calc(50% - 160px);
@@ -261,8 +273,7 @@ const DetailTitle = styled.div`
 
 const Line = styled.div`
   border-bottom: 2px solid #74c6cc;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin: 20px 0px;
 `;
 
 const DetailActionsOutside = styled.div`
@@ -344,7 +355,7 @@ const Times = styled.div`
 const PicOutside = styled.div`
   width: 100%;
   height: 200px;
-  margin: 20px 0px 40px 0px;
+  margin: 30px 0px 40px 0px;
 `;
 
 const Pic = styled.div`
