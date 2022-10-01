@@ -42,7 +42,7 @@ const options = {
 export default function Map() {
   //最一開始load地圖
   const { isLoaded, loadError } = useLoadScript({
-    // googleMapsApiKey: process.env.REACT_APP_API_KEY,
+    googleMapsApiKey: process.env.REACT_APP_API_KEY,
     libraries,
   });
 
@@ -70,9 +70,9 @@ export default function Map() {
 
   //找出附近的健身房
   async function nearbyGymsMap({ lat, lng }) {
-    const res = await fetch();
-    // `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
-
+    const res = await fetch(
+      `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
+    );
     const json = await res.json();
     console.log(json);
     setGyms(json.results);

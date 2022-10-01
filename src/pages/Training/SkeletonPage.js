@@ -166,7 +166,7 @@ const SkeletonRight = styled.div`
 
 const SkeletonRightOne = styled.div`
   width: 202px;
-  height: 34px;
+  height: 27px;
   border-radius: 15px;
   background: linear-gradient(
       to right,

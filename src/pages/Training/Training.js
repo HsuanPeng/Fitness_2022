@@ -984,12 +984,13 @@ const PaginationOutside = styled.div`
   display: flex;
   margin: 0 auto;
   color: black;
-  font-size: 30px;
+  font-size: 24px;
   margin-bottom: 80px;
+  font-weight: 700;
 `;
 
 const PaginationItem = styled.div`
-  margin: 0 25px;
+  margin: 0 18px;
   background: ${(props) => (props.$isActive ? 'white' : '#74c6cc')};
   padding: 5px 10px;
   cursor: pointer;
