@@ -68,10 +68,10 @@ const MainPicZone = styled.div`
   height: 100%;
   background-image: url(${HomePic});
   background-size: cover;
-  background-position: center;
+  background-position: 30% 30%;
   position: absolute;
   @media screen and (max-width: 767px) {
-    background-position: 70% 50%;
+    background-position: 60% 50%;
   }
 `;
 
