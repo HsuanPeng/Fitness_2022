@@ -14,6 +14,7 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
+  getDocs,
   startAfter,
   limit,
 } from 'firebase/firestore';
@@ -80,6 +81,8 @@ const Training = () => {
 
   //抓到每筆菜單
   const [trainingData, setTrainingData] = useState([]);
+  const [pagination, setPagination] = useState([]);
+  const [currentPage, setCurrentPgae] = useState(1);
 
   //建立菜單上下頁開關
   const [openTrainingInput, setOpenTrainingInput] = useState(false);
@@ -216,11 +219,13 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝點擊建立菜單+上下頁切換＝＝＝＝＝＝＝＝＝＝＝
 
+  //點擊建立菜單
   function addTraining() {
     if (isLoggedIn) {
       setShowHistoryBackground(true);
       setOpenTrainingInput(true);
       setPageTwo(false);
+      setShowHistory([]);
       if (openTrainingOne !== true && openTrainingTwo !== true && openCompleteSetting !== true)
         setOpenTrainingOne(true);
       setImageList('');
@@ -302,6 +307,7 @@ const Training = () => {
       alertPop();
       setContent('成功刪除菜單');
       setDeleteAlert(false);
+      setCurrentPgae(1);
     } catch (e) {
       console.log(e);
     }
@@ -371,32 +377,61 @@ const Training = () => {
   async function compeleteTrainingSetting() {
     try {
       if (totalWeight !== 0.0 && choiceAction.length > 0) {
-        const docRef = doc(collection(db, 'users', uid, 'trainingTables'));
-        const data = {
-          docID: docRef.id,
-          complete: '未完成',
-          picture: imageList,
-          title: title,
-          description: description,
-          totalActions: choiceAction.length,
-          totalWeight: totalWeight,
-          trainingDate: date,
-          setDate: new Date(),
-          actions: choiceAction,
-        };
-        await setDoc(docRef, data);
-        setOpenTrainingOne(false);
-        setOpenTrainingTwo(false);
-        setOpenTrainingInput(false);
-        setChoiceAction([]);
-        setTotalWeight(0);
-        sendEmail();
-        setShowHistoryBackground(false);
-        alertPop();
-        setContent('完成設定並寄信通知');
-        setTitle('');
-        setDate('');
-        setDescription('');
+        if (showHistory.docID) {
+          const docRef = await doc(db, 'users', uid, 'trainingTables', showHistory.docID);
+          const data = {
+            docID: docRef.id,
+            complete: '未完成',
+            picture: imageList,
+            title: title,
+            description: description,
+            totalActions: choiceAction.length,
+            totalWeight: totalWeight,
+            trainingDate: date,
+            setDate: new Date(),
+            actions: choiceAction,
+          };
+          await updateDoc(docRef, data);
+          setOpenTrainingOne(false);
+          setOpenTrainingTwo(false);
+          setOpenTrainingInput(false);
+          setChoiceAction([]);
+          setTotalWeight(0);
+          sendEmail();
+          setShowHistoryBackground(false);
+          alertPop();
+          setContent('完成設定並寄信通知');
+          setTitle('');
+          setDate('');
+          setDescription('');
+        } else {
+          const docRef = doc(collection(db, 'users', uid, 'trainingTables'));
+          const data = {
+            docID: docRef.id,
+            complete: '未完成',
+            picture: imageList,
+            title: title,
+            description: description,
+            totalActions: choiceAction.length,
+            totalWeight: totalWeight,
+            trainingDate: date,
+            setDate: new Date(),
+            actions: choiceAction,
+          };
+          await setDoc(docRef, data);
+          setOpenTrainingOne(false);
+          setOpenTrainingTwo(false);
+          setOpenTrainingInput(false);
+          setChoiceAction([]);
+          setTotalWeight(0);
+          sendEmail();
+          setShowHistoryBackground(false);
+          alertPop();
+          setContent('完成設定並寄信通知');
+          setTitle('');
+          setDate('');
+          setDescription('');
+        }
       } else if (!choiceAction.length > 0) {
         alertPop();
         setContent('請加入動作');
@@ -413,26 +448,81 @@ const Training = () => {
 
   // ＝＝＝＝＝＝＝＝＝＝即時抓出每筆菜單資料＝＝＝＝＝＝＝＝＝＝＝
 
+  //第一次進來第一頁，點到哪頁跳哪頁
   useEffect(() => {
     if (isLoggedIn == false) {
       setTrainingData([]);
     } else {
       async function getTrainingTables() {
+        if (currentPage == 1) {
+          setSkeleton(true);
+          const first = await query(
+            collection(db, 'users', uid, 'trainingTables'),
+            orderBy('trainingDate', 'desc'),
+            limit(8)
+          );
+          onSnapshot(first, (item) => {
+            const newData = [];
+            item.forEach((doc) => {
+              newData.push(doc.data());
+            });
+            setTrainingData(newData);
+          });
+          setTimeout(() => {
+            setSkeleton(false);
+          }, 1000);
+        } else {
+          setSkeleton(true);
+          const before = await query(
+            collection(db, 'users', uid, 'trainingTables'),
+            orderBy('trainingDate', 'desc'),
+            limit(8 * currentPage)
+          );
+          const documentSnapshots = await getDocs(before);
+          const lastVisible = await documentSnapshots.docs[8 * (currentPage - 1) - 1];
+          const next = await query(
+            collection(db, 'users', uid, 'trainingTables'),
+            orderBy('trainingDate', 'desc'),
+            startAfter(lastVisible),
+            limit(8)
+          );
+          onSnapshot(next, (item) => {
+            const newData = [];
+            item.forEach((doc) => {
+              newData.push(doc.data());
+            });
+            setTrainingData(newData);
+          });
+          setTimeout(() => {
+            setSkeleton(false);
+          }, 1000);
+        }
+      }
+      getTrainingTables();
+    }
+  }, [isLoggedIn, currentPage]);
+
+  //知道現在要分幾頁
+  useEffect(() => {
+    if (isLoggedIn == false) {
+      setPagination([]);
+    } else {
+      async function getTrainingTablesPage() {
         const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-        setSkeleton(true);
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
             newData.push(doc.data());
           });
           const reverseNewData = newData.reverse();
-          setTrainingData(reverseNewData);
+          const arr = [];
+          for (let i = 1; i <= Math.ceil(reverseNewData.length / 8); i++) {
+            arr.push(i);
+          }
+          setPagination(arr);
         });
-        setTimeout(() => {
-          setSkeleton(false);
-        }, 1300);
       }
-      getTrainingTables();
+      getTrainingTablesPage();
     }
   }, [isLoggedIn]);
 
@@ -585,9 +675,6 @@ const Training = () => {
     setOpenTrainingInput(true);
     setOpenTrainingOne(true);
     setImageList(showHistory.picture);
-    console.log(showHistory.docID);
-    const docRef = await doc(db, 'users', uid, 'trainingTables', showHistory.docID);
-    deleteDoc(docRef);
   }
 
   // ＝＝＝＝＝＝＝＝＝＝歷史菜單編輯功能＝＝＝＝＝＝＝＝＝＝＝
@@ -682,6 +769,21 @@ const Training = () => {
             <NoHistory>尚未建立菜單</NoHistory>
           )}
         </TrainingZone>
+        {pagination.length > 0 ? (
+          <PaginationOutside>
+            {pagination.map((item, index) => (
+              <PaginationItem
+                index={index}
+                onClick={() => {
+                  setCurrentPgae(index + 1);
+                }}
+                $isActive={index + 1 == currentPage}
+              >
+                {item}
+              </PaginationItem>
+            ))}
+          </PaginationOutside>
+        ) : null}
         <OpenHistoryZone
           showHistory={showHistory}
           openHistory={openHistory}
@@ -721,7 +823,6 @@ const Training = () => {
                             </FaDumbbell>
                             主題
                           </Title>
-
                           <FavoriteSelectOutside
                             onChange={(e) => setFavoriteChoice(e.target.value)}
                             defaultValue={null}
@@ -880,15 +981,24 @@ const Training = () => {
 
 export default Training;
 
-const Center = styled.div`
-  width: 1px;
-  height: 200px;
+const PaginationOutside = styled.div`
+  display: flex;
   margin: 0 auto;
-  background: red;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  z-index: 300;
+  color: black;
+  font-size: 24px;
+  margin-bottom: 80px;
+  font-weight: 700;
+`;
+
+const PaginationItem = styled.div`
+  margin: 0 18px;
+  background: ${(props) => (props.$isActive ? 'white' : '#74c6cc')};
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 12px;
+  &:hover {
+    background: white;
+  }
 `;
 
 const LoadingOutside = styled.div`
@@ -922,6 +1032,18 @@ const DeleteAlertOutside = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  animation-name: deletefadein;
+  animation-duration: 0.8s;
+  @keyframes deletefadein {
+    0% {
+      transform: translateY(-10%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 100%;
+    }
+  }
   @media screen and (max-width: 767px) {
     padding: 10px;
     width: 300px;
@@ -967,7 +1089,7 @@ const YesOutside = styled.div`
   border-radius: 10px;
   margin-right: 30px;
   &:hover {
-    background: red;
+    background: #c14e4f;
     color: black;
   }
 `;
@@ -1206,6 +1328,18 @@ const TrainingOutside = styled.div`
   margin-top: 100px;
   color: white;
   border-top: 0.5rem solid #74c6cc;
+  animation-name: favoritefadein;
+  animation-duration: 0.5s;
+  @keyframes favoritefadein {
+    0% {
+      transform: translateY(-2%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateY(0%);
+      opacity: 100%;
+    }
+  }
   @media screen and (max-width: 1279px) {
     left: ${(props) => (props.$isActive ? 'calc(50% - 350px)' : 'calc(50% - 280px)')};
     top: ${(props) => (props.$isActive ? '4%' : '5%')};

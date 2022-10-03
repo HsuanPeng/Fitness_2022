@@ -20,7 +20,9 @@ const HistoryZone = (props) => {
             </HistoryPicOutside>
           )}
           <HistoryRight>
-            <HistoryTitle>主題：{item.title}</HistoryTitle>
+            <HistoryTitleOutside>
+              <HistoryTitle>主題：{item.title}</HistoryTitle>
+            </HistoryTitleOutside>
             <HistoryDate>訓練日期：{item.trainingDate}</HistoryDate>
             <HistoryWeight>總重量：{item.totalWeight} KG</HistoryWeight>
             <HistoryTimes>總動作數：{item.totalActions} 個</HistoryTimes>
@@ -86,6 +88,7 @@ const HistoryItemsOutside = styled.div`
   background: #475260;
   padding: 20px;
   font-size: 16px;
+  width: 465px;
   border-top: 0.5rem solid #74c6cc;
   &:hover {
     ${Mask} {
@@ -138,11 +141,21 @@ const HistoryRight = styled.div`
   margin-left: 18px;
 `;
 
-const HistoryTitle = styled.span`
+const HistoryTitleOutside = styled.div`
+  width: 200px;
+  @media screen and (max-width: 767px) {
+    width: 240px;
+  }
+`;
+
+const HistoryTitle = styled.div`
   font-weight: 700;
   letter-spacing: 2px;
   color: #74c6cc;
   font-size: 24px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   @media screen and (max-width: 767px) {
     margin-top: 15px;
   }

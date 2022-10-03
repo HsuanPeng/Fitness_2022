@@ -434,11 +434,11 @@ const OpenHistory = styled.div`
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
-    top: 14%;
+    top: 15%;
     max-width: 700px;
   }
   @media screen and (max-width: 767px) {
-    top: 13%;
+    top: 10%;
     max-width: 320px;
     padding-left: 15px;
     padding-right: 15px;
@@ -823,6 +823,9 @@ const HistoryBottom = styled.div`
   display: flex;
   margin: 0 auto;
   max-width: 500px;
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+  }
 `;
 
 const EditTrainingItemOutside = styled.div`
@@ -837,6 +840,9 @@ const EditTrainingItemOutside = styled.div`
   &:hover {
     background: white;
     color: black;
+  }
+  @media screen and (max-width: 767px) {
+    margin: 10px auto;
   }
 `;
 
@@ -861,6 +867,9 @@ const CompleteTrainingOutside = styled.div`
     background: white;
     color: black;
   }
+  @media screen and (max-width: 767px) {
+    margin: 10px auto;
+  }
 `;
 
 const CompleteTraining = styled.div`
@@ -883,6 +892,9 @@ const DeleteTrainingItemOutside = styled.div`
   &:hover {
     background: white;
     color: black;
+  }
+  @media screen and (max-width: 767px) {
+    margin: 10px auto;
   }
 `;
 
