@@ -200,7 +200,6 @@ const Statistics = () => {
           padding: 15,
           color: 'white',
         },
-        min: 0,
       },
       x: {
         ticks: { padding: 15, color: 'white' },
