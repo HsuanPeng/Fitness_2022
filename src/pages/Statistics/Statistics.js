@@ -31,17 +31,17 @@ const Statistics = () => {
 
   const [showFatRecord, setShowFatRecord] = useState(true);
 
-  const [fatRecord, setFatRecord] = useState([]);
   const [fatDateInput, setFatDateInput] = useState();
   const [fatNumberInput, setFatNumberInput] = useState();
 
+  const [fatRecord, setFatRecord] = useState([]);
   const [fatDateLine, setFatDateLine] = useState([]);
   const [fatNumberLine, setFatNumberLine] = useState([]);
 
-  const [weightRecord, setWeightRecord] = useState([]);
   const [weightDateInput, setWeightDateInput] = useState();
   const [weightNumberInput, setWeightNumberInput] = useState();
 
+  const [weightRecord, setWeightRecord] = useState([]);
   const [weightDateLine, setWeightDateLine] = useState([]);
   const [weightNumberLine, setWeightNumberLine] = useState([]);
 
@@ -238,23 +238,23 @@ const Statistics = () => {
         </BannerOutside>
         <ChangeOutside>
           <ChangeMenuZone>
-            <GoBodyFatOutide
+            <ChangeButtonOutside
               onClick={() => {
                 setShowFatRecord(true);
               }}
             >
               <GoBodyFat $showFatRecord={showFatRecord}>體脂肪率</GoBodyFat>
-            </GoBodyFatOutide>
-            <GoBodyWeightOutside
+            </ChangeButtonOutside>
+            <ChangeButtonOutside
               onClick={() => {
                 setShowFatRecord(false);
               }}
             >
               <GoBodyWeight $showFatRecord={showFatRecord}>體重</GoBodyWeight>
-            </GoBodyWeightOutside>
+            </ChangeButtonOutside>
           </ChangeMenuZone>
           {showFatRecord ? (
-            <BodyFatZone>
+            <BodyZone>
               <BodyFatPage
                 setFatDateInput={setFatDateInput}
                 fatNumberInput={fatNumberInput}
@@ -266,17 +266,17 @@ const Statistics = () => {
                 fatDateInput={fatDateInput}
               />
               <BodyFatLinePageZone>
-                <BodyFatLineOutside>
+                <LineOutside>
                   {fatRecord.length > 0 ? (
                     <Line data={lineData} options={dataOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
-                </BodyFatLineOutside>
+                </LineOutside>
               </BodyFatLinePageZone>
-            </BodyFatZone>
+            </BodyZone>
           ) : (
-            <BodyWeightZone>
+            <BodyZone>
               <BodyWeightPage
                 setWeightDateInput={setWeightDateInput}
                 setWeightNumberInput={setWeightNumberInput}
@@ -288,15 +288,15 @@ const Statistics = () => {
                 weightDateInput={weightDateInput}
               />
               <BodyWeightLinePageZone>
-                <BodyWeightLineOutside>
+                <LineOutside>
                   {weightRecord.length > 0 ? (
                     <Line data={lineData} options={dataOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
-                </BodyWeightLineOutside>
+                </LineOutside>
               </BodyWeightLinePageZone>
-            </BodyWeightZone>
+            </BodyZone>
           )}
         </ChangeOutside>
       </Wrapper>
@@ -375,7 +375,7 @@ const ChangeMenuZone = styled.div`
   }
 `;
 
-const GoBodyFatOutide = styled.div`
+const ChangeButtonOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -396,28 +396,11 @@ const GoBodyFat = styled.div`
   }
 `;
 
-const GoBodyWeightOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px;
-`;
-
-const GoBodyWeight = styled.div`
-  cursor: pointer;
-  padding: 5px 15px;
-  border-radius: 7px;
-  color: black;
-  font-size: 24px;
-  letter-spacing: 2px;
-  font-weight: 600;
+const GoBodyWeight = styled(GoBodyFat)`
   background: ${(props) => (props.$showFatRecord ? '#475260' : '#74c6cc')};
-  &:hover {
-    background: #74c6cc;
-  }
 `;
 
-const BodyFatZone = styled.div`
+const BodyZone = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -432,7 +415,7 @@ const BodyFatZone = styled.div`
 
 const BodyFatLinePageZone = styled.div``;
 
-const BodyFatLineOutside = styled.div`
+const LineOutside = styled.div`
   width: 600px;
   margin: 40px auto 0px auto;
   pointer-events: none;
@@ -451,42 +434,7 @@ const BodyFatLineOutside = styled.div`
   @media screen and (max-width: 450px) {
     width: 280px;
     margin-right: 10px;
-  }
-`;
-
-const BodyWeightZone = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #475260;
-  padding-bottom: 30px;
-  margin-top: 20px;
-  border-top: 0.5rem solid #74c6cc;
-  @media screen and (max-width: 1279px) {
-    flex-direction: column;
   }
 `;
 
 const BodyWeightLinePageZone = styled.div``;
-
-const BodyWeightLineOutside = styled.div`
-  width: 600px;
-  margin: 40px auto 0px auto;
-  pointer-events: none;
-  @media screen and (max-width: 1279px) {
-    margin: 50px auto;
-    margin-right: 55px;
-  }
-  @media screen and (max-width: 767px) {
-    width: 450px;
-    margin-right: 10px;
-  }
-  @media screen and (max-width: 550px) {
-    width: 350px;
-    margin-right: 10px;
-  }
-  @media screen and (max-width: 450px) {
-    width: 280px;
-    margin-right: 10px;
-  }
-`;

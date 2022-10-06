@@ -42,17 +42,15 @@ const TrainingTwo = (props) => {
           addActionItem={props.addActionItem}
           playing={props.playing}
           setPlaying={props.setPlaying}
-          setVideoShow={props.setVideoShow}
           setVideoUrl={props.setVideoUrl}
         />
       </ActionOutside>
       <TrainingOutsideTwoBottom>
         <CalculationZone choiceAction={props.choiceAction} data={props.data} dataNull={props.dataNull} />
-        {props.videoShow ? (
+        {props.playing ? (
           <VideoZone>
             <CloseVideo
               onClick={() => {
-                props.setVideoShow(false);
                 props.setPlaying(null);
               }}
             >
