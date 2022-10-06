@@ -10,23 +10,21 @@ const HistoryZone = (props) => {
             props.openHistory(index);
           }}
         >
-          {!item.picture ? (
-            <NoPicOutside>
-              <NoPic>請上傳照片</NoPic>
-            </NoPicOutside>
-          ) : (
+          {item.picture ? (
             <HistoryPicOutside>
               <HistoryPic src={item.picture}></HistoryPic>
             </HistoryPicOutside>
+          ) : (
+            <NoPicOutside>請上傳照片</NoPicOutside>
           )}
           <HistoryRight>
             <HistoryTitleOutside>
               <HistoryTitle>主題：{item.title}</HistoryTitle>
             </HistoryTitleOutside>
-            <HistoryDate>訓練日期：{item.trainingDate}</HistoryDate>
-            <HistoryWeight>總重量：{item.totalWeight} KG</HistoryWeight>
-            <HistoryTimes>總動作數：{item.totalActions} 個</HistoryTimes>
-            <HistoryComplete>狀態：{item.complete}</HistoryComplete>
+            <HistoryItem>訓練日期：{item.trainingDate}</HistoryItem>
+            <HistoryItem>總重量：{item.totalWeight} KG</HistoryItem>
+            <HistoryItem>總動作數：{item.totalActions} 個</HistoryItem>
+            <HistoryItem>狀態：{item.complete}</HistoryItem>
           </HistoryRight>
           <MaskText>點擊看更多資訊</MaskText>
           <Mask></Mask>
@@ -118,8 +116,6 @@ const NoPicOutside = styled.div`
   color: white;
 `;
 
-const NoPic = styled.div``;
-
 const HistoryPicOutside = styled.div`
   height: 180px;
   width: 200px;
@@ -160,25 +156,7 @@ const HistoryTitle = styled.div`
     margin-top: 15px;
   }
 `;
-const HistoryDate = styled.div`
-  font-size: 20px;
-  @media screen and (max-width: 767px) {
-    margin-top: 15px;
-  }
-`;
-const HistoryWeight = styled.div`
-  font-size: 20px;
-  @media screen and (max-width: 767px) {
-    margin-top: 15px;
-  }
-`;
-const HistoryTimes = styled.div`
-  font-size: 20px;
-  @media screen and (max-width: 767px) {
-    margin-top: 15px;
-  }
-`;
-const HistoryComplete = styled.div`
+const HistoryItem = styled.div`
   font-size: 20px;
   @media screen and (max-width: 767px) {
     margin-top: 15px;

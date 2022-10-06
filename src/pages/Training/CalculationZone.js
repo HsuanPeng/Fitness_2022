@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 
-//chart.js
 import { Pie } from 'react-chartjs-2';
 
-const CalculationShowZone = (props) => {
+const CalculationZone = (props) => {
   return (
     <>
       <CalculationShow>
@@ -19,7 +18,7 @@ const CalculationShowZone = (props) => {
   );
 };
 
-export default CalculationShowZone;
+export default CalculationZone;
 
 const PieOutside = styled.div`
   width: 475px;

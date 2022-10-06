@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
 import styled from 'styled-components';
 
-//FontAwesomeIcon
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import {} from '@fortawesome/free-brands-svg-icons';
 
-const BodyFatDataPage = (props) => {
+const BodyFatPage = (props) => {
   return (
     <BodyFatWriteDataZone>
       <Top>
@@ -28,11 +24,11 @@ const BodyFatDataPage = (props) => {
             maxLength={4}
             placeholder="0"
           ></BodyFatInput>
-        </Fat>{' '}
+        </Fat>
         <BodyFatInputButtonOutside>
           <BodyFatInputButton onClick={props.writeBodyFat}>新增</BodyFatInputButton>
         </BodyFatInputButtonOutside>
-      </Top>{' '}
+      </Top>
       <FatRemind>＊體脂肪率請輸入阿拉伯數字，最多4字</FatRemind>
       <Bottom>
         {props.fatRecord.length > 0 ? (
@@ -68,7 +64,7 @@ const BodyFatDataPage = (props) => {
   );
 };
 
-export default BodyFatDataPage;
+export default BodyFatPage;
 
 const BodyFatWriteDataZone = styled.div`
   margin-right: 40px;

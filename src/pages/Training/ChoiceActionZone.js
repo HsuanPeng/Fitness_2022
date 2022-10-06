@@ -1,15 +1,11 @@
 import styled from 'styled-components';
 
-//FontAwesomeIcon
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import {} from '@fortawesome/free-brands-svg-icons';
 
-//beautiful-dnd
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 
-const ChoiceActionOutsideZone = (props) => {
+const ChoiceActionZone = (props) => {
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const items = Array.from(props.choiceAction);
@@ -139,7 +135,7 @@ const ChoiceActionOutsideZone = (props) => {
   );
 };
 
-export default ChoiceActionOutsideZone;
+export default ChoiceActionZone;
 
 const ChoiceActionOutside = styled.div`
   position: relative;
@@ -188,7 +184,7 @@ const TotalZone = styled.div`
 const TotalWeight = styled.div`
   color: ${(props) => (props.$isActive ? '#74c6cc' : 'white')};
   scale: 1;
-  animation-name: ${(props) => (props.$isActive ? 'active' : null)};
+  animation-name: ${(props) => props.$isActive && 'active'};
   animation-duration: 1s;
   transition: ease-in-out;
   @keyframes active {

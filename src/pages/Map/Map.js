@@ -1,28 +1,16 @@
-import React, { useState, useRef, useCallback, useContext } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 
-//maps
-import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps/api';
-import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
-import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from '@reach/combobox';
+import Locate from './Locate';
+import Search from './Search';
 
-//樣式
+import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+
 import '@reach/combobox/styles.css';
 import mapStyles from './mapStyles';
 
-//icon
-import logo from '../../images/高畫質logo_黑色2.png';
-
-//components
-import UserContext from '../../contexts/UserContext';
-
-//pic
-import trainingBanner from '../../images/Equipment-rack-in-gym-563854.JPG';
-
-//FontAwesomeIcon
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlassLocation, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
+import trainingBanner from '../../images/Equipment-rack-in-gym.JPG';
+import logo from '../../images/Logo_black.png';
 
 const libraries = ['places'];
 
@@ -30,6 +18,7 @@ const mapContainerStyle = {
   height: '80vh',
   width: '80vw',
 };
+
 const center = {
   lat: 25.03411303772624,
   lng: 121.56247802392849,
@@ -40,19 +29,15 @@ const options = {
 };
 
 export default function Map() {
-  //最一開始load地圖
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_API_KEY,
     libraries,
   });
 
-  //點擊健身房
   const [selected, setSelected] = useState(null);
 
-  //附近的健身房
   const [gyms, setGyms] = useState([]);
 
-  //我的所在地
   const [myPosition, setMyPosition] = useState();
 
   const mapRef = useRef();
@@ -60,7 +45,6 @@ export default function Map() {
     mapRef.current = map;
   }, []);
 
-  //點擊搜尋出來的地點後，地圖跑去那邊
   const panTo = useCallback(({ lat, lng }) => {
     mapRef.current.panTo({ lat, lng });
     mapRef.current.setZoom(16);
@@ -68,7 +52,6 @@ export default function Map() {
     setMyPosition({ lat, lng });
   }, []);
 
-  //找出附近的健身房
   async function nearbyGymsMap({ lat, lng }) {
     const res = await fetch(
       `https://us-central1-fitness2-d4aaf.cloudfunctions.net/getGoogleNearbySearch?lat=${lat}&lng=${lng}`
@@ -117,8 +100,7 @@ export default function Map() {
               }}
             />
           ))}
-
-          {selected ? (
+          {selected && (
             <InfoWindow
               position={{
                 lat: selected.geometry.location.lat + 0.0003,
@@ -142,157 +124,10 @@ export default function Map() {
                 )}
               </InfoOutside>
             </InfoWindow>
-          ) : null}
+          )}
         </GoogleMap>
       </GoogleMapOutside>
     </>
-  );
-}
-
-//找出我在哪
-function Locate({ panTo }) {
-  //UserContext拿資料
-  const {
-    isLoggedIn,
-    setIsLoggedIn,
-    userSignOut,
-    signInWithGoogle,
-    uid,
-    displayName,
-    email,
-    signIn,
-    setContent,
-    alertPop,
-  } = useContext(UserContext);
-
-  return (
-    <>
-      <LocationOutside>
-        <LocatePic>
-          <FontAwesomeIcon icon={faMapLocationDot} />
-        </LocatePic>
-        <LocateButtonOutside>
-          <LocateButton
-            onClick={() => {
-              {
-                isLoggedIn
-                  ? navigator.geolocation.getCurrentPosition(
-                      (position) => {
-                        panTo({
-                          lat: position.coords.latitude,
-                          lng: position.coords.longitude,
-                        });
-                      },
-                      () => null
-                    )
-                  : signIn();
-                alertPop();
-                setContent('請開啟瀏覽器存取權');
-              }
-            }}
-          >
-            找出我附近的健身房
-          </LocateButton>
-        </LocateButtonOutside>
-      </LocationOutside>
-    </>
-  );
-}
-
-//搜尋地點，預設在AWS附近
-function Search({ panTo }) {
-  //UserContext拿資料
-  const { isLoggedIn, setIsLoggedIn, userSignOut, signInWithGoogle, uid, displayName, email, signIn } =
-    useContext(UserContext);
-
-  //監測有無在使用搜尋框框
-  const [focus, setFocus] = useState(false);
-
-  const {
-    ready,
-    value,
-    suggestions: { status, data },
-    setValue,
-    clearSuggestions,
-  } = usePlacesAutocomplete({
-    requestOptions: {
-      location: { lat: () => 25.03411303772624, lng: () => 121.56247802392849 },
-      radius: 100 * 1000,
-    },
-  });
-
-  const handleInput = (e) => {
-    setValue(e.target.value);
-    setFocus(true);
-  };
-
-  //選擇搜尋出來的地點以後，清除下拉遠單
-  const handleSelect = async (address) => {
-    setValue(address, false);
-    clearSuggestions();
-    try {
-      if (isLoggedIn) {
-        const results = await getGeocode({ address });
-        const { lat, lng } = await getLatLng(results[0]);
-        panTo({ lat, lng });
-      } else {
-        signIn();
-      }
-    } catch (error) {
-      console.log('😱 Error: ', error);
-    }
-  };
-
-  return (
-    <ComboboxOutside
-      style={{
-        zIndex: '50',
-      }}
-    >
-      <ComboboxPic $focus={focus}>
-        <FontAwesomeIcon icon={faMagnifyingGlassLocation} />
-      </ComboboxPic>
-      <Combobox onSelect={handleSelect}>
-        <ComboboxInput
-          value={value}
-          onChange={handleInput}
-          onFocus={() => {
-            setFocus(true);
-          }}
-          onBlur={() => {
-            setFocus(false);
-          }}
-          disabled={!ready}
-          placeholder="輸入地點找尋健身房"
-          style={{
-            width: '240px',
-            textAlign: 'center',
-            borderRadius: '5px',
-            height: '40px',
-            border: 'none',
-            paddingLeft: '5px',
-            paddingTop: '2px',
-            fontSize: '20px',
-            border: '2px solid black',
-            letterSpacing: '1px',
-          }}
-        />
-        <ComboboxPopover>
-          <ComboboxList>
-            {status === 'OK' &&
-              data.map(({ id, description }) => (
-                <ComboboxOption
-                  key={id}
-                  value={description}
-                  style={{
-                    color: 'black',
-                  }}
-                />
-              ))}
-          </ComboboxList>
-        </ComboboxPopover>
-      </Combobox>
-    </ComboboxOutside>
   );
 }
 
@@ -350,73 +185,6 @@ const ButtonOutside = styled.div`
   margin: 40px auto;
   @media screen and (max-width: 767px) {
     flex-direction: column;
-  }
-`;
-
-const LocateButtonOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #74c6cc;
-  width: 260px;
-  margin-right: 20px;
-  color: black;
-  cursor: pointer;
-  transition: ease-in-out 0.2s;
-  &:hover {
-    background: white;
-    color: black;
-  }
-  @media screen and (max-width: 767px) {
-    margin-right: 0px;
-  }
-`;
-
-const LocationOutside = styled.div`
-  display: flex;
-`;
-
-const LocatePic = styled.div`
-  color: #74c6cc;
-  font-size: 30px;
-  margin-right: 20px;
-`;
-
-const LocateButton = styled.div`
-  padding: 8px;
-  font-size: 23px;
-  letter-spacing: 2px;
-  font-weight: 600;
-`;
-
-const ComboboxOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 350px;
-  @media screen and (max-width: 767px) {
-    margin-top: 30px;
-  }
-`;
-
-const ComboboxPic = styled.div`
-  font-size: 30px;
-  color: ${(props) => (props.$focus ? '#74c6cc' : 'white')};
-  margin-right: 10px;
-  scale: 1;
-  animation-name: ${(props) => (props.$focus ? 'zoom' : null)};
-  animation-duration: 2.5s;
-  animation-iteration-count: infinite;
-  @keyframes zoom {
-    0% {
-      scale: 1;
-    }
-    50% {
-      scale: 1.5;
-    }
-    100% {
-      scale: 1;
-    }
   }
 `;
 
