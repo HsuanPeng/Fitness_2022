@@ -49,7 +49,7 @@ const Statistics = () => {
     labels: showFatRecord ? fatDateLine : weightDateLine,
     datasets: [
       {
-        label: '體脂肪率',
+        label: showFatRecord ? '體脂肪率' : '體重',
         data: showFatRecord ? fatNumberLine : weightNumberLine,
         fill: true,
         backgroundColor: showFatRecord ? 'rgba(238,141,71,0.2)' : 'rgba(255,183,3,0.2)',
