@@ -2,54 +2,28 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-//components
 import UserContext from '../../contexts/UserContext';
 
-//images
-import LogoBlue from '../../images/高畫質logo_藍色2.png';
+import LogoBlue from '../../images/Logo_blue.png';
 
-//FontAwesomeIcon
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
-  const {
-    isLoggedIn,
-    setIsLoggedIn,
-    userSignOut,
-    signInWithGoogle,
-    uid,
-    displayName,
-    email,
-    signIn,
-    currentPage,
-    setCurrentPgae,
-  } = useContext(UserContext);
+  const { isLoggedIn, userSignOut, signIn, currentPage, setCurrentPgae } = useContext(UserContext);
 
-  //控制手機版menu開關
   const [openMenu, setOpenMenu] = useState(false);
-
-  function mobileMenu() {
-    setOpenMenu((prev) => !prev);
-  }
 
   return (
     <>
       <Wrapper>
-        {!openMenu ? (
-          <>
-            <MenuIcon onClick={mobileMenu} openMenu={openMenu}>
-              <FontAwesomeIcon icon={faBars} />
-            </MenuIcon>
-          </>
-        ) : (
-          <>
-            <MenuIcon onClick={mobileMenu} openMenu={openMenu}>
-              <FontAwesomeIcon icon={faXmark} />
-            </MenuIcon>
-          </>
-        )}
+        <MenuIcon
+          onClick={() => {
+            setOpenMenu((prev) => !prev);
+          }}
+        >
+          {openMenu ? <FontAwesomeIcon icon={faXmark} /> : <FontAwesomeIcon icon={faBars} />}
+        </MenuIcon>
         <LogoZone
           to="/"
           onClick={() => {
@@ -59,67 +33,65 @@ const Header = () => {
           <Logo></Logo>
           <LogoTitle>健人網</LogoTitle>
         </LogoZone>
-        <PageSelection openMenu={openMenu}>
-          <TrainingPage
+        <PageSelection $openMenu={openMenu}>
+          <PageButton
             to="/training"
             onClick={() => {
               setCurrentPgae('TrainingPage');
             }}
-            $isActive={currentPage}
+            $currentPage={currentPage === 'TrainingPage'}
           >
-            <TrainingPageTitle> 健菜單</TrainingPageTitle>
-            <UnderLine></UnderLine>
-          </TrainingPage>
-          <Calendar
+            <PageButtonTitle> 健菜單</PageButtonTitle>
+            <UnderLine />
+          </PageButton>
+          <PageButton
             to="/calendar"
             onClick={() => {
               setCurrentPgae('Calendar');
             }}
-            $isActive={currentPage}
+            $currentPage={currentPage === 'Calendar'}
           >
-            <CalendarPageTitle>健日曆</CalendarPageTitle>
-            <UnderLine></UnderLine>
-          </Calendar>
-          <StatisticsPage
+            <PageButtonTitle>健日曆</PageButtonTitle>
+            <UnderLine />
+          </PageButton>
+          <PageButton
             to="/statistics"
             onClick={() => {
               setCurrentPgae('StatisticsPage');
             }}
-            $isActive={currentPage}
+            $currentPage={currentPage === 'StatisticsPage'}
           >
-            <StatisticsPageTitle> 健數據</StatisticsPageTitle>
-            <UnderLine></UnderLine>
-          </StatisticsPage>
-          <MapPage
+            <PageButtonTitle> 健數據</PageButtonTitle>
+            <UnderLine />
+          </PageButton>
+          <PageButton
             to="/map"
             onClick={() => {
               setCurrentPgae('MapPage');
             }}
-            $isActive={currentPage}
+            $currentPage={currentPage === 'MapPage'}
           >
-            <MapPageTitle> 健地圖</MapPageTitle>
-            <UnderLine></UnderLine>
-          </MapPage>
+            <PageButtonTitle> 健地圖</PageButtonTitle>
+            <UnderLine />
+          </PageButton>
           {isLoggedIn ? (
-            <>
-              <Logout
-                onClick={() => {
-                  userSignOut();
-                }}
-              >
-                <LogoutTitle>登出</LogoutTitle>
-                <UnderLine></UnderLine>
-              </Logout>
-            </>
+            <LogButton
+              onClick={() => {
+                userSignOut();
+              }}
+            >
+              <LogButtonTitle>登出</LogButtonTitle>
+              <UnderLine></UnderLine>
+            </LogButton>
           ) : (
-            <Login
+            <LogButton
               onClick={() => {
                 signIn();
               }}
             >
-              <LoginTitle> 登入</LoginTitle>
-              <UnderLine></UnderLine>
-            </Login>
+              <LogButtonTitle> 登入</LogButtonTitle>
+              <UnderLine />
+            </LogButton>
           )}
         </PageSelection>
       </Wrapper>
@@ -150,7 +122,7 @@ const MenuIcon = styled.div`
     position: absolute;
     top: 15px;
     left: 15px;
-    color: ${({ openMenu }) => (openMenu ? '#74c6cc' : 'white')};
+    color: white;
     font-weight: 200;
     cursor: pointer;
     &:hover {
@@ -219,8 +191,8 @@ const PageSelection = styled.div`
     z-index: 30;
     left: 0%;
     top: 8.1%;
-    transform: ${({ openMenu }) => (openMenu ? 'translateX(0)' : 'translateX(-100%)')};
-    transition: ${({ openMenu }) => (openMenu ? 'all 0.3s' : 'all 0s')};
+    transform: ${(props) => (props.$openMenu ? 'translateX(0)' : 'translateX(-100%)')};
+    transition: ${(props) => (props.$openMenu ? 'all 0.3s' : 'all 0s')};
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -237,8 +209,8 @@ const UnderLine = styled.div`
   transition: ease-in-out 0.3s;
 `;
 
-const TrainingPage = styled(Link)`
-  color: ${(props) => (props.$isActive === 'TrainingPage' ? '#74c6cc' : 'white')};
+const PageButton = styled(Link)`
+  color: ${(props) => (props.$currentPage ? '#74c6cc' : 'white')};
   height: 40px;
   margin-top: 28px;
   display: flex;
@@ -248,7 +220,7 @@ const TrainingPage = styled(Link)`
   transition: ease-in-out 0.2s;
   cursor: pointer;
   ${UnderLine} {
-    width: ${(props) => (props.$isActive === 'TrainingPage' ? '100%' : '0%')};
+    width: ${(props) => (props.$currentPage ? '100%' : '0%')};
     background-color: #74c6cc;
   }
   &:hover {
@@ -266,8 +238,8 @@ const TrainingPage = styled(Link)`
     letter-spacing: 5px;
     height: 60px;
     border: 0.5px solid rgba(255, 255, 255, 0.5);
-    color: ${(props) => (props.$isActive === 'TrainingPage' ? 'black' : null)};
-    background: ${(props) => (props.$isActive === 'TrainingPage' ? 'white' : null)};
+    color: ${(props) => props.$currentPage && 'black'};
+    background: ${(props) => props.$currentPage && 'white'};
     ${UnderLine} {
       width: 0%;
     }
@@ -284,164 +256,11 @@ const TrainingPage = styled(Link)`
   }
 `;
 
-const TrainingPageTitle = styled.div`
+const PageButtonTitle = styled.div`
   margin-left: 5px;
 `;
 
-const Calendar = styled(Link)`
-  color: ${(props) => (props.$isActive === 'Calendar' ? '#74c6cc' : 'white')};
-  height: 40px;
-  margin-top: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: ease-in-out 0.2s;
-  cursor: pointer;
-  ${UnderLine} {
-    width: ${(props) => (props.$isActive === 'Calendar' ? '100%' : '0%')};
-    background-color: #74c6cc;
-  }
-  &:hover {
-    color: #74c6cc;
-    height: 45px;
-    margin-top: 23px;
-    ${UnderLine} {
-      width: 100%;
-      background-color: #74c6cc;
-    }
-  }
-  @media screen and (max-width: 767px) {
-    margin: 0px 0px;
-    width: 100%;
-    letter-spacing: 5px;
-    height: 60px;
-    border: 0.5px solid rgba(255, 255, 255, 0.5);
-    color: ${(props) => (props.$isActive === 'Calendar' ? 'black' : null)};
-    background: ${(props) => (props.$isActive === 'Calendar' ? 'white' : null)};
-    ${UnderLine} {
-      width: 0%;
-    }
-    &:hover {
-      color: black;
-      height: 60px;
-      background: white;
-      margin-top: 0px;
-      ${UnderLine} {
-        width: 0%;
-        background-color: #74c6cc;
-      }
-    }
-  }
-`;
-
-const CalendarPageTitle = styled.div`
-  margin-left: 5px;
-`;
-
-const StatisticsPage = styled(Link)`
-  color: ${(props) => (props.$isActive === 'StatisticsPage' ? '#74c6cc' : 'white')};
-  height: 40px;
-  margin-top: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: ease-in-out 0.2s;
-  cursor: pointer;
-  ${UnderLine} {
-    width: ${(props) => (props.$isActive === 'StatisticsPage' ? '100%' : '0%')};
-    background-color: #74c6cc;
-  }
-  &:hover {
-    color: #74c6cc;
-    height: 45px;
-    margin-top: 23px;
-    ${UnderLine} {
-      width: 100%;
-      background-color: #74c6cc;
-    }
-  }
-  @media screen and (max-width: 767px) {
-    margin: 0px 0px;
-    width: 100%;
-    letter-spacing: 5px;
-    height: 60px;
-    border: 0.5px solid rgba(255, 255, 255, 0.5);
-    color: ${(props) => (props.$isActive === 'StatisticsPage' ? 'black' : null)};
-    background: ${(props) => (props.$isActive === 'StatisticsPage' ? 'white' : null)};
-    ${UnderLine} {
-      width: 0%;
-    }
-    &:hover {
-      color: black;
-      height: 60px;
-      background: white;
-      margin-top: 0px;
-      ${UnderLine} {
-        width: 0%;
-        background-color: #74c6cc;
-      }
-    }
-  }
-`;
-
-const StatisticsPageTitle = styled.div`
-  margin-left: 5px;
-`;
-
-const MapPage = styled(Link)`
-  color: ${(props) => (props.$isActive === 'MapPage' ? '#74c6cc' : 'white')};
-  height: 40px;
-  margin-top: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: ease-in-out 0.2s;
-  cursor: pointer;
-  ${UnderLine} {
-    width: ${(props) => (props.$isActive === 'MapPage' ? '100%' : '0%')};
-    background-color: #74c6cc;
-  }
-  &:hover {
-    color: #74c6cc;
-    height: 45px;
-    margin-top: 23px;
-    ${UnderLine} {
-      width: 100%;
-      background-color: #74c6cc;
-    }
-  }
-  @media screen and (max-width: 767px) {
-    margin: 0px 0px;
-    width: 100%;
-    letter-spacing: 5px;
-    height: 60px;
-    border: 0.5px solid rgba(255, 255, 255, 0.5);
-    color: ${(props) => (props.$isActive === 'MapPage' ? 'black' : null)};
-    background: ${(props) => (props.$isActive === 'MapPage' ? 'white' : null)};
-    ${UnderLine} {
-      width: 0%;
-    }
-    &:hover {
-      color: black;
-      height: 60px;
-      background: white;
-      margin-top: 0px;
-      ${UnderLine} {
-        width: 0%;
-        background-color: #74c6cc;
-      }
-    }
-  }
-`;
-
-const MapPageTitle = styled.div`
-  margin-left: 5px;
-`;
-
-const Logout = styled.div`
+const LogButton = styled.div`
   color: white;
   height: 40px;
   margin-top: 28px;
@@ -480,49 +299,6 @@ const Logout = styled.div`
   }
 `;
 
-const LogoutTitle = styled.div`
-  margin-left: 5px;
-`;
-
-const Login = styled.div`
-  color: white;
-  height: 40px;
-  margin-top: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: ease-in-out 0.2s;
-  cursor: pointer;
-  &:hover {
-    color: #74c6cc;
-    height: 45px;
-    margin-top: 23px;
-    ${UnderLine} {
-      width: 100%;
-      background-color: #74c6cc;
-    }
-  }
-  @media screen and (max-width: 767px) {
-    margin: 0px 0px;
-    width: 100%;
-    letter-spacing: 5px;
-    height: 60px;
-    border: 0.5px solid white;
-    border: 0.5px solid rgba(255, 255, 255, 0.5);
-    &:hover {
-      color: black;
-      height: 60px;
-      background: white;
-      margin-top: 0px;
-      ${UnderLine} {
-        width: 0%;
-        background-color: #74c6cc;
-      }
-    }
-  }
-`;
-
-const LoginTitle = styled.div`
+const LogButtonTitle = styled.div`
   margin-left: 5px;
 `;

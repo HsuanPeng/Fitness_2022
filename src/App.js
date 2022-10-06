@@ -1,78 +1,34 @@
 import React, { useEffect, useState } from 'react';
 
-//Route
 import { Outlet } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
-//firebase
-import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  signOut,
-  onAuthStateChanged,
-  signInWithPopup,
-} from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { GoogleAuthProvider, signOut, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import { auth } from '../src/utils/firebase';
 
-//components
 import Header from './components/Header/Header';
 import UserContext from './contexts/UserContext';
 
-//pic
-import signInPic from './images/Beautiful-woman-holding-heavy-603695.jpg';
+import signInPic from './images/Beautiful-woman-holding-heavy.jpg';
 import remove from './images/remove.png';
 
-//FontAwesomeIcon
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { faGooglePlusG } from '@fortawesome/free-brands-svg-icons';
 
-//loading animation
-import { Blocks } from 'react-loader-spinner';
-
 const App = () => {
-  //判斷有無登入
   const [isLoggedIn, setIsLoggedIn] = useState(null);
 
-  //存登入資料
   const [uid, setUid] = useState(null);
   const [displayName, setDisplayName] = useState(null);
   const [email, setEmail] = useState(null);
 
-  //登入畫面
   const [signInPage, setSignInPage] = useState(false);
 
-  //可愛通知
   const [alert, setAlert] = useState(false);
   const [content, setContent] = useState('');
 
-  //loading動畫
-  const [loading, setLoading] = useState(false);
-
-  //控制header分頁變色
-  const [currentPage, setCurrentPgae] = useState();
-
-  // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
-
-  const firebaseConfig = {
-    apiKey: 'AIzaSyDtlWrSX2x1e0oTxI1_MN52sQsVyEwaOzA',
-    authDomain: 'fitness2-d4aaf.firebaseapp.com',
-    projectId: 'fitness2-d4aaf',
-    storageBucket: 'fitness2-d4aaf.appspot.com',
-    messagingSenderId: '440863323792',
-    appId: '1:440863323792:web:3f097801137f4002c7ca15',
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-
-  // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
-
-  // ＝＝＝＝＝＝＝＝＝＝登入系統＝＝＝＝＝＝＝＝＝＝＝
+  const [currentPage, setCurrentPgae] = useState('');
 
   const provider = new GoogleAuthProvider();
 
@@ -80,7 +36,6 @@ const App = () => {
     setSignInPage(true);
   }
 
-  //登入google視窗
   function signInWithGoogle() {
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -92,7 +47,6 @@ const App = () => {
       .catch((error) => console.log(error));
   }
 
-  // 登出
   function userSignOut() {
     signOut(auth)
       .then(() => {
@@ -105,7 +59,6 @@ const App = () => {
       });
   }
 
-  //判斷有無登入或登出
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -121,18 +74,12 @@ const App = () => {
     });
   }, []);
 
-  // ＝＝＝＝＝＝＝＝＝＝登入系統＝＝＝＝＝＝＝＝＝＝＝
-
-  // ＝＝＝＝＝＝＝＝＝＝＝跳通知功能＝＝＝＝＝＝＝＝＝＝＝
-
   function alertPop() {
     setAlert(true);
     setTimeout(() => {
       setAlert(false);
     }, 4000);
   }
-
-  // ＝＝＝＝＝＝＝＝＝＝＝跳通知功能＝＝＝＝＝＝＝＝＝＝＝
 
   return (
     <>
@@ -153,18 +100,6 @@ const App = () => {
         }}
       >
         <GlobalStyle />
-        <LoadingOutside $isActive={loading}>
-          <LoadingBlocks>
-            <Blocks
-              visible={true}
-              height="260"
-              width="260"
-              ariaLabel="blocks-loading"
-              wrapperStyle={{}}
-              wrapperClass="blocks-wrapper"
-            />
-          </LoadingBlocks>
-        </LoadingOutside>
         <AlertOutside $alert={alert}>
           <Check>
             <FontAwesomeIcon icon={faBell} />
@@ -182,7 +117,7 @@ const App = () => {
                 src={remove}
               ></Close>
               <Close />
-              <SignInPicture signInPic={signInPic} />
+              <SignInPicture />
               <SignInContent>
                 <SignInQuestion>
                   準備好開始你的
@@ -261,23 +196,6 @@ const GlobalStyle = createGlobalStyle`
 }
 `;
 
-const LoadingOutside = styled.div`
-  position: fixed;
-  z-index: 2000;
-  background: #475260;
-  height: 100%;
-  width: 100%;
-  display: ${(props) => (props.$isActive ? 'block' : 'none')};
-`;
-
-const LoadingBlocks = styled.div`
-  position: fixed;
-  z-index: 2000;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
-
 const AlertOutside = styled.div`
   display: flex;
   justify-content: center;
@@ -291,7 +209,7 @@ const AlertOutside = styled.div`
   z-index: 1000;
   padding: 40px 10px;
   color: white;
-  animation-name: ${(props) => (props.$alert ? 'alertIn' : null)};
+  animation-name: ${(props) => props.$alert && 'alertIn'};
   animation-duration: 4s;
   @keyframes alertIn {
     0% {
@@ -324,7 +242,7 @@ const AlertLine = styled.div`
   position: absolute;
   bottom: 0px;
   left: 0px;
-  animation-name: ${(props) => (props.$alert ? 'lineOut' : null)};
+  animation-name: ${(props) => props.$alert && 'lineOut'};
   animation-duration: 4s;
   @keyframes lineOut {
     0% {

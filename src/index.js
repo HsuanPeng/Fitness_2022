@@ -1,9 +1,7 @@
 import ReactDOM from 'react-dom/client';
 
-//Router設定
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
-//引入分頁
 import App from './App';
 import Home from './pages/Home/Home';
 import Training from './pages/Training/Training';

@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-//FontAwesomeIcon
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideo, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import {} from '@fortawesome/free-brands-svg-icons';
 
-const PromoteActionOutsideZone = (props) => {
+const PromoteActionZone = (props) => {
   return (
     <PromoteActionOutside>
       <PromoteTop>
@@ -36,10 +33,11 @@ const PromoteActionOutsideZone = (props) => {
           <PromoteListPart>{item.bodyPart}</PromoteListPart>
           <PromoteLisName>{item.actionName}</PromoteLisName>
           <VideoTag
-            $isActive={index == props.playing}
+            $playing={index === props.playing}
             id={index}
             onClick={(e) => {
-              props.openVideo(e);
+              props.setVideoUrl(props.promoteActions[e.target.id].videoURL);
+              props.setVideoShow(true);
               props.setPlaying(e.target.id);
             }}
           >
@@ -51,7 +49,7 @@ const PromoteActionOutsideZone = (props) => {
   );
 };
 
-export default PromoteActionOutsideZone;
+export default PromoteActionZone;
 
 const PromoteActionOutside = styled.div`
   width: 45%;
@@ -167,7 +165,7 @@ const PromoteLisName = styled.div`
 const VideoTag = styled.div`
   width: 10%;
   cursor: pointer;
-  color: ${(props) => (props.$isActive ? '#74c6cc' : 'black')};
+  color: ${(props) => (props.$playing ? '#74c6cc' : 'black')};
   &:hover {
     color: #74c6cc;
   }

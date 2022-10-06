@@ -1,12 +1,9 @@
 import styled from 'styled-components';
 
-//FontAwesomeIcon
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import {} from '@fortawesome/free-brands-svg-icons';
 
-const BodyWeightDataPage = (props) => {
+const BodyWeightPage = (props) => {
   return (
     <BodyWeightWriteDataZone>
       <Top>
@@ -67,7 +64,7 @@ const BodyWeightDataPage = (props) => {
   );
 };
 
-export default BodyWeightDataPage;
+export default BodyWeightPage;
 
 const BodyWeightWriteDataZone = styled.div`
   margin-right: 40px;

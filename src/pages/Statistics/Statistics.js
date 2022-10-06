@@ -1,17 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-//components
 import UserContext from '../../contexts/UserContext';
-import BodyFatDataPage from './BodyFatDataPage';
-import BodyWeightDataPage from './BodyWeightDataPage';
+import BodyFatPage from './BodyFatPage';
+import BodyWeightPage from './BodyWeightPage';
 
-//firebase
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, collection, onSnapshot, query, orderBy, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, onSnapshot, query, orderBy, deleteDoc } from 'firebase/firestore';
+import { db } from '../../utils/firebase';
 
-//chart.js
-import { Chart, Line } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,69 +20,74 @@ import {
   Legend,
 } from 'chart.js';
 
-//pic
-import trainingBanner from '../../images/Athlete-preparing-for-training-467612.jpg';
+import trainingBanner from '../../images/Athlete-preparing-for-training.jpg';
 
 const Statistics = () => {
-  ChartJS.defaults.font.size = 16;
+  ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+  ChartJS.defaults.font.size = 20;
+  ChartJS.defaults.color = 'white';
 
-  //UserContext拿資料
-  const {
-    isLoggedIn,
-    setIsLoggedIn,
-    userSignOut,
-    signInWithGoogle,
-    uid,
-    displayName,
-    email,
-    signIn,
-    alertPop,
-    setContent,
-  } = useContext(UserContext);
+  const { isLoggedIn, uid, signIn, alertPop, setContent } = useContext(UserContext);
 
-  //控制顯示體脂肪or體重
   const [showFatRecord, setShowFatRecord] = useState(true);
-  const [showWeightRecord, setShowWeightRecord] = useState(false);
 
-  //抓出體脂肪歷史＋寫入＋刪除
   const [fatRecord, setFatRecord] = useState([]);
   const [fatDateInput, setFatDateInput] = useState();
   const [fatNumberInput, setFatNumberInput] = useState();
 
-  //體脂肪率折線圖
   const [fatDateLine, setFatDateLine] = useState([]);
   const [fatNumberLine, setFatNumberLine] = useState([]);
 
-  //抓出體重歷史＋寫入＋刪除
   const [weightRecord, setWeightRecord] = useState([]);
   const [weightDateInput, setWeightDateInput] = useState();
   const [weightNumberInput, setWeightNumberInput] = useState();
 
-  //體重率折線圖
   const [weightDateLine, setWeightDateLine] = useState([]);
   const [weightNumberLine, setWeightNumberLine] = useState([]);
 
-  // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
-
-  const firebaseConfig = {
-    apiKey: 'AIzaSyDtlWrSX2x1e0oTxI1_MN52sQsVyEwaOzA',
-    authDomain: 'fitness2-d4aaf.firebaseapp.com',
-    projectId: 'fitness2-d4aaf',
-    storageBucket: 'fitness2-d4aaf.appspot.com',
-    messagingSenderId: '440863323792',
-    appId: '1:440863323792:web:3f097801137f4002c7ca15',
+  const lineData = {
+    labels: showFatRecord ? fatDateLine : weightDateLine,
+    datasets: [
+      {
+        label: '體脂肪率',
+        data: showFatRecord ? fatNumberLine : weightNumberLine,
+        fill: true,
+        backgroundColor: showFatRecord ? 'rgba(238,141,71,0.2)' : 'rgba(255,183,3,0.2)',
+        borderColor: showFatRecord ? 'rgba(238,141,71,1)' : 'rgba(255,183,3,1)',
+        borderWidth: '5',
+      },
+    ],
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const dataOptions = {
+    scales: {
+      y: {
+        ticks: {
+          padding: 15,
+          color: 'white',
+        },
+      },
+      x: {
+        ticks: { padding: 15, color: 'white' },
+      },
+    },
+  };
 
-  // ＝＝＝＝＝＝＝＝＝＝＝啟動firebase＝＝＝＝＝＝＝＝＝＝＝
+  const dataNull = {
+    labels: null,
+    datasets: [
+      {
+        label: '無資料',
+        data: [0],
+        fill: true,
+        backgroundColor: 'grey',
+        borderColor: 'grey',
+      },
+    ],
+  };
 
-  //＝＝＝＝＝＝＝＝＝＝＝體脂歷史資料＝＝＝＝＝＝＝＝＝＝＝
-
-  //即時map出歷史資料
   useEffect(() => {
-    if (isLoggedIn == false) {
+    if (isLoggedIn === false) {
       setFatRecord([]);
     } else {
       async function getFatRecord() {
@@ -110,9 +112,8 @@ const Statistics = () => {
       }
       getFatRecord();
     }
-  }, [isLoggedIn, showFatRecord, showWeightRecord]);
+  }, [isLoggedIn, showFatRecord, uid]);
 
-  //登錄資料
   async function writeBodyFat(index) {
     if (isLoggedIn) {
       try {
@@ -120,7 +121,7 @@ const Statistics = () => {
         if (!re.test(fatNumberInput)) {
           alertPop();
           setContent('請輸入數字');
-        } else if (fatNumberInput > 99 || fatNumberInput == 0) {
+        } else if (fatNumberInput > 99 || fatNumberInput === 0) {
           alertPop();
           setContent('數據不實');
         } else {
@@ -147,86 +148,17 @@ const Statistics = () => {
     }
   }
 
-  //刪除個別資料
   async function deleteFatRecord(id) {
     const newFatRecord = fatRecord.filter((item, index) => {
-      return id != index;
+      return id !== index;
     });
     setFatRecord(newFatRecord);
-    updateFatRecord(id);
-  }
-
-  //刪除以後更新資料庫
-  async function updateFatRecord(id) {
     const docRef = await doc(db, 'users', uid, 'fatRecords', fatRecord[id].docID);
-    await deleteDoc(docRef);
+    deleteDoc(docRef);
   }
 
-  //＝＝＝＝＝＝＝＝＝＝＝體脂歷史資料＝＝＝＝＝＝＝＝＝＝＝
-
-  // ＝＝＝＝＝＝＝＝＝＝＝體脂chart.js＝＝＝＝＝＝＝＝＝＝＝
-
-  ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
-  ChartJS.defaults.font.size = 20;
-
-  const BodyFatData = {
-    labels: fatDateLine,
-    datasets: [
-      {
-        label: '體脂肪率',
-        data: fatNumberLine,
-        fill: true,
-        backgroundColor: 'rgba(238,141,71,0.2)',
-        borderColor: 'rgba(238,141,71,1)',
-        borderWidth: '5',
-        plugins: {
-          legend: {
-            labels: {
-              font: {
-                size: 20,
-              },
-            },
-          },
-        },
-      },
-    ],
-  };
-
-  const bodyFatOptions = {
-    scales: {
-      y: {
-        ticks: {
-          padding: 15,
-          color: 'white',
-        },
-      },
-      x: {
-        ticks: { padding: 15, color: 'white' },
-      },
-    },
-  };
-
-  const dataNull = {
-    labels: fatDateLine,
-    datasets: [
-      {
-        label: '無資料',
-        data: [0],
-        fill: true,
-        backgroundColor: 'grey',
-        borderColor: 'grey',
-      },
-    ],
-  };
-
-  // ＝＝＝＝＝＝＝＝＝＝＝體脂chart.js＝＝＝＝＝＝＝＝＝＝＝
-
-  //＝＝＝＝＝＝＝＝＝＝＝體重歷史資料＝＝＝＝＝＝＝＝＝＝＝
-
-  //即時map出歷史資料
   useEffect(() => {
-    if (isLoggedIn == false) {
+    if (isLoggedIn === false) {
       setWeightRecord([]);
     } else {
       async function getWeightRecord() {
@@ -251,9 +183,8 @@ const Statistics = () => {
       }
       getWeightRecord();
     }
-  }, [isLoggedIn, showFatRecord, showWeightRecord]);
+  }, [isLoggedIn, showFatRecord, uid]);
 
-  //登錄資料
   async function writeBodyWeight(index) {
     if (isLoggedIn) {
       try {
@@ -261,7 +192,7 @@ const Statistics = () => {
         if (!re.test(weightNumberInput)) {
           alertPop();
           setContent('請填寫數字');
-        } else if (weightNumberInput > 999 || weightNumberInput == 0) {
+        } else if (weightNumberInput > 999 || weightNumberInput === 0) {
           alertPop();
           setContent('數據不實');
         } else {
@@ -288,79 +219,14 @@ const Statistics = () => {
     }
   }
 
-  //刪除個別資料
   async function deleteWeightRecord(id) {
     const newWeightRecord = weightRecord.filter((item, index) => {
-      return id != index;
+      return id !== index;
     });
     setWeightRecord(newWeightRecord);
-    updateWeightRecord(id);
-  }
-
-  //刪除以後更新資料庫
-  async function updateWeightRecord(id) {
     const docRef = await doc(db, 'users', uid, 'weightRecords', weightRecord[id].docID);
-    await deleteDoc(docRef);
+    deleteDoc(docRef);
   }
-
-  //＝＝＝＝＝＝＝＝＝＝＝體重歷史資料＝＝＝＝＝＝＝＝＝＝＝
-
-  // ＝＝＝＝＝＝＝＝＝＝＝體重chart.js＝＝＝＝＝＝＝＝＝＝＝
-
-  ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
-  const BodyWeightData = {
-    labels: weightDateLine,
-    datasets: [
-      {
-        label: '體重',
-        data: weightNumberLine,
-        fill: true,
-        backgroundColor: 'rgba(255,183,3,0.2)',
-        borderColor: 'rgba(255,183,3,1)',
-        borderWidth: '5',
-        plugins: {
-          legend: {
-            labels: {
-              font: {
-                size: 16,
-              },
-            },
-          },
-        },
-      },
-    ],
-  };
-
-  const bodyWeightOptions = {
-    scales: {
-      y: {
-        ticks: {
-          padding: 15,
-          color: 'white',
-        },
-      },
-      x: {
-        ticks: { padding: 15, color: 'white' },
-      },
-    },
-  };
-
-  // ＝＝＝＝＝＝＝＝＝＝＝體重chart.js＝＝＝＝＝＝＝＝＝＝＝
-
-  // ＝＝＝＝＝＝＝＝＝＝＝頁面切換＝＝＝＝＝＝＝＝＝＝＝
-
-  function goBodyFatPage() {
-    setShowFatRecord(true);
-    setShowWeightRecord(false);
-  }
-
-  function goBodyWeightPage() {
-    setShowFatRecord(false);
-    setShowWeightRecord(true);
-  }
-
-  // ＝＝＝＝＝＝＝＝＝＝＝頁面切換＝＝＝＝＝＝＝＝＝＝＝
 
   return (
     <>
@@ -372,16 +238,24 @@ const Statistics = () => {
         </BannerOutside>
         <ChangeOutside>
           <ChangeMenuZone>
-            <GoBodyFatOutide onClick={goBodyFatPage}>
-              <GoBodyFat $isActive={showFatRecord}>體脂肪率</GoBodyFat>
+            <GoBodyFatOutide
+              onClick={() => {
+                setShowFatRecord(true);
+              }}
+            >
+              <GoBodyFat $showFatRecord={showFatRecord}>體脂肪率</GoBodyFat>
             </GoBodyFatOutide>
-            <GoBodyWeightOutside onClick={goBodyWeightPage}>
-              <GoBodyWeight $isActive={showWeightRecord}>體重</GoBodyWeight>
+            <GoBodyWeightOutside
+              onClick={() => {
+                setShowFatRecord(false);
+              }}
+            >
+              <GoBodyWeight $showFatRecord={showFatRecord}>體重</GoBodyWeight>
             </GoBodyWeightOutside>
           </ChangeMenuZone>
-          <ChangeToBodyFat $isHide={showFatRecord}>
+          {showFatRecord ? (
             <BodyFatZone>
-              <BodyFatDataPage
+              <BodyFatPage
                 setFatDateInput={setFatDateInput}
                 fatNumberInput={fatNumberInput}
                 setFatNumberInput={setFatNumberInput}
@@ -394,17 +268,16 @@ const Statistics = () => {
               <BodyFatLinePageZone>
                 <BodyFatLineOutside>
                   {fatRecord.length > 0 ? (
-                    <Line data={BodyFatData} options={bodyFatOptions} />
+                    <Line data={lineData} options={dataOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
                 </BodyFatLineOutside>
               </BodyFatLinePageZone>
             </BodyFatZone>
-          </ChangeToBodyFat>
-          <ChangeToBodyWeight $isHide={showWeightRecord}>
+          ) : (
             <BodyWeightZone>
-              <BodyWeightDataPage
+              <BodyWeightPage
                 setWeightDateInput={setWeightDateInput}
                 setWeightNumberInput={setWeightNumberInput}
                 weightNumberInput={weightNumberInput}
@@ -417,14 +290,14 @@ const Statistics = () => {
               <BodyWeightLinePageZone>
                 <BodyWeightLineOutside>
                   {weightRecord.length > 0 ? (
-                    <Line data={BodyWeightData} options={bodyWeightOptions} />
+                    <Line data={lineData} options={dataOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
                 </BodyWeightLineOutside>
               </BodyWeightLinePageZone>
             </BodyWeightZone>
-          </ChangeToBodyWeight>
+          )}
         </ChangeOutside>
       </Wrapper>
     </>
@@ -517,7 +390,7 @@ const GoBodyFat = styled.div`
   font-size: 24px;
   letter-spacing: 2px;
   font-weight: 600;
-  background: ${(props) => (props.$isActive ? '#74c6cc' : '#475260')};
+  background: ${(props) => (props.$showFatRecord ? '#74c6cc' : '#475260')};
   &:hover {
     background: #74c6cc;
   }
@@ -538,16 +411,10 @@ const GoBodyWeight = styled.div`
   font-size: 24px;
   letter-spacing: 2px;
   font-weight: 600;
-  background: ${(props) => (props.$isActive ? '#74c6cc' : '#475260')};
+  background: ${(props) => (props.$showFatRecord ? '#475260' : '#74c6cc')};
   &:hover {
     background: #74c6cc;
   }
-`;
-
-// ＝＝＝＝＝＝＝＝＝＝＝體脂肪區＝＝＝＝＝＝＝＝＝＝＝
-
-const ChangeToBodyFat = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
 `;
 
 const BodyFatZone = styled.div`
@@ -562,10 +429,6 @@ const BodyFatZone = styled.div`
     flex-direction: column;
   }
 `;
-
-// ＝＝＝＝＝＝＝＝＝＝＝體脂肪區＝＝＝＝＝＝＝＝＝＝＝
-
-// ＝＝＝＝＝＝＝＝＝＝＝體脂肪折線圖區＝＝＝＝＝＝＝＝＝＝＝
 
 const BodyFatLinePageZone = styled.div``;
 
@@ -591,14 +454,6 @@ const BodyFatLineOutside = styled.div`
   }
 `;
 
-// ＝＝＝＝＝＝＝＝＝＝＝體脂肪折線圖區＝＝＝＝＝＝＝＝＝＝＝
-
-// ＝＝＝＝＝＝＝＝＝＝＝體重區＝＝＝＝＝＝＝＝＝＝＝
-
-const ChangeToBodyWeight = styled.div`
-  display: ${(props) => (props.$isHide ? 'block;' : 'none;')};
-`;
-
 const BodyWeightZone = styled.div`
   display: flex;
   justify-content: center;
@@ -611,10 +466,6 @@ const BodyWeightZone = styled.div`
     flex-direction: column;
   }
 `;
-
-// ＝＝＝＝＝＝＝＝＝＝＝體重區＝＝＝＝＝＝＝＝＝＝＝
-
-// ＝＝＝＝＝＝＝＝＝＝＝體重折線圖區＝＝＝＝＝＝＝＝＝＝＝
 
 const BodyWeightLinePageZone = styled.div``;
 
@@ -639,5 +490,3 @@ const BodyWeightLineOutside = styled.div`
     margin-right: 10px;
   }
 `;
-
-// ＝＝＝＝＝＝＝＝＝＝＝體重折線圖區＝＝＝＝＝＝＝＝＝＝＝

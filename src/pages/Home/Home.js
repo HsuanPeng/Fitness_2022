@@ -1,28 +1,16 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
+
 import { useNavigate } from 'react-router-dom';
 
-//pic
-import HomePic from '../../images/Man-performs-dumbbell-rows-451139.jpg';
+import HomePic from '../../images/Man-performs-dumbbell-rows.jpg';
 
-//components
 import UserContext from '../../contexts/UserContext';
 
 const Home = () => {
   let navigate = useNavigate();
 
-  const {
-    isLoggedIn,
-    setIsLoggedIn,
-    userSignOut,
-    signInWithGoogle,
-    uid,
-    displayName,
-    email,
-    signIn,
-    currentPage,
-    setCurrentPgae,
-  } = useContext(UserContext);
+  const { setCurrentPgae } = useContext(UserContext);
 
   return (
     <>
@@ -32,9 +20,9 @@ const Home = () => {
             <HomeTitle>全力以赴 你會很酷</HomeTitle>
             <HomeContent>菜單規劃｜數據追蹤｜健身地圖</HomeContent>
             <HomeContentMobile>
-              <Training>菜單規劃</Training>
-              <Statistics>數據追蹤</Statistics>
-              <Map>健身地圖</Map>
+              <HomeContentMobileItem>菜單規劃</HomeContentMobileItem>
+              <HomeContentMobileItem>數據追蹤</HomeContentMobileItem>
+              <HomeContentMobileItem>健身地圖</HomeContentMobileItem>
             </HomeContentMobile>
           </HomeContentZone>
           <GoTrainingPageOutside
@@ -139,23 +127,7 @@ const HomeContentMobile = styled.div`
   font-size: 28px;
 `;
 
-const Training = styled.div`
-  display: none;
-  padding-top: 30px;
-  @media screen and (max-width: 767px) {
-    display: block;
-  }
-`;
-
-const Statistics = styled.div`
-  display: none;
-  padding-top: 30px;
-  @media screen and (max-width: 767px) {
-    display: block;
-  }
-`;
-
-const Map = styled.div`
+const HomeContentMobileItem = styled.div`
   display: none;
   padding-top: 30px;
   @media screen and (max-width: 767px) {
