@@ -53,7 +53,7 @@ const Training = () => {
   const { isLoggedIn, uid, displayName, email, signIn, alertPop, setContent } = useContext(UserContext);
 
   const [trainingData, setTrainingData] = useState([]);
-  const [pagination, setPagination] = useState([]);
+  // const [pagination, setPagination] = useState([]);
   const [currentPage, setCurrentPgae] = useState(1);
 
   const [openTrainingInput, setOpenTrainingInput] = useState(false);
@@ -378,51 +378,51 @@ const Training = () => {
     }
   }, [isLoggedIn, currentPage]);
 
-  // let pagination;
-  // useEffect(() => {
-  //   if (isLoggedIn === false) {
-  //     pagination = [];
-  //   } else {
-  //     async function getTrainingTablesPage() {
-  //       const docRef = collection(db, 'users', uid, 'trainingTables');
-  //       const querySnapshot = await getDocs(docRef);
-  //       console.log(querySnapshot.size);
-  //       const arr = [];
-  //       for (let i = 1; i <= Math.ceil(querySnapshot.size / 8); i++) {
-  //         arr.push(i);
-  //       }
-  //       pagination = arr;
-  //       console.log(pagination);
-  //       return pagination;
-  //     }
-  //     getTrainingTablesPage();
-  //   }
-  // }, [isLoggedIn]);
-
-  // console.log(pagination);
-
+  let pagination;
   useEffect(() => {
     if (isLoggedIn === false) {
-      setPagination([]);
+      pagination = null;
     } else {
       async function getTrainingTablesPage() {
-        const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
-        onSnapshot(docRef, (item) => {
-          const newData = [];
-          item.forEach((doc) => {
-            newData.push(doc.data());
-          });
-          const reverseNewData = newData.reverse();
-          const arr = [];
-          for (let i = 1; i <= Math.ceil(reverseNewData.length / 8); i++) {
-            arr.push(i);
-          }
-          setPagination(arr);
-        });
+        const docRef = collection(db, 'users', uid, 'trainingTables');
+        const querySnapshot = await getDocs(docRef);
+        console.log(querySnapshot.size);
+        const arr = [];
+        for (let i = 1; i <= Math.ceil(querySnapshot.size / 8); i++) {
+          arr.push(i);
+        }
+        pagination = arr;
+        console.log(pagination);
+        return pagination;
       }
       getTrainingTablesPage();
     }
   }, [isLoggedIn]);
+
+  console.log(pagination);
+
+  // useEffect(() => {
+  //   if (isLoggedIn === false) {
+  //     setPagination([]);
+  //   } else {
+  //     async function getTrainingTablesPage() {
+  //       const docRef = query(collection(db, 'users', uid, 'trainingTables'), orderBy('trainingDate'));
+  //       onSnapshot(docRef, (item) => {
+  //         const newData = [];
+  //         item.forEach((doc) => {
+  //           newData.push(doc.data());
+  //         });
+  //         const reverseNewData = newData.reverse();
+  //         const arr = [];
+  //         for (let i = 1; i <= Math.ceil(reverseNewData.length / 8); i++) {
+  //           arr.push(i);
+  //         }
+  //         setPagination(arr);
+  //       });
+  //     }
+  //     getTrainingTablesPage();
+  //   }
+  // }, [isLoggedIn]);
 
   function openHistory(index) {
     setShowHistoryToggle(true);
