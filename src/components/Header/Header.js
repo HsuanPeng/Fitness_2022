@@ -1,10 +1,14 @@
-import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import UserContext from '../../contexts/UserContext';
 
 import LogoBlue from '../../images/Logo_blue.png';
+import trainingBanner from '../../images/Beautiful-woman-holding-heavy-604970.jpg';
+import calendarBanner from '../../images/Strong-man-doing-bench-press-in-gym.jpg';
+import statisticsBanner from '../../images/Athlete-preparing-for-training.jpg';
+import mapBanner from '../../images/Equipment-rack-in-gym.JPG';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -12,11 +16,29 @@ import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
 const Header = () => {
   const { isLoggedIn, userSignOut, signIn, currentPage, setCurrentPgae } = useContext(UserContext);
 
+  const location = useLocation();
+
   const [openMenu, setOpenMenu] = useState(false);
+
+  const [backgroundPic, setBackgroundPic] = useState(null);
+
+  useEffect(() => {
+    if (location.pathname === `/training`) {
+      setBackgroundPic(trainingBanner);
+    } else if (location.pathname === `/calendar`) {
+      setBackgroundPic(calendarBanner);
+    } else if (location.pathname === `/statistics`) {
+      setBackgroundPic(statisticsBanner);
+    } else if (location.pathname === `/map`) {
+      setBackgroundPic(mapBanner);
+    } else if (location.pathname === `/`) {
+      setBackgroundPic(null);
+    }
+  }, [location.pathname]);
 
   return (
     <>
-      <Wrapper>
+      <HeaderZone>
         <MenuIcon
           onClick={() => {
             setOpenMenu((prev) => !prev);
@@ -94,14 +116,25 @@ const Header = () => {
             </LogButton>
           )}
         </PageSelection>
-      </Wrapper>
+      </HeaderZone>
+      {backgroundPic && (
+        <BannerOutside>
+          <Banner style={{ backgroundImage: `url(${backgroundPic})` }} $backgroundPic={backgroundPic}>
+            {location.pathname === `/training` && <BannerText>開始我的記錄！</BannerText>}
+            {location.pathname === `/calendar` && <BannerText>讓健身成為生活的一部分！</BannerText>}
+            {location.pathname === `/statistics` && <BannerText>追蹤自己的身體變化！</BannerText>}
+            {location.pathname === `/map` && <BannerText>找出離你最近的健身房！</BannerText>}
+            {location.pathname === `/` && <BannerText></BannerText>}
+          </Banner>
+        </BannerOutside>
+      )}
     </>
   );
 };
 
 export default Header;
 
-const Wrapper = styled.div`
+const HeaderZone = styled.div`
   position: fixed;
   width: 100%;
   z-index: 99;
@@ -301,4 +334,59 @@ const LogButton = styled.div`
 
 const LogButtonTitle = styled.div`
   margin-left: 5px;
+`;
+
+const BannerOutside = styled.div`
+  margin-top: 90px;
+  height: 320px;
+  @media screen and (max-width: 1279px) {
+    height: 200px;
+  }
+`;
+
+const Banner = styled.div`
+  background-size: cover;
+  background-position: ${(props) => {
+    if (props.$backgroundPic === trainingBanner) {
+      return '0% 20%';
+    } else if (props.$backgroundPic === calendarBanner) {
+      return '0% 50%';
+    } else if (props.$backgroundPic === statisticsBanner) {
+      return '0% 45%';
+    } else if (props.$backgroundPic === mapBanner) {
+      return '25% 75%';
+    }
+  }};
+  position: absolute;
+  width: 100%;
+  height: 320px;
+  @media screen and (max-width: 1279px) {
+    height: 200px;
+  }
+`;
+
+const BannerText = styled.div`
+  color: white;
+  padding-top: 180px;
+  padding-left: 150px;
+  font-size: 25px;
+  letter-spacing: 3px;
+  font-size: 35px;
+  animation-name: fadein;
+  animation-duration: 2s;
+  @keyframes fadein {
+    0% {
+      transform: translateX(-6%);
+      opacity: 0%;
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 100%;
+    }
+  }
+  @media screen and (max-width: 1279px) {
+    font-size: 25px;
+    padding-left: 50px;
+    padding-top: 100px;
+  }
 `;

@@ -34,8 +34,6 @@ import emailjs from 'emailjs-com';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
-import trainingBanner from '../../images/Beautiful-woman-holding-heavy-604970.jpg';
-
 import { Blocks } from 'react-loader-spinner';
 
 import { v4 as uuid } from 'uuid';
@@ -499,11 +497,6 @@ const Training = () => {
         <DeleteZone setDeleteAlert={setDeleteAlert} confirmDeleteTrainingItem={confirmDeleteTrainingItem} />
       )}
       <Wrapper>
-        <BannerOutside>
-          <Banner>
-            <BannerText>開始我的記錄！</BannerText>
-          </Banner>
-        </BannerOutside>
         <TrainingZone>
           <TrainingButtonsZone
             addTraining={addTraining}
@@ -657,52 +650,6 @@ const Wrapper = styled.div`
   margin: 0 auto;
   font-size: 20px;
   position: relative;
-  padding-top: 90px;
-`;
-
-const BannerOutside = styled.div`
-  height: 320px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const Banner = styled.div`
-  background-image: url(${trainingBanner});
-  background-size: cover;
-  background-position: 0% 20%;
-  position: absolute;
-  width: 100%;
-  height: 320px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const BannerText = styled.div`
-  color: white;
-  padding-top: 180px;
-  padding-left: 150px;
-  font-size: 25px;
-  letter-spacing: 3px;
-  font-size: 35px;
-  animation-name: fadein;
-  animation-duration: 2s;
-  @keyframes fadein {
-    0% {
-      transform: translateX(-6%);
-      opacity: 0%;
-    }
-    100% {
-      transform: translateX(0%);
-      opacity: 100%;
-    }
-  }
-  @media screen and (max-width: 1279px) {
-    font-size: 25px;
-    padding-left: 50px;
-    padding-top: 100px;
-  }
 `;
 
 const TrainingZone = styled.div`

@@ -67,8 +67,8 @@ const BodyFatPage = (props) => {
 export default BodyFatPage;
 
 const BodyFatWriteDataZone = styled.div`
-  margin-right: 40px;
-  @media screen and (max-width: 1279px) {
+  margin-right: 20px;
+  @media screen and (max-width: 767px) {
     margin-right: 0px;
   }
 `;
@@ -160,7 +160,6 @@ const BodyFatHistoryOutside = styled.div`
   align-items: center;
   font-size: 20px;
   margin: 10px 0px;
-  margin-right: 30px;
   border: 1px solid #818a8e;
   padding: 5px 10px 5px 10px;
   background: rgba(255, 255, 255, 0.5);
