@@ -167,9 +167,9 @@ const Title = styled.div`
 `;
 
 const DropDownContainer = styled('div')`
-  width: 180px;
+  width: 160px;
   letter-spacing: 1px;
-  font-size: 20px;
+  font-size: 18px;
 `;
 
 const DropDownHeader = styled('div')`
@@ -187,7 +187,7 @@ const DropDownHeader = styled('div')`
 const DropDownListContainer = styled('div')``;
 
 const DropDownList = styled('ul')`
-  width: 180px;
+  width: 160px;
   padding: 0;
   margin: 0;
   background: #ffffff;
