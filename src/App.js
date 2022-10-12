@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { doc, setDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signOut, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
-import { auth } from '../src/utils/firebase';
+import { db, auth } from '../src/utils/firebase';
 
 import Header from './components/Header/Header';
 import UserContext from './contexts/UserContext';
@@ -62,12 +63,18 @@ const App = () => {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log(user);
         setUid(user.uid);
         setDisplayName(user.displayName);
         setEmail(user.email);
         setIsLoggedIn(true);
         alertPop();
         setContent('登入中');
+        await setDoc(doc(db, 'users', user.uid), {
+          name: user.displayName,
+          email: user.email,
+          uid: user.uid,
+        });
       } else {
         setIsLoggedIn(false);
       }

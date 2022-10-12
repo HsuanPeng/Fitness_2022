@@ -42,9 +42,9 @@ const DeleteAlertOutside = styled.div`
   border: 5px solid #74c6cc;
   border-radius: 20px;
   position: absolute;
-  top: 35%;
+  top: 28%;
   left: calc(50% - 200px);
-  z-index: 100;
+  z-index: 98;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -60,10 +60,14 @@ const DeleteAlertOutside = styled.div`
       opacity: 100%;
     }
   }
+  @media screen and (max-width: 1279px) {
+    top: 16%;
+  }
   @media screen and (max-width: 767px) {
     padding: 10px;
     width: 300px;
     left: calc(50% - 150px);
+    top: 12%;
   }
 `;
 

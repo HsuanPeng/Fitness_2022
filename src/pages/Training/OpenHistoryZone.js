@@ -254,7 +254,7 @@ const Close = styled.div`
 
 const OpenHistory = styled.div`
   position: absolute;
-  top: 15%;
+  top: -13%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;
@@ -269,11 +269,11 @@ const OpenHistory = styled.div`
   color: white;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
-    top: 15%;
+    top: -5%;
     max-width: 700px;
   }
   @media screen and (max-width: 767px) {
-    top: 10%;
+    top: -3.2%;
     max-width: 320px;
     padding-left: 15px;
     padding-right: 15px;

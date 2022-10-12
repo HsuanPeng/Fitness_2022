@@ -142,6 +142,7 @@ const Training = () => {
       setOpenTrainingInput(true);
       setOpenTrainingPage(1);
       setImageList('');
+      setShowHistory(null);
     } else {
       signIn();
     }
@@ -368,7 +369,7 @@ const Training = () => {
 
   useEffect(() => {
     if (isLoggedIn === false) {
-      pagination = null;
+      setPagination([]);
     } else {
       async function getTrainingTablesPage() {
         const docRef = collection(db, 'users', uid, 'trainingTables');
@@ -596,11 +597,11 @@ const Training = () => {
                   setOpenTrainingPage={setOpenTrainingPage}
                 />
               </TrainingOutsideTwo>
-            )}
+            )}{' '}
             <Background />
           </>
         )}
-      </Wrapper>
+      </Wrapper>{' '}
     </>
   );
 };
@@ -628,6 +629,7 @@ const PaginationItem = styled.div`
 `;
 
 const LoadingOutside = styled.div`
+  top: 0px;
   position: fixed;
   z-index: 2000;
   background: #475260;
@@ -675,7 +677,7 @@ const NoHistory = styled.div`
 const TrainingOutsideOne = styled.div`
   position: absolute;
   left: calc(50% - 280px);
-  top: 10%;
+  top: -22%;
   z-index: 20;
   display: ${(props) => (props.$isActive ? 'bloock' : 'none')};
   background: #475260;
@@ -698,11 +700,11 @@ const TrainingOutsideOne = styled.div`
   }
   @media screen and (max-width: 1279px) {
     left: calc(50% - 280px);
-    top: 5%;
+    top: -9%;
   }
   @media screen and (max-width: 767px) {
     left: calc(50% - 220px);
-    top: 2%;
+    top: -5.5%;
   }
   @media screen and (max-width: 575px) {
     left: calc(50% - 220px);
@@ -714,17 +716,17 @@ const TrainingOutsideOne = styled.div`
 
 const TrainingOutsideTwo = styled(TrainingOutsideOne)`
   left: calc(50% - 500px);
-  top: 7%;
+  top: -22%;
   z-index: 20;
   display: block;
   max-width: 1000px;
   @media screen and (max-width: 1279px) {
     left: calc(50% - 350px);
-    top: 4%;
+    top: -9%;
   }
   @media screen and (max-width: 767px) {
     left: calc(50% - 275px);
-    top: 2%;
+    top: -5.5%;
   }
   @media screen and (max-width: 575px) {
     left: calc(50% - 165px);

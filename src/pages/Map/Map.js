@@ -98,7 +98,7 @@ export default function Map() {
             <InfoWindow
               position={{
                 lat: selected.geometry.location.lat + 0.0003,
-                lng: selected.geometry.location.lng + 0.0004,
+                lng: selected.geometry.location.lng + 0.0005,
               }}
               onCloseClick={() => {
                 setSelected(null);
