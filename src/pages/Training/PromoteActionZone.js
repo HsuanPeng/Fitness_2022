@@ -16,8 +16,6 @@ const PromoteActionZone = (props) => {
     setIsOpen(false);
   };
 
-  console.log(props.part);
-
   return (
     <PromoteActionOutside>
       <PromoteTop>

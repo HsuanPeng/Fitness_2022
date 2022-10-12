@@ -63,7 +63,6 @@ const App = () => {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log(user);
         setUid(user.uid);
         setDisplayName(user.displayName);
         setEmail(user.email);

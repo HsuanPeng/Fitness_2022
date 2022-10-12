@@ -382,7 +382,7 @@ const Training = () => {
       }
       getTrainingTablesPage();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, trainingData]);
 
   function openHistory(index) {
     setShowHistoryToggle(true);
