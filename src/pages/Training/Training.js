@@ -563,6 +563,7 @@ const Training = () => {
             <TrainingOutsideOne $isActive={openTrainingPage === 1}>
               <TrainingOne
                 closeAddTraining={closeAddTraining}
+                favoriteChoice={favoriteChoice}
                 favoriteTrainings={favoriteTrainings}
                 setFavoriteChoice={setFavoriteChoice}
                 title={title}
@@ -584,6 +585,7 @@ const Training = () => {
                   deleteItem={deleteItem}
                   totalWeight={totalWeight}
                   setPart={setPart}
+                  part={part}
                   promoteActions={promoteActions}
                   addActionItem={addActionItem}
                   playing={playing}

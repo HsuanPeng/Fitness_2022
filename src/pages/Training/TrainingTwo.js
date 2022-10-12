@@ -43,6 +43,7 @@ const TrainingTwo = (props) => {
           playing={props.playing}
           setPlaying={props.setPlaying}
           setVideoUrl={props.setVideoUrl}
+          part={props.part}
         />
       </ActionOutside>
       <TrainingOutsideTwoBottom>

@@ -1,4 +1,4 @@
-import React, { useContext, forwardRef } from 'react';
+import React, { useContext, forwardRef, useState } from 'react';
 import styled from 'styled-components';
 
 import pageOnePic from '../../images/Empty-gym-in-sunlight.jpg';
@@ -11,10 +11,22 @@ import {
   faCalendarDays,
   faHandPointUp,
   faDumbbell,
+  faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 
 const TrainingOne = forwardRef((props, ref) => {
   const { displayName, email } = useContext(UserContext);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [favoriteChoiceTitle, setFavoriteChoiceTitle] = useState(null);
+
+  const toggling = () => setIsOpen(!isOpen);
+
+  const onOptionClicked = (value) => () => {
+    props.setFavoriteChoice(value.docID);
+    setFavoriteChoiceTitle(value.title);
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -32,24 +44,30 @@ const TrainingOne = forwardRef((props, ref) => {
                   </FaDumbbell>
                   主題
                 </Title>
-                <FavoriteSelectOutside onChange={(e) => props.setFavoriteChoice(e.target.value)} defaultValue={null}>
+                <DropDownContainer>
                   {props.favoriteTrainings.length > 0 ? (
                     <>
-                      <option disabled selected>
-                        套用喜愛菜單
-                      </option>
-                      {props.favoriteTrainings.map((item, index) => (
-                        <option index={index} value={item.docID}>
-                          {item.title}
-                        </option>
-                      ))}
+                      <DropDownHeader onClick={toggling}>
+                        {favoriteChoiceTitle || '套用喜愛菜單'}
+                        <FontAwesomeIcon icon={faChevronDown} style={{ pointerEvents: 'none' }} />
+                      </DropDownHeader>
+                      {isOpen && (
+                        <DropDownListContainer>
+                          <DropDownList>
+                            {props.favoriteTrainings.map((option) => (
+                              <ListItem onClick={onOptionClicked(option)}>{option.title}</ListItem>
+                            ))}
+                          </DropDownList>
+                        </DropDownListContainer>
+                      )}
                     </>
                   ) : (
-                    <option disabled selected>
+                    <DropDownHeader onClick={toggling}>
                       無喜愛菜單
-                    </option>
+                      <FontAwesomeIcon icon={faChevronDown} style={{ pointerEvents: 'none' }} />
+                    </DropDownHeader>
                   )}
-                </FavoriteSelectOutside>
+                </DropDownContainer>
               </FavoriteTitle>
               <TitleInputLine />
               <TitleInput
@@ -138,26 +156,6 @@ const PageOneDetail = styled.div`
 
 const PageOneDetailContent = styled.div``;
 
-const FavoriteSelectOutside = styled.select`
-  width: 25%;
-  height: 30px;
-  background: white;
-  color: gray;
-  padding-left: 5px;
-  font-size: 14px;
-  border-radius: 6px;
-  option {
-    color: black;
-    background: white;
-    display: flex;
-    white-space: pre;
-    min-height: 20px;
-  }
-  @media screen and (max-width: 575px) {
-    width: 30%;
-  }
-`;
-
 const Title = styled.div`
   font-weight: 600;
   letter-spacing: 3px;
@@ -165,6 +163,49 @@ const Title = styled.div`
   display: flex;
   @media screen and (max-width: 767px) {
     font-size: 20px;
+  }
+`;
+
+const DropDownContainer = styled('div')`
+  width: 180px;
+  letter-spacing: 1px;
+  font-size: 20px;
+`;
+
+const DropDownHeader = styled('div')`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 10px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  color: gray;
+  background: #ffffff;
+  cursor: pointer;
+`;
+
+const DropDownListContainer = styled('div')``;
+
+const DropDownList = styled('ul')`
+  width: 180px;
+  padding: 0;
+  margin: 0;
+  background: #ffffff;
+  box-sizing: border-box;
+  color: gray;
+  position: absolute;
+  font-weight: 500;
+  &:first-child {
+    padding-top: 0.2em;
+  }
+`;
+
+const ListItem = styled('li')`
+  list-style: none;
+  cursor: pointer;
+  padding: 0px 10px;
+  &:hover {
+    background: #74c6cc;
   }
 `;
 
