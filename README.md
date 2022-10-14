@@ -12,8 +12,6 @@ records, Google Calendar, and Google Map.`
 <li>Provide long-term recording system of body fat and weight</li>
 </ul>
 
-<br/>
-
 # Link
 
 > ### **:point_right: <a href="https://fitness2-d4aaf.firebaseapp.com/">健人網>></a>**
@@ -25,7 +23,6 @@ Test account is also availible below
 <li>Password : seaturtle</li>
 </ul>
 
-<br/>
 
 # Technologies
 
@@ -48,15 +45,11 @@ Test account is also availible below
 <li>chart.js</li>
 </ul>
 
-<br/>
-
 # User Flow Chart
 
 <div align="center">
   <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/user%20flow.png" />
 </div>
-
-<br/>
 
 # Demo
 
@@ -99,8 +92,6 @@ Test account is also availible below
 <div align="center">
   <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/%E7%B6%B2%E7%AB%99%E6%97%A5%E6%9B%86.gif" />
 </div>
-
-<br/>
 
 # Contact
 
