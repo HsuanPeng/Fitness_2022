@@ -1,3 +1,5 @@
+<br/>
+
 <div align="center" margin-bottom="20px">
   <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/logo_darkbackground.png" width="300"/>
 </div>
