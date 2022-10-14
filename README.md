@@ -1,70 +1,124 @@
-# Getting Started with Create React App
+<div align="center" margin-bottom="20px">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/logo_darkbackground.png" width="300"/>
+</div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Introduction
 
-## Available Scripts
+`A multi-functional fitness recording website that integrates fitness schedule records, body data change
+records, Google Calendar, and Google Map.`
+<ul>
+<li>Provide a list of movements for the six major parts and sample teaching videos for fitness enthusiasts to understand at a glance</li>
+<li>Combine two calendar systems, including google calendar and react-big-calendar to manage fitness schedules well</li>
+<li>Provide long-term recording system of body fat and weight</li>
+</ul>
 
-In the project directory, you can run:
+<br/>
 
-### `npm start`
+# Link
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+> ### **:point_right: <a href="https://fitness2-d4aaf.firebaseapp.com/">健人網>></a>**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Test account is also availible below
 
-### `npm test`
+<ul>
+<li>User : seaturtlerace@gmail.com</li>
+<li>Password : seaturtle</li>
+</ul>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<br/>
 
-### `npm run build`
+# Technologies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Front-End
+<ul>
+<li>HTML5</li>
+<li>CSS</li>
+<li>JavaScript (ES6+)</li>
+<li>React</li>
+<li>React Router</li>
+<li>Styled Components</li>
+<li>Responsive Web Design</li>
+<li>Firebase : firestore / storage / hosting / cloud function</li>
+</ul>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Main Packages
+<ul>
+<li>react-beautiful-dnd</li>
+<li>react-big-calendar</li>
+<li>chart.js</li>
+</ul>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<br/>
 
-### `npm run eject`
+# User Flow Chart
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+<div align="center">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/user%20flow.png" />
+</div>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<br/>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the coPied scripts so you can tweak them. At this point you're on your own.
+# Demo
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
++ **Added exercise itinerary, providing actions choice and videos of six body parts, and pie charts to calculate body part ratios**
+<div align="center">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/%E6%96%B0%E5%A2%9E%E8%8F%9C%E5%96%AE.gif" />
+</div>
 
-## Learn More
+<br/>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
++ **Users can upload photos to commemorate each workout**
+<div align="center">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/%E4%B8%8A%E5%82%B3%E7%85%A7%E7%89%87.gif" />
+</div>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<br/>
 
-### Code Splitting
++ **Users can add workout schedules to their Google Calendar to combine work and life balance**
+<div align="center">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/%E5%8A%A0%E5%85%A5google%E6%97%A5%E6%9B%86.gif" />
+</div>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+<br/>
 
-### Analyzing the Bundle Size
++ **Added exercise itinerary, providing movements and videos of six body parts, and pie charts to calculate movement ratios**
+<div align="center">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/%E5%9C%B0%E5%9C%96.gif" />
+</div>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<br/>
 
-### Making a Progressive Web App
++ **Users can quickly find gyms near their location through the map function, or they can search for gyms near the destination**
+<div align="center">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/%E5%A2%9E%E5%8A%A0%E8%BA%AB%E9%AB%94%E6%95%B8%E6%93%9A.gif" />
+</div>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+<br/>
 
-### Advanced Configuration
++ **Website provides long-term tracking of body fat and weight with visual line graphs**
+<div align="center">
+  <img src="https://github.com/HsuanPeng/Fitness/blob/master/src/images/%E7%B6%B2%E7%AB%99%E6%97%A5%E6%9B%86.gif" />
+</div>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+<br/>
 
-### Deployment
+# Contact
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+If you have any questions or want to chat with me, please contact me<br/>
+<ul>
+<li>Author : Hsuan Peng</li>
+<li>Email : lisalisa12332180@gmail.com</li>
+</ul>
 
-### `npm run build` fails to minify
+<div align="center">
+  <img src="https://github.com/devicons/devicon/blob/master/icons/html5/html5-original.svg" width="40"/>
+    <img src="https://github.com/devicons/devicon/blob/master/icons/css3/css3-original.svg" width="40"/>
+        <img src="https://github.com/devicons/devicon/blob/master/icons/javascript/javascript-original.svg" width="40"/>
+          <img src="https://github.com/devicons/devicon/blob/master/icons/git/git-original.svg" width="40"/>
+  <img src="https://github.com/devicons/devicon/blob/master/icons/react/react-original-wordmark.svg" width="40"/>
+     <img src="https://github.com/devicons/devicon/blob/master/icons/firebase/firebase-plain-wordmark.svg" width="40"/>
+  <img src="https://github.com/devicons/devicon/blob/master/icons/figma/figma-original.svg" width="40"/>
+</div>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
