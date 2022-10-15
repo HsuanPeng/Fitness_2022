@@ -6,23 +6,15 @@
 
 # Introduction
 
+> ### **:point_right: <a href="https://fitness2-d4aaf.firebaseapp.com/">健人網>></a>**
+
+
 `A multi-functional fitness recording website that integrates fitness schedule records, body data change
 records, Google Calendar, and Google Map.`
 <ul>
 <li>Provide a list of movements for the six major parts and sample teaching videos for fitness enthusiasts to understand at a glance</li>
 <li>Combine two calendar systems, including google calendar and react-big-calendar to manage fitness schedules well</li>
 <li>Provide long-term recording system of body fat and weight</li>
-</ul>
-
-# Link
-
-> ### **:point_right: <a href="https://fitness2-d4aaf.firebaseapp.com/">健人網>></a>**
-
-Test account is also availible below
-
-<ul>
-<li>User : seaturtlerace@gmail.com</li>
-<li>Password : seaturtle</li>
 </ul>
 
 
