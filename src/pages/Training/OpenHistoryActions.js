@@ -61,10 +61,8 @@ const HistoryActions = styled.div`
 const BodyPart = styled.div`
   width: 200px;
   display: flex;
-  margin-left: 10px;
   @media screen and (max-width: 1279px) {
     width: 270px;
-    margin-left: 40px;
   }
   @media screen and (max-width: 767px) {
     width: 200px;
@@ -109,7 +107,6 @@ const Weight = styled.div`
   width: 200px;
   @media screen and (max-width: 1279px) {
     width: 270px;
-    margin-left: 40px;
   }
   @media screen and (max-width: 767px) {
     width: 200px;

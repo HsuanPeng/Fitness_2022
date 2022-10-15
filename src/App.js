@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { doc, setDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signOut, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
-import { auth } from '../src/utils/firebase';
+import { db, auth } from '../src/utils/firebase';
 
 import Header from './components/Header/Header';
 import UserContext from './contexts/UserContext';
@@ -68,6 +69,11 @@ const App = () => {
         setIsLoggedIn(true);
         alertPop();
         setContent('登入中');
+        await setDoc(doc(db, 'users', user.uid), {
+          name: user.displayName,
+          email: user.email,
+          uid: user.uid,
+        });
       } else {
         setIsLoggedIn(false);
       }
@@ -130,10 +136,6 @@ const App = () => {
                   </FaGooglePlus>
                   <SignInGoogleText>使用google登入</SignInGoogleText>
                 </SignInGoogle>
-                <SignInTest>
-                  <SignInTestText>測試用帳號：seaturtlerace@gmail.com</SignInTestText>
-                  <SignInTestPassword>測試用密碼：seaturtle</SignInTestPassword>
-                </SignInTest>
               </SignInContent>
             </SignInMenu>
             <SignInMenuBackground />

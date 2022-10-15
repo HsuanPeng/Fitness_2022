@@ -167,9 +167,9 @@ const DeleteAlertOutside = styled.div`
   border: 5px solid #74c6cc;
   border-radius: 20px;
   position: absolute;
-  top: 25%;
+  top: 8%;
   left: calc(50% - 200px);
-  z-index: 100;
+  z-index: 98;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -186,13 +186,13 @@ const DeleteAlertOutside = styled.div`
     }
   }
   @media screen and (max-width: 1279px) {
-    top: 16.5%;
+    top: 8%;
   }
   @media screen and (max-width: 767px) {
     padding: 10px;
     width: 300px;
     left: calc(50% - 150px);
-    top: 9.2%;
+    top: 6%;
   }
 `;
 
@@ -269,7 +269,7 @@ const Wrapper = styled.div`
   display: block;
   margin: 0 auto;
   position: absolute;
-  top: 15%;
+  top: -14%;
   left: calc(50% - 390px);
   z-index: 15;
   background: #475260;
@@ -289,10 +289,10 @@ const Wrapper = styled.div`
     }
   }
   @media screen and (max-width: 1279px) {
-    top: 10%;
+    top: -4%;
   }
   @media screen and (max-width: 767px) {
-    top: 5.5%;
+    top: -3%;
     left: calc(50% - 212.5px);
   }
   @media screen and (max-width: 500px) {

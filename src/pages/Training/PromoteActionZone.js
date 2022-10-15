@@ -1,24 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideo, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { faVideo, faCirclePlus, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+
+const options = ['肩', '手臂', '胸', '背', '臀腿', '核心', '上半身', '全身'];
 
 const PromoteActionZone = (props) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggling = () => setIsOpen(!isOpen);
+
+  const onOptionClicked = (value) => () => {
+    props.setPart(value);
+    setIsOpen(false);
+  };
+
   return (
     <PromoteActionOutside>
       <PromoteTop>
         <PartTitle>請選擇部位</PartTitle>
-        <PartSelect onChange={(e) => props.setPart(e.target.value)}>
-          <option defaultValue="肩">肩</option>
-          <option defaultValue="手臂">手臂</option>
-          <option defaultValue="胸">胸</option>
-          <option defaultValue="背">背</option>
-          <option defaultValue="臀腿">臀腿</option>
-          <option defaultValue="核心">核心</option>
-          <option defaultValue="上半身">上半身</option>
-          <option defaultValue="全身">全身</option>
-        </PartSelect>
+        <DropDownContainer>
+          <DropDownHeader onClick={toggling}>
+            {props.part || '肩'} <FontAwesomeIcon icon={faChevronDown} style={{ pointerEvents: 'none' }} />
+          </DropDownHeader>
+          {isOpen && (
+            <DropDownListContainer>
+              <DropDownList>
+                {options.map((option) => (
+                  <ListItem onClick={onOptionClicked(option)}>{option}</ListItem>
+                ))}
+              </DropDownList>
+            </DropDownListContainer>
+          )}
+        </DropDownContainer>
       </PromoteTop>
       {props.promoteActions.map((item, index) => (
         <PromoteListOutside>
@@ -33,11 +48,10 @@ const PromoteActionZone = (props) => {
           <PromoteListPart>{item.bodyPart}</PromoteListPart>
           <PromoteLisName>{item.actionName}</PromoteLisName>
           <VideoTag
-            $playing={index === props.playing}
+            $playing={index == props.playing}
             id={index}
             onClick={(e) => {
               props.setVideoUrl(props.promoteActions[e.target.id].videoURL);
-              props.setVideoShow(true);
               props.setPlaying(e.target.id);
             }}
           >
@@ -95,23 +109,45 @@ const PartTitle = styled.div`
   color: white;
 `;
 
-const PartSelect = styled.select`
-  width: 20%;
-  height: 30px;
-  background: white;
+const DropDownContainer = styled('div')`
+  width: 110px;
+  letter-spacing: 1px;
+`;
+
+const DropDownHeader = styled('div')`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 10px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
   color: gray;
-  padding-left: 5px;
-  font-size: 14px;
-  border-radius: 6px;
-  option {
-    color: black;
-    background: white;
-    display: flex;
-    white-space: pre;
-    min-height: 20px;
+  background: #ffffff;
+  cursor: pointer;
+`;
+
+const DropDownListContainer = styled('div')``;
+
+const DropDownList = styled('ul')`
+  width: 110px;
+  padding: 0;
+  margin: 0;
+  background: #ffffff;
+  box-sizing: border-box;
+  color: gray;
+  position: absolute;
+  font-weight: 500;
+  &:first-child {
+    padding-top: 0.2em;
   }
-  @media screen and (max-width: 575px) {
-    width: 30%;
+`;
+
+const ListItem = styled('li')`
+  list-style: none;
+  cursor: pointer;
+  padding: 0px 10px;
+  &:hover {
+    background: #74c6cc;
   }
 `;
 

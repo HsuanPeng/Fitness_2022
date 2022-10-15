@@ -11,8 +11,6 @@ import { db } from '../../utils/firebase';
 import UserContext from '../../contexts/UserContext';
 import CalendarDetail from './CalendarDetail';
 
-import trainingBanner from '../../images/Strong-man-doing-bench-press-in-gym.jpg';
-
 function CalendarPage() {
   const { isLoggedIn, uid } = useContext(UserContext);
 
@@ -91,11 +89,6 @@ function CalendarPage() {
 
   return (
     <>
-      <BannerOutside>
-        <Banner>
-          <BannerText>讓健身成為生活的一部分！</BannerText>
-        </Banner>
-      </BannerOutside>
       {detail && <CalendarDetail detail={detail} setDetail={setDetail} />}
       <CalendarOutside>
         <NewComponent />
@@ -105,52 +98,6 @@ function CalendarPage() {
 }
 
 export default CalendarPage;
-
-const BannerOutside = styled.div`
-  height: 320px;
-  margin-top: 90px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const Banner = styled.div`
-  background-image: url(${trainingBanner});
-  background-size: cover;
-  background-position: 0% 50%;
-  position: absolute;
-  width: 100%;
-  height: 320px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const BannerText = styled.div`
-  color: white;
-  padding-top: 180px;
-  padding-left: 150px;
-  font-size: 25px;
-  letter-spacing: 3px;
-  font-size: 35px;
-  animation-name: fadein;
-  animation-duration: 2s;
-  @keyframes fadein {
-    0% {
-      transform: translateX(-6%);
-      opacity: 0%;
-    }
-    100% {
-      transform: translateX(0%);
-      opacity: 100%;
-    }
-  }
-  @media screen and (max-width: 1279px) {
-    font-size: 25px;
-    padding-left: 50px;
-    padding-top: 100px;
-  }
-`;
 
 const CalendarOutside = styled.div`
   padding: 80px 150px 150px 150px;

@@ -9,7 +9,6 @@ import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps
 import '@reach/combobox/styles.css';
 import mapStyles from './mapStyles';
 
-import trainingBanner from '../../images/Equipment-rack-in-gym.JPG';
 import logo from '../../images/Logo_black.png';
 
 const libraries = ['places'];
@@ -66,11 +65,6 @@ export default function Map() {
 
   return (
     <>
-      <BannerOutside>
-        <Banner>
-          <BannerText>找出離你最近的健身房！</BannerText>
-        </Banner>
-      </BannerOutside>
       <ButtonOutside>
         <Locate panTo={panTo} />
         <Search panTo={panTo} />
@@ -104,7 +98,7 @@ export default function Map() {
             <InfoWindow
               position={{
                 lat: selected.geometry.location.lat + 0.0003,
-                lng: selected.geometry.location.lng + 0.0004,
+                lng: selected.geometry.location.lng + 0.0005,
               }}
               onCloseClick={() => {
                 setSelected(null);
@@ -130,52 +124,6 @@ export default function Map() {
     </>
   );
 }
-
-const BannerOutside = styled.div`
-  height: 320px;
-  margin-top: 90px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const Banner = styled.div`
-  background-image: url(${trainingBanner});
-  background-size: cover;
-  background-position: 25% 75%;
-  position: absolute;
-  width: 100%;
-  height: 320px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const BannerText = styled.div`
-  color: white;
-  padding-top: 180px;
-  padding-left: 150px;
-  font-size: 25px;
-  letter-spacing: 3px;
-  font-size: 35px;
-  animation-name: fadein;
-  animation-duration: 2s;
-  @keyframes fadein {
-    0% {
-      transform: translateX(-6%);
-      opacity: 0%;
-    }
-    100% {
-      transform: translateX(0%);
-      opacity: 100%;
-    }
-  }
-  @media screen and (max-width: 1279px) {
-    font-size: 25px;
-    padding-left: 50px;
-    padding-top: 100px;
-  }
-`;
 
 const ButtonOutside = styled.div`
   display: flex;

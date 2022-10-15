@@ -20,8 +20,6 @@ import {
   Legend,
 } from 'chart.js';
 
-import trainingBanner from '../../images/Athlete-preparing-for-training.jpg';
-
 const Statistics = () => {
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
   ChartJS.defaults.font.size = 20;
@@ -31,17 +29,17 @@ const Statistics = () => {
 
   const [showFatRecord, setShowFatRecord] = useState(true);
 
-  const [fatRecord, setFatRecord] = useState([]);
   const [fatDateInput, setFatDateInput] = useState();
   const [fatNumberInput, setFatNumberInput] = useState();
 
+  const [fatRecord, setFatRecord] = useState([]);
   const [fatDateLine, setFatDateLine] = useState([]);
   const [fatNumberLine, setFatNumberLine] = useState([]);
 
-  const [weightRecord, setWeightRecord] = useState([]);
   const [weightDateInput, setWeightDateInput] = useState();
   const [weightNumberInput, setWeightNumberInput] = useState();
 
+  const [weightRecord, setWeightRecord] = useState([]);
   const [weightDateLine, setWeightDateLine] = useState([]);
   const [weightNumberLine, setWeightNumberLine] = useState([]);
 
@@ -49,7 +47,7 @@ const Statistics = () => {
     labels: showFatRecord ? fatDateLine : weightDateLine,
     datasets: [
       {
-        label: '體脂肪率',
+        label: showFatRecord ? '體脂肪率' : '體重',
         data: showFatRecord ? fatNumberLine : weightNumberLine,
         fill: true,
         backgroundColor: showFatRecord ? 'rgba(238,141,71,0.2)' : 'rgba(255,183,3,0.2)',
@@ -121,7 +119,7 @@ const Statistics = () => {
         if (!re.test(fatNumberInput)) {
           alertPop();
           setContent('請輸入數字');
-        } else if (fatNumberInput > 99 || fatNumberInput === 0) {
+        } else if (fatNumberInput > 99 || fatNumberInput == 0) {
           alertPop();
           setContent('數據不實');
         } else {
@@ -192,7 +190,7 @@ const Statistics = () => {
         if (!re.test(weightNumberInput)) {
           alertPop();
           setContent('請填寫數字');
-        } else if (weightNumberInput > 999 || weightNumberInput === 0) {
+        } else if (weightNumberInput > 999 || weightNumberInput == 0) {
           alertPop();
           setContent('數據不實');
         } else {
@@ -231,30 +229,25 @@ const Statistics = () => {
   return (
     <>
       <Wrapper>
-        <BannerOutside>
-          <Banner>
-            <BannerText>追蹤自己的身體變化！</BannerText>
-          </Banner>
-        </BannerOutside>
         <ChangeOutside>
           <ChangeMenuZone>
-            <GoBodyFatOutide
+            <ChangeButtonOutside
               onClick={() => {
                 setShowFatRecord(true);
               }}
             >
               <GoBodyFat $showFatRecord={showFatRecord}>體脂肪率</GoBodyFat>
-            </GoBodyFatOutide>
-            <GoBodyWeightOutside
+            </ChangeButtonOutside>
+            <ChangeButtonOutside
               onClick={() => {
                 setShowFatRecord(false);
               }}
             >
               <GoBodyWeight $showFatRecord={showFatRecord}>體重</GoBodyWeight>
-            </GoBodyWeightOutside>
+            </ChangeButtonOutside>
           </ChangeMenuZone>
           {showFatRecord ? (
-            <BodyFatZone>
+            <BodyZone>
               <BodyFatPage
                 setFatDateInput={setFatDateInput}
                 fatNumberInput={fatNumberInput}
@@ -266,17 +259,17 @@ const Statistics = () => {
                 fatDateInput={fatDateInput}
               />
               <BodyFatLinePageZone>
-                <BodyFatLineOutside>
+                <LineOutside>
                   {fatRecord.length > 0 ? (
                     <Line data={lineData} options={dataOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
-                </BodyFatLineOutside>
+                </LineOutside>
               </BodyFatLinePageZone>
-            </BodyFatZone>
+            </BodyZone>
           ) : (
-            <BodyWeightZone>
+            <BodyZone>
               <BodyWeightPage
                 setWeightDateInput={setWeightDateInput}
                 setWeightNumberInput={setWeightNumberInput}
@@ -288,15 +281,15 @@ const Statistics = () => {
                 weightDateInput={weightDateInput}
               />
               <BodyWeightLinePageZone>
-                <BodyWeightLineOutside>
+                <LineOutside>
                   {weightRecord.length > 0 ? (
                     <Line data={lineData} options={dataOptions} />
                   ) : (
                     <Line data={dataNull} options={{ color: 'white' }} />
                   )}
-                </BodyWeightLineOutside>
+                </LineOutside>
               </BodyWeightLinePageZone>
-            </BodyWeightZone>
+            </BodyZone>
           )}
         </ChangeOutside>
       </Wrapper>
@@ -309,52 +302,6 @@ export default Statistics;
 const Wrapper = styled.div`
   margin: 0 auto;
   color: white;
-  padding-top: 90px;
-`;
-
-const BannerOutside = styled.div`
-  height: 320px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const Banner = styled.div`
-  background-image: url(${trainingBanner});
-  background-size: cover;
-  background-position: 0% 45%;
-  position: absolute;
-  width: 100%;
-  height: 320px;
-  @media screen and (max-width: 1279px) {
-    height: 200px;
-  }
-`;
-
-const BannerText = styled.div`
-  color: white;
-  padding-top: 180px;
-  padding-left: 150px;
-  font-size: 25px;
-  letter-spacing: 3px;
-  font-size: 35px;
-  animation-name: fadein;
-  animation-duration: 2s;
-  @keyframes fadein {
-    0% {
-      transform: translateX(-6%);
-      opacity: 0%;
-    }
-    100% {
-      transform: translateX(0%);
-      opacity: 100%;
-    }
-  }
-  @media screen and (max-width: 1279px) {
-    font-size: 25px;
-    padding-left: 50px;
-    padding-top: 100px;
-  }
 `;
 
 const ChangeOutside = styled.div`
@@ -369,17 +316,17 @@ const ChangeOutside = styled.div`
 const ChangeMenuZone = styled.div`
   display: flex;
   justify-content: start;
-  margin-top: 25px;
+  margin-top: 35px;
   @media screen and (max-width: 767px) {
     justify-content: center;
   }
 `;
 
-const GoBodyFatOutide = styled.div`
+const ChangeButtonOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 20px;
 `;
 
 const GoBodyFat = styled.div`
@@ -396,34 +343,17 @@ const GoBodyFat = styled.div`
   }
 `;
 
-const GoBodyWeightOutside = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px;
-`;
-
-const GoBodyWeight = styled.div`
-  cursor: pointer;
-  padding: 5px 15px;
-  border-radius: 7px;
-  color: black;
-  font-size: 24px;
-  letter-spacing: 2px;
-  font-weight: 600;
+const GoBodyWeight = styled(GoBodyFat)`
   background: ${(props) => (props.$showFatRecord ? '#475260' : '#74c6cc')};
-  &:hover {
-    background: #74c6cc;
-  }
 `;
 
-const BodyFatZone = styled.div`
+const BodyZone = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background: #475260;
   padding-bottom: 30px;
-  margin-top: 20px;
+  margin-top: 30px;
   border-top: 0.5rem solid #74c6cc;
   @media screen and (max-width: 1279px) {
     flex-direction: column;
@@ -432,7 +362,7 @@ const BodyFatZone = styled.div`
 
 const BodyFatLinePageZone = styled.div``;
 
-const BodyFatLineOutside = styled.div`
+const LineOutside = styled.div`
   width: 600px;
   margin: 40px auto 0px auto;
   pointer-events: none;
@@ -451,42 +381,7 @@ const BodyFatLineOutside = styled.div`
   @media screen and (max-width: 450px) {
     width: 280px;
     margin-right: 10px;
-  }
-`;
-
-const BodyWeightZone = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #475260;
-  padding-bottom: 30px;
-  margin-top: 20px;
-  border-top: 0.5rem solid #74c6cc;
-  @media screen and (max-width: 1279px) {
-    flex-direction: column;
   }
 `;
 
 const BodyWeightLinePageZone = styled.div``;
-
-const BodyWeightLineOutside = styled.div`
-  width: 600px;
-  margin: 40px auto 0px auto;
-  pointer-events: none;
-  @media screen and (max-width: 1279px) {
-    margin: 50px auto;
-    margin-right: 55px;
-  }
-  @media screen and (max-width: 767px) {
-    width: 450px;
-    margin-right: 10px;
-  }
-  @media screen and (max-width: 550px) {
-    width: 350px;
-    margin-right: 10px;
-  }
-  @media screen and (max-width: 450px) {
-    width: 280px;
-    margin-right: 10px;
-  }
-`;
