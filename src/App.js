@@ -136,10 +136,6 @@ const App = () => {
                   </FaGooglePlus>
                   <SignInGoogleText>使用google登入</SignInGoogleText>
                 </SignInGoogle>
-                <SignInTest>
-                  <SignInTestText>測試用帳號：seaturtlerace@gmail.com</SignInTestText>
-                  <SignInTestPassword>測試用密碼：seaturtle</SignInTestPassword>
-                </SignInTest>
               </SignInContent>
             </SignInMenu>
             <SignInMenuBackground />

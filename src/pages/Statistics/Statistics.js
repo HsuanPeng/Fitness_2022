@@ -119,7 +119,7 @@ const Statistics = () => {
         if (!re.test(fatNumberInput)) {
           alertPop();
           setContent('請輸入數字');
-        } else if (fatNumberInput > 99 || fatNumberInput === 0) {
+        } else if (fatNumberInput > 99 || fatNumberInput == 0) {
           alertPop();
           setContent('數據不實');
         } else {
@@ -190,7 +190,7 @@ const Statistics = () => {
         if (!re.test(weightNumberInput)) {
           alertPop();
           setContent('請填寫數字');
-        } else if (weightNumberInput > 999 || weightNumberInput === 0) {
+        } else if (weightNumberInput > 999 || weightNumberInput == 0) {
           alertPop();
           setContent('數據不實');
         } else {
