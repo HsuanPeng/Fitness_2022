@@ -4,7 +4,13 @@ import { Outlet } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import { doc, setDoc } from 'firebase/firestore';
-import { GoogleAuthProvider, signOut, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  signOut,
+  onAuthStateChanged,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { db, auth } from '../src/utils/firebase';
 
 import Header from './components/Header/Header';
@@ -14,7 +20,7 @@ import signInPic from './images/Beautiful-woman-holding-heavy.jpg';
 import remove from './images/remove.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { faGooglePlusG } from '@fortawesome/free-brands-svg-icons';
 
 const App = () => {
@@ -22,7 +28,8 @@ const App = () => {
 
   const [uid, setUid] = useState(null);
   const [displayName, setDisplayName] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [email, setEmail] = useState('test@test.com');
+  const password = 'test123';
 
   const [signInPage, setSignInPage] = useState(false);
 
@@ -35,6 +42,17 @@ const App = () => {
 
   function signIn() {
     setSignInPage(true);
+  }
+
+  function signInWithTest() {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        setIsLoggedIn(true);
+        setSignInPage(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function signInWithGoogle() {
@@ -67,6 +85,7 @@ const App = () => {
         setDisplayName(user.displayName);
         setEmail(user.email);
         setIsLoggedIn(true);
+        setSignInPage(false);
         alertPop();
         setContent('登入中');
         await setDoc(doc(db, 'users', user.uid), {
@@ -76,6 +95,7 @@ const App = () => {
         });
       } else {
         setIsLoggedIn(false);
+        setEmail('test@test.com');
       }
     });
   }, []);
@@ -130,6 +150,12 @@ const App = () => {
                   <br />
                   健身記錄了嗎？
                 </SignInQuestion>
+                <SignInButton onClick={signInWithTest}>
+                  <FaTestSignIn>
+                    <FontAwesomeIcon icon={faRightToBracket} />
+                  </FaTestSignIn>
+                  使用測試帳號登入
+                </SignInButton>
                 <SignInGoogle onClick={signInWithGoogle}>
                   <FaGooglePlus>
                     <FontAwesomeIcon icon={faGooglePlusG} />
@@ -196,6 +222,32 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Noto Sans TC', sans-serif;
     letter-spacing:3px;
 }
+`;
+
+const FaTestSignIn = styled.div`
+  margin-right: 10px;
+`;
+
+const SignInButton = styled.div`
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 10px;
+  background: #74c6cc;
+  border-radius: 5px;
+  color: white;
+  letter-spacing: 1.5px;
+  width: 100%;
+  text-align: center;
+  font-size: 17px;
+  &:hover {
+    background: #eb4537;
+  }
+  @media screen and (max-width: 1279px) {
+    width: 250px;
+  }
 `;
 
 const AlertOutside = styled.div`
@@ -291,7 +343,7 @@ const SignInMenu = styled.div`
     width: 500px;
   }
   @media screen and (max-width: 767px) {
-    width: 350px;
+    width: 300px;
     height: 400px;
   }
 `;
@@ -330,6 +382,7 @@ const SignInContent = styled.div`
   padding: 25px;
   @media screen and (max-width: 1279px) {
     width: 300px;
+    padding: 25px;
   }
 `;
 
@@ -371,30 +424,6 @@ const SignInGoogleText = styled.div`
   font-size: 17px;
   color: white;
   letter-spacing: 1.2px;
-`;
-
-const SignInTest = styled.div`
-  display: flex;
-  justify-content: start;
-  flex-direction: column;
-  width: 303px;
-  margin-top: 20px;
-  letter-spacing: 1.2px;
-`;
-
-const SignInTestText = styled.div`
-  font-size: 14px;
-  @media screen and (max-width: 1279px) {
-    font-size: 12px;
-  }
-`;
-
-const SignInTestPassword = styled.div`
-  margin-top: 15px;
-  font-size: 14px;
-  @media screen and (max-width: 1279px) {
-    font-size: 12px;
-  }
 `;
 
 const SignInMenuBackground = styled.div`

@@ -53,6 +53,7 @@ const LocateButtonOutside = styled.div`
   color: black;
   cursor: pointer;
   transition: ease-in-out 0.2s;
+  border-radius: 5px;
   &:hover {
     background: white;
     color: black;
