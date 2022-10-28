@@ -5,39 +5,39 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const BodyFatPage = (props) => {
   return (
-    <BodyFatWriteDataZone>
+    <WriteDataZone>
       <Top>
         <Date>
           <DateTitle>日期：</DateTitle>
-          <BodyFatDateInput
+          <DateInput
             type="date"
             onChange={(e) => props.setFatDateInput(e.target.value)}
             value={props.fatDateInput}
             max={new window.Date().toISOString().split('T')[0]}
-          ></BodyFatDateInput>
+          ></DateInput>
         </Date>
         <Fat>
           <FatTitle>體脂肪率：</FatTitle>
-          <BodyFatInput
+          <Input
             onChange={(e) => props.setFatNumberInput(e.target.value)}
             value={props.fatNumberInput}
             maxLength={4}
             placeholder="0"
             type="number"
-          ></BodyFatInput>
+          ></Input>
         </Fat>
-        <BodyFatInputButtonOutside>
-          <BodyFatInputButton onClick={props.writeBodyFat}>新增</BodyFatInputButton>
-        </BodyFatInputButtonOutside>
+        <InputButtonOutside>
+          <InputButton onClick={props.writeBodyFat}>新增</InputButton>
+        </InputButtonOutside>
       </Top>
       <FatRemind>＊體脂肪率請輸入阿拉伯數字，最多4字</FatRemind>
       <Bottom>
         {props.fatRecord.length > 0 ? (
           <>
             {props.fatRecord.map((item, index) => (
-              <BodyFatHistoryOutside id={index}>
-                <BodyFatMeasureDate>日期：{item.measureDate}</BodyFatMeasureDate>
-                <BodyFatChange>
+              <HistoryOutside id={index}>
+                <MeasureDate>日期：{item.measureDate}</MeasureDate>
+                <Change>
                   變化：
                   {index > 0 ? (
                     (props.fatNumberLine[index] - props.fatNumberLine[index - 1]).toFixed(1)
@@ -45,29 +45,29 @@ const BodyFatPage = (props) => {
                     <span>--</span>
                   )}
                   %
-                </BodyFatChange>
-                <BodyFatResult>體脂肪率：{item.bodyFat}%</BodyFatResult>
-                <BodyFatDelete
+                </Change>
+                <Result>體脂肪率：{item.bodyFat}%</Result>
+                <Delete
                   onClick={() => {
                     props.deleteFatRecord(index);
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} />
-                </BodyFatDelete>
-              </BodyFatHistoryOutside>
+                </Delete>
+              </HistoryOutside>
             ))}
           </>
         ) : (
           <NoData>請新增資料</NoData>
         )}
       </Bottom>
-    </BodyFatWriteDataZone>
+    </WriteDataZone>
   );
 };
 
 export default BodyFatPage;
 
-const BodyFatWriteDataZone = styled.div`
+const WriteDataZone = styled.div`
   margin-right: 20px;
   @media screen and (max-width: 767px) {
     margin-right: 0px;
@@ -98,7 +98,7 @@ const DateTitle = styled.div`
   margin-right: 10px;
 `;
 
-const BodyFatDateInput = styled.input`
+const DateInput = styled.input`
   border-radius: 7px;
   font-size: 20px;
 `;
@@ -126,7 +126,7 @@ const FatTitle = styled.div`
   margin-right: 10px;
 `;
 
-const BodyFatInput = styled.input`
+const Input = styled.input`
   width: 80px;
   margin-right: 10px;
   border-radius: 7px;
@@ -134,7 +134,7 @@ const BodyFatInput = styled.input`
   padding-left: 8px;
 `;
 
-const BodyFatInputButtonOutside = styled.div`
+const InputButtonOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -151,13 +151,13 @@ const BodyFatInputButtonOutside = styled.div`
   }
 `;
 
-const BodyFatInputButton = styled.div`
+const InputButton = styled.div`
   font-size: 22px;
   letter-spacing: 2px;
   font-weight: 600;
 `;
 
-const BodyFatHistoryOutside = styled.div`
+const HistoryOutside = styled.div`
   align-items: center;
   font-size: 20px;
   margin: 10px 0px;
@@ -194,7 +194,7 @@ const Bottom = styled.div`
   }
 `;
 
-const BodyFatMeasureDate = styled.div`
+const MeasureDate = styled.div`
   margin-right: 10px;
   display: flex;
   justify-content: start;
@@ -206,7 +206,7 @@ const BodyFatMeasureDate = styled.div`
   }
 `;
 
-const BodyFatChange = styled.div`
+const Change = styled.div`
   margin: 0px 10px;
   text-align: start;
   width: 130px;
@@ -215,7 +215,7 @@ const BodyFatChange = styled.div`
   }
 `;
 
-const BodyFatResult = styled.div`
+const Result = styled.div`
   margin-left: 15px;
   width: 158px;
   @media screen and (max-width: 580px) {
@@ -226,7 +226,7 @@ const BodyFatResult = styled.div`
   }
 `;
 
-const BodyFatDelete = styled.div`
+const Delete = styled.div`
   margin: 0px 5px;
   cursor: pointer;
   text-align: center;

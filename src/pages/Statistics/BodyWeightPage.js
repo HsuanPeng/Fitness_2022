@@ -5,39 +5,39 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const BodyWeightPage = (props) => {
   return (
-    <BodyWeightWriteDataZone>
+    <WriteDataZone>
       <Top>
         <Date>
           <DateTitle>日期：</DateTitle>
-          <BodyWeightDateInput
+          <DateInput
             type="date"
             onChange={(e) => props.setWeightDateInput(e.target.value)}
             value={props.weightDateInput}
             max={new window.Date().toISOString().split('T')[0]}
-          ></BodyWeightDateInput>
+          ></DateInput>
         </Date>
         <Weight>
           <WeightTitle>體重：</WeightTitle>
-          <BodyWeightInput
+          <Input
             onChange={(e) => props.setWeightNumberInput(e.target.value)}
             value={props.weightNumberInput}
             maxLength={6}
             placeholder="0"
             type="number"
-          ></BodyWeightInput>
+          ></Input>
         </Weight>
-        <BodyWeightInputButtonOutside>
-          <BodyWeightInputButton onClick={props.writeBodyWeight}>新增</BodyWeightInputButton>
-        </BodyWeightInputButtonOutside>
+        <InputButtonOutside>
+          <InputButton onClick={props.writeBodyWeight}>新增</InputButton>
+        </InputButtonOutside>
       </Top>
       <WeightRemind>＊體重請輸入阿拉伯數字，最多6字</WeightRemind>
       <Bottom>
         {props.weightRecord.length > 0 ? (
           <>
             {props.weightRecord.map((item, index) => (
-              <BodyWeightHistoryOutside id={index}>
-                <BodyWeightMeasureDate>日期：{item.measureDate}</BodyWeightMeasureDate>
-                <BodyWeightChange>
+              <HistoryOutside id={index}>
+                <MeasureDate>日期：{item.measureDate}</MeasureDate>
+                <Change>
                   變化：
                   {index > 0 ? (
                     (props.weightNumberLine[index] - props.weightNumberLine[index - 1]).toFixed(1)
@@ -45,29 +45,29 @@ const BodyWeightPage = (props) => {
                     <span>--</span>
                   )}
                   KG
-                </BodyWeightChange>
-                <BodyWeightResult>體重：{item.bodyWeight} KG</BodyWeightResult>
-                <BodyWeightDelete
+                </Change>
+                <Result>體重：{item.bodyWeight} KG</Result>
+                <Delete
                   onClick={() => {
                     props.deleteWeightRecord(index);
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} />
-                </BodyWeightDelete>
-              </BodyWeightHistoryOutside>
+                </Delete>
+              </HistoryOutside>
             ))}
           </>
         ) : (
           <NoData>請新增資料</NoData>
         )}
       </Bottom>
-    </BodyWeightWriteDataZone>
+    </WriteDataZone>
   );
 };
 
 export default BodyWeightPage;
 
-const BodyWeightWriteDataZone = styled.div`
+const WriteDataZone = styled.div`
   margin-right: 20px;
   @media screen and (max-width: 767px) {
     margin-right: 0px;
@@ -98,7 +98,7 @@ const DateTitle = styled.div`
   margin-right: 10px;
 `;
 
-const BodyWeightDateInput = styled.input`
+const DateInput = styled.input`
   border-radius: 7px;
   font-size: 20px;
 `;
@@ -119,7 +119,7 @@ const WeightTitle = styled.div`
   margin-right: 10px;
 `;
 
-const BodyWeightInput = styled.input`
+const Input = styled.input`
   width: 80px;
   margin-right: 10px;
   border-radius: 7px;
@@ -127,7 +127,7 @@ const BodyWeightInput = styled.input`
   padding-left: 8px;
 `;
 
-const BodyWeightInputButtonOutside = styled.div`
+const InputButtonOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -151,13 +151,13 @@ const WeightRemind = styled.div`
   margin-top: -12px;
 `;
 
-const BodyWeightInputButton = styled.div`
+const InputButton = styled.div`
   font-size: 22px;
   letter-spacing: 2px;
   font-weight: 600;
 `;
 
-const BodyWeightHistoryOutside = styled.div`
+const HistoryOutside = styled.div`
   align-items: center;
   font-size: 20px;
   margin: 10px 0px;
@@ -194,7 +194,7 @@ const Bottom = styled.div`
   }
 `;
 
-const BodyWeightMeasureDate = styled.div`
+const MeasureDate = styled.div`
   margin-right: 10px;
   display: flex;
   justify-content: start;
@@ -206,7 +206,7 @@ const BodyWeightMeasureDate = styled.div`
   }
 `;
 
-const BodyWeightChange = styled.div`
+const Change = styled.div`
   margin: 0px 10px;
   text-align: start;
   width: 148px;
@@ -215,7 +215,7 @@ const BodyWeightChange = styled.div`
   }
 `;
 
-const BodyWeightResult = styled.div`
+const Result = styled.div`
   margin-left: 15px;
   width: 160px;
   @media screen and (max-width: 580px) {
@@ -226,7 +226,7 @@ const BodyWeightResult = styled.div`
   }
 `;
 
-const BodyWeightDelete = styled.div`
+const Delete = styled.div`
   margin: 0px 5px;
   cursor: pointer;
   text-align: center;
