@@ -25,19 +25,14 @@ const Header = () => {
   useEffect(() => {
     if (location.pathname === `/training`) {
       setBackgroundPic(trainingBanner);
-      setOpenMenu(false);
     } else if (location.pathname === `/calendar`) {
       setBackgroundPic(calendarBanner);
-      setOpenMenu(false);
     } else if (location.pathname === `/statistics`) {
       setBackgroundPic(statisticsBanner);
-      setOpenMenu(false);
     } else if (location.pathname === `/map`) {
       setBackgroundPic(mapBanner);
-      setOpenMenu(false);
     } else if (location.pathname === `/`) {
       setBackgroundPic(null);
-      setOpenMenu(false);
     }
   }, [location.pathname]);
 
@@ -55,6 +50,7 @@ const Header = () => {
           to="/"
           onClick={() => {
             setCurrentPgae('');
+            setOpenMenu(false);
           }}
         >
           <Logo></Logo>
@@ -65,6 +61,7 @@ const Header = () => {
             to="/training"
             onClick={() => {
               setCurrentPgae('TrainingPage');
+              setOpenMenu(false);
             }}
             $currentPage={currentPage === 'TrainingPage'}
           >
@@ -75,6 +72,7 @@ const Header = () => {
             to="/calendar"
             onClick={() => {
               setCurrentPgae('Calendar');
+              setOpenMenu(false);
             }}
             $currentPage={currentPage === 'Calendar'}
           >
@@ -85,6 +83,7 @@ const Header = () => {
             to="/statistics"
             onClick={() => {
               setCurrentPgae('StatisticsPage');
+              setOpenMenu(false);
             }}
             $currentPage={currentPage === 'StatisticsPage'}
           >
@@ -95,6 +94,7 @@ const Header = () => {
             to="/map"
             onClick={() => {
               setCurrentPgae('MapPage');
+              setOpenMenu(false);
             }}
             $currentPage={currentPage === 'MapPage'}
           >
@@ -105,6 +105,7 @@ const Header = () => {
             <LogButton
               onClick={() => {
                 userSignOut();
+                setOpenMenu(false);
               }}
             >
               <LogButtonTitle>登出</LogButtonTitle>
