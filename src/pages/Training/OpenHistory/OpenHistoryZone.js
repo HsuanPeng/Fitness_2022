@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 
-import { useScript } from '../../Hooks/useScript';
-import UserContext from '../../contexts/UserContext';
+import { useScript } from '../../../Hooks/useScript';
+import UserContext from '../../../contexts/UserContext';
 import OpenHistoryZoneTop from './OpenHistoryTop';
 import OpenHistoryZoneBottom from './OpenHistoryBottom';
 import OpenHistoryActions from './OpenHistoryActions';
@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
-import { db } from '../../utils/firebase';
+import { db } from '../../../utils/firebase';
 
 const OpenHistoryZone = (props) => {
   const { uid, alertPop, setContent } = useContext(UserContext);

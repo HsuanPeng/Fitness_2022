@@ -1,17 +1,17 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
-import UserContext from '../../contexts/UserContext';
+import UserContext from '../../../contexts/UserContext';
 import FavoriteNameZone from './FavoriteNameZone';
 import FavoriteActionZone from './FavoriteActionZone';
 
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../utils/firebase';
+import { db } from '../../../utils/firebase';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faHeartCirclePlus, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 
-import favoriteBanner from '../../images/Kettlebell-weights.jpg';
+import favoriteBanner from '../../../images/Kettlebell-weights.jpg';
 
 const FavoritePage = (props) => {
   const { uid, alertPop, setContent } = useContext(UserContext);

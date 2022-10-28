@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 
-import armMuscle from '../../images/armMuscle.png';
+import armMuscle from '../../../images/armMuscle.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDumbbell } from '@fortawesome/free-solid-svg-icons';
