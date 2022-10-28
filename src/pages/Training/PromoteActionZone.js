@@ -48,7 +48,7 @@ const PromoteActionZone = (props) => {
           <PromoteListPart>{item.bodyPart}</PromoteListPart>
           <PromoteLisName>{item.actionName}</PromoteLisName>
           <VideoTag
-            $playing={index == props.playing}
+            $playing={index === props.playing}
             id={index}
             onClick={(e) => {
               props.setVideoUrl(props.promoteActions[e.target.id].videoURL);

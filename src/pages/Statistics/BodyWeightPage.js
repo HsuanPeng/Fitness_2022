@@ -23,6 +23,7 @@ const BodyWeightPage = (props) => {
             value={props.weightNumberInput}
             maxLength={6}
             placeholder="0"
+            type="number"
           ></BodyWeightInput>
         </Weight>
         <BodyWeightInputButtonOutside>

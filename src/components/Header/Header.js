@@ -25,14 +25,19 @@ const Header = () => {
   useEffect(() => {
     if (location.pathname === `/training`) {
       setBackgroundPic(trainingBanner);
+      setOpenMenu(false);
     } else if (location.pathname === `/calendar`) {
       setBackgroundPic(calendarBanner);
+      setOpenMenu(false);
     } else if (location.pathname === `/statistics`) {
       setBackgroundPic(statisticsBanner);
+      setOpenMenu(false);
     } else if (location.pathname === `/map`) {
       setBackgroundPic(mapBanner);
+      setOpenMenu(false);
     } else if (location.pathname === `/`) {
       setBackgroundPic(null);
+      setOpenMenu(false);
     }
   }, [location.pathname]);
 

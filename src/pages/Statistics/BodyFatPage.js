@@ -23,6 +23,7 @@ const BodyFatPage = (props) => {
             value={props.fatNumberInput}
             maxLength={4}
             placeholder="0"
+            type="number"
           ></BodyFatInput>
         </Fat>
         <BodyFatInputButtonOutside>
