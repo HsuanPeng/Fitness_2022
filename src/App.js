@@ -24,7 +24,7 @@ import { faBell, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { faGooglePlusG } from '@fortawesome/free-brands-svg-icons';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [uid, setUid] = useState(null);
   const [displayName, setDisplayName] = useState(null);
@@ -108,74 +108,72 @@ const App = () => {
   }
 
   return (
-    <>
-      <UserContext.Provider
-        value={{
-          isLoggedIn,
-          setIsLoggedIn,
-          userSignOut,
-          signInWithGoogle,
-          uid,
-          displayName,
-          email,
-          signIn,
-          alertPop,
-          setContent,
-          currentPage,
-          setCurrentPgae,
-        }}
-      >
-        <GlobalStyle />
-        <AlertOutside $alert={alert}>
-          <Check>
-            <FontAwesomeIcon icon={faBell} />
-          </Check>
-          <AlertContent>{content}</AlertContent>
-          <AlertLine $alert={alert} />
-        </AlertOutside>
-        {signInPage ? (
-          <>
-            <SignInMenu>
-              <Close
-                onClick={() => {
-                  setSignInPage(false);
-                }}
-                src={remove}
-              ></Close>
-              <Close />
-              <SignInPicture />
-              <SignInContent>
-                <SignInQuestion>
-                  準備好開始你的
-                  <br />
-                  健身記錄了嗎？
-                </SignInQuestion>
-                <SignInButton onClick={signInWithTest}>
-                  <FaTestSignIn>
-                    <FontAwesomeIcon icon={faRightToBracket} />
-                  </FaTestSignIn>
-                  使用測試帳號登入
-                </SignInButton>
-                <SignInGoogle onClick={signInWithGoogle}>
-                  <FaGooglePlus>
-                    <FontAwesomeIcon icon={faGooglePlusG} />
-                  </FaGooglePlus>
-                  <SignInGoogleText>使用google登入</SignInGoogleText>
-                </SignInGoogle>
-              </SignInContent>
-            </SignInMenu>
-            <SignInMenuBackground />
-            <Header />
-            <Outlet />
-          </>
-        ) : (
-          <>
-            <Header />
-            <Outlet />
-          </>
-        )}
-      </UserContext.Provider>
-    </>
+    <UserContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        userSignOut,
+        signInWithGoogle,
+        uid,
+        displayName,
+        email,
+        signIn,
+        alertPop,
+        setContent,
+        currentPage,
+        setCurrentPgae,
+      }}
+    >
+      <GlobalStyle />
+      <AlertOutside $alert={alert}>
+        <Check>
+          <FontAwesomeIcon icon={faBell} />
+        </Check>
+        <AlertContent>{content}</AlertContent>
+        <AlertLine $alert={alert} />
+      </AlertOutside>
+      {signInPage ? (
+        <>
+          <SignInMenu>
+            <Close
+              onClick={() => {
+                setSignInPage(false);
+              }}
+              src={remove}
+            ></Close>
+            <Close />
+            <SignInPicture />
+            <SignInContent>
+              <SignInQuestion>
+                準備好開始你的
+                <br />
+                健身記錄了嗎？
+              </SignInQuestion>
+              <SignInButton onClick={signInWithTest}>
+                <FaTestSignIn>
+                  <FontAwesomeIcon icon={faRightToBracket} />
+                </FaTestSignIn>
+                使用測試帳號登入
+              </SignInButton>
+              <SignInGoogle onClick={signInWithGoogle}>
+                <FaGooglePlus>
+                  <FontAwesomeIcon icon={faGooglePlusG} />
+                </FaGooglePlus>
+                <SignInGoogleText>使用google登入</SignInGoogleText>
+              </SignInGoogle>
+            </SignInContent>
+          </SignInMenu>
+          <SignInMenuBackground />
+          <Header />
+          <Outlet />
+        </>
+      ) : (
+        <>
+          <Header />
+          <Outlet />
+        </>
+      )}
+    </UserContext.Provider>
   );
 };
 

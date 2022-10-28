@@ -371,11 +371,11 @@ const LineOutside = styled.div`
     margin-right: 55px;
   }
   @media screen and (max-width: 767px) {
-    width: 450px;
+    width: 520px;
     margin-right: 10px;
   }
   @media screen and (max-width: 550px) {
-    width: 350px;
+    width: 400px;
     margin-right: 10px;
   }
   @media screen and (max-width: 450px) {

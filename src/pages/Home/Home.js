@@ -12,6 +12,8 @@ const Home = () => {
 
   const { setCurrentPgae } = useContext(UserContext);
 
+  const HOME_ITEMS = ['菜單規劃', '數據追蹤', '健身地圖'];
+
   return (
     <>
       <Wrapper>
@@ -20,9 +22,9 @@ const Home = () => {
             <HomeTitle>全力以赴 你會很酷</HomeTitle>
             <HomeContent>菜單規劃｜數據追蹤｜健身地圖</HomeContent>
             <HomeContentMobile>
-              <HomeContentMobileItem>菜單規劃</HomeContentMobileItem>
-              <HomeContentMobileItem>數據追蹤</HomeContentMobileItem>
-              <HomeContentMobileItem>健身地圖</HomeContentMobileItem>
+              {HOME_ITEMS.map((item) => (
+                <HomeContentMobileItem key={item}>{item}</HomeContentMobileItem>
+              ))}
             </HomeContentMobile>
           </HomeContentZone>
           <GoTrainingPageOutside
