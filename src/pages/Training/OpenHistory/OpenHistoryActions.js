@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import armMuscle from '../../images/armMuscle.png';
+import armMuscle from '../../../images/armMuscle.png';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faDumbbell, faWeightHanging } from '@fortawesome/free-solid-svg-icons';

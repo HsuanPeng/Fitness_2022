@@ -20,15 +20,15 @@ import { db, storage } from '../../utils/firebase';
 
 import UserContext from '../../contexts/UserContext';
 import HistoryZone from './HistoryZone';
-import OpenHistoryZone from './OpenHistoryZone';
-import FavoritePage from './FavoritePage';
+import OpenHistoryZone from './OpenHistory/OpenHistoryZone';
+import FavoritePage from './Favorite/FavoritePage';
 import SkeletonPage from './SkeletonPage';
 import TrainingOne from './TrainingOne';
 import TrainingTwo from './TrainingTwo';
 import DeleteZone from './DeleteZone';
 import TrainingButtonsZone from './TrainingButtonsZone';
 
-import ACTIONS from './allActionsLists';
+import ACTIONS from '../../utils/allActionsLists';
 
 import emailjs from 'emailjs-com';
 
