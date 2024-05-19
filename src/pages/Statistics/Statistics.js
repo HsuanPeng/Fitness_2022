@@ -1,14 +1,22 @@
-import React, { useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useEffect, useState } from "react";
+import styled from "styled-components";
 
-import UserContext from '../../contexts/UserContext';
-import BodyFatPage from './BodyFatPage';
-import BodyWeightPage from './BodyWeightPage';
+import UserContext from "../../contexts/UserContext";
+import BodyFatPage from "./BodyFatPage";
+import BodyWeightPage from "./BodyWeightPage";
 
-import { doc, setDoc, collection, onSnapshot, query, orderBy, deleteDoc } from 'firebase/firestore';
-import { db } from '../../utils/firebase';
+import {
+  doc,
+  setDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../../utils/firebase";
 
-import { Line } from 'react-chartjs-2';
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,14 +26,23 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from "chart.js";
 
 const Statistics = () => {
-  ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
   ChartJS.defaults.font.size = 20;
-  ChartJS.defaults.color = 'white';
+  ChartJS.defaults.color = "white";
 
-  const { isLoggedIn, uid, signIn, alertPop, setContent } = useContext(UserContext);
+  const { isLoggedIn, uid, signIn, alertPop, setContent } =
+    useContext(UserContext);
 
   const [showFatRecord, setShowFatRecord] = useState(true);
 
@@ -47,12 +64,14 @@ const Statistics = () => {
     labels: showFatRecord ? fatDateLine : weightDateLine,
     datasets: [
       {
-        label: showFatRecord ? '體脂肪率' : '體重',
+        label: showFatRecord ? "體脂肪率" : "體重",
         data: showFatRecord ? fatNumberLine : weightNumberLine,
         fill: true,
-        backgroundColor: showFatRecord ? 'rgba(238,141,71,0.2)' : 'rgba(255,183,3,0.2)',
-        borderColor: showFatRecord ? 'rgba(238,141,71,1)' : 'rgba(255,183,3,1)',
-        borderWidth: '5',
+        backgroundColor: showFatRecord
+          ? "rgba(238,141,71,0.2)"
+          : "rgba(255,183,3,0.2)",
+        borderColor: showFatRecord ? "rgba(238,141,71,1)" : "rgba(255,183,3,1)",
+        borderWidth: "5",
       },
     ],
   };
@@ -62,11 +81,11 @@ const Statistics = () => {
       y: {
         ticks: {
           padding: 15,
-          color: 'white',
+          color: "white",
         },
       },
       x: {
-        ticks: { padding: 15, color: 'white' },
+        ticks: { padding: 15, color: "white" },
       },
     },
   };
@@ -75,11 +94,11 @@ const Statistics = () => {
     labels: null,
     datasets: [
       {
-        label: '無資料',
+        label: "無資料",
         data: [0],
         fill: true,
-        backgroundColor: 'grey',
-        borderColor: 'grey',
+        backgroundColor: "grey",
+        borderColor: "grey",
       },
     ],
   };
@@ -89,7 +108,10 @@ const Statistics = () => {
       setFatRecord([]);
     } else {
       async function getFatRecord() {
-        const docRef = await query(collection(db, 'users', uid, 'fatRecords'), orderBy('measureDate'));
+        const docRef = await query(
+          collection(db, "users", uid, "fatRecords"),
+          orderBy("measureDate")
+        );
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
@@ -118,15 +140,17 @@ const Statistics = () => {
         let re = /^[0-9]+.?[0-9]*$/;
         if (!re.test(fatNumberInput)) {
           alertPop();
-          setContent('請輸入數字');
+          setContent("請輸入數字");
         } else if (fatNumberInput > 99 || Number(fatNumberInput) === 0) {
           alertPop();
-          setContent('數據不實');
+          setContent("數據不實");
         } else {
-          if (fatDateInput !== undefined && fatNumberInput !== undefined && fatDateInput !== '') {
-            setFatNumberInput('');
-            setFatDateInput('');
-            const docRef = await doc(collection(db, 'users', uid, 'fatRecords'));
+          if (fatDateInput && fatNumberInput && fatDateInput) {
+            setFatNumberInput("");
+            setFatDateInput("");
+            const docRef = await doc(
+              collection(db, "users", uid, "fatRecords")
+            );
             const data = {
               measureDate: fatDateInput,
               bodyFat: Number(fatNumberInput).toFixed(1),
@@ -135,7 +159,7 @@ const Statistics = () => {
             await setDoc(docRef, data);
           } else {
             alertPop();
-            setContent('請填寫完整資料');
+            setContent("請填寫完整資料");
           }
         }
       } catch (e) {
@@ -151,7 +175,13 @@ const Statistics = () => {
       return id !== index;
     });
     setFatRecord(newFatRecord);
-    const docRef = await doc(db, 'users', uid, 'fatRecords', fatRecord[id].docID);
+    const docRef = await doc(
+      db,
+      "users",
+      uid,
+      "fatRecords",
+      fatRecord[id].docID
+    );
     deleteDoc(docRef);
   }
 
@@ -160,7 +190,10 @@ const Statistics = () => {
       setWeightRecord([]);
     } else {
       async function getWeightRecord() {
-        const docRef = await query(collection(db, 'users', uid, 'weightRecords'), orderBy('measureDate'));
+        const docRef = await query(
+          collection(db, "users", uid, "weightRecords"),
+          orderBy("measureDate")
+        );
         onSnapshot(docRef, (item) => {
           const newData = [];
           item.forEach((doc) => {
@@ -189,15 +222,17 @@ const Statistics = () => {
         let re = /^[0-9]+.?[0-9]*$/;
         if (!re.test(weightNumberInput)) {
           alertPop();
-          setContent('請填寫數字');
+          setContent("請填寫數字");
         } else if (weightNumberInput > 999 || Number(weightNumberInput) === 0) {
           alertPop();
-          setContent('數據不實');
+          setContent("數據不實");
         } else {
-          if (weightDateInput !== undefined && weightNumberInput !== undefined && weightDateInput !== '') {
-            setWeightNumberInput('');
-            setWeightDateInput('');
-            const docRef = await doc(collection(db, 'users', uid, 'weightRecords'));
+          if (weightDateInput && weightNumberInput && weightDateInput) {
+            setWeightNumberInput("");
+            setWeightDateInput("");
+            const docRef = await doc(
+              collection(db, "users", uid, "weightRecords")
+            );
             const data = {
               measureDate: weightDateInput,
               bodyWeight: Number(weightNumberInput).toFixed(1),
@@ -206,7 +241,7 @@ const Statistics = () => {
             await setDoc(docRef, data);
           } else {
             alertPop();
-            setContent('請填寫完整資料');
+            setContent("請填寫完整資料");
           }
         }
       } catch (e) {
@@ -222,7 +257,13 @@ const Statistics = () => {
       return id !== index;
     });
     setWeightRecord(newWeightRecord);
-    const docRef = await doc(db, 'users', uid, 'weightRecords', weightRecord[id].docID);
+    const docRef = await doc(
+      db,
+      "users",
+      uid,
+      "weightRecords",
+      weightRecord[id].docID
+    );
     deleteDoc(docRef);
   }
 
@@ -263,7 +304,7 @@ const Statistics = () => {
                   {fatRecord.length > 0 ? (
                     <Line data={lineData} options={dataOptions} />
                   ) : (
-                    <Line data={dataNull} options={{ color: 'white' }} />
+                    <Line data={dataNull} options={{ color: "white" }} />
                   )}
                 </LineOutside>
               </BodyFatLinePageZone>
@@ -285,7 +326,7 @@ const Statistics = () => {
                   {weightRecord.length > 0 ? (
                     <Line data={lineData} options={dataOptions} />
                   ) : (
-                    <Line data={dataNull} options={{ color: 'white' }} />
+                    <Line data={dataNull} options={{ color: "white" }} />
                   )}
                 </LineOutside>
               </BodyWeightLinePageZone>
@@ -337,14 +378,14 @@ const GoBodyFat = styled.div`
   font-size: 24px;
   letter-spacing: 2px;
   font-weight: 600;
-  background: ${(props) => (props.$showFatRecord ? '#74c6cc' : '#475260')};
+  background: ${(props) => (props.$showFatRecord ? "#74c6cc" : "#475260")};
   &:hover {
     background: #74c6cc;
   }
 `;
 
 const GoBodyWeight = styled(GoBodyFat)`
-  background: ${(props) => (props.$showFatRecord ? '#475260' : '#74c6cc')};
+  background: ${(props) => (props.$showFatRecord ? "#475260" : "#74c6cc")};
 `;
 
 const BodyZone = styled.div`

@@ -121,7 +121,7 @@ const OpenHistoryZone = (props) => {
 
   async function handleAuthClick() {
     tokenClient.current.callback = async (resp) => {
-      if (resp.error !== undefined) {
+      if (resp.error) {
         throw resp;
       }
       await listUpcomingEvents();
