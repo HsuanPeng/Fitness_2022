@@ -1,11 +1,11 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const HistoryZone = (props) => {
   return (
     <HistoryOutside>
       {props.trainingData.map((item, index) => (
         <HistoryItemsOutside
-          index={index}
+          index={item.docID}
           onClick={() => {
             props.openHistory(index);
           }}

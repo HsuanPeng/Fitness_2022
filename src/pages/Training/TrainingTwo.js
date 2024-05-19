@@ -1,14 +1,17 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-import ChoiceActionZone from './ChoiceActionZone';
-import PromoteActionZone from './PromoteActionZone';
-import CalculationZone from './CalculationZone';
+import ChoiceActionZone from "./ChoiceActionZone";
+import PromoteActionZone from "./PromoteActionZone";
+import CalculationZone from "./CalculationZone";
 
-import logo from '../../images/Logo_blue.png';
+import logo from "../../images/Logo_blue.png";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleArrowLeft, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleArrowLeft,
+  faCircleXmark,
+} from "@fortawesome/free-solid-svg-icons";
 
 const TrainingTwo = (props) => {
   return (
@@ -47,7 +50,11 @@ const TrainingTwo = (props) => {
         />
       </ActionOutside>
       <TrainingOutsideTwoBottom>
-        <CalculationZone choiceAction={props.choiceAction} data={props.data} dataNull={props.dataNull} />
+        <CalculationZone
+          choiceAction={props.choiceAction}
+          data={props.data}
+          dataNull={props.dataNull}
+        />
         {props.playing ? (
           <VideoZone>
             <CloseVideo
@@ -57,7 +64,13 @@ const TrainingTwo = (props) => {
             >
               <FontAwesomeIcon icon={faCircleXmark} />
             </CloseVideo>
-            <video autoPlay loop width="100%" controls src={props.videoUrl}></video>
+            <video
+              autoPlay
+              loop
+              width="100%"
+              controls
+              src={props.videoUrl}
+            ></video>
           </VideoZone>
         ) : (
           <NoVideo>
@@ -65,17 +78,17 @@ const TrainingTwo = (props) => {
           </NoVideo>
         )}
       </TrainingOutsideTwoBottom>
-      <CompeleteTrainingSettingOutside>
+      <CompleteTrainingSettingOutside>
         <CompeleteTrainingSetting
           type="button"
           value="submit"
           onClick={() => {
-            props.compeleteTrainingSetting();
+            props.completeTrainingSetting();
           }}
         >
           完成菜單設定
         </CompeleteTrainingSetting>
-      </CompeleteTrainingSettingOutside>
+      </CompleteTrainingSettingOutside>
       <TurnOutside>
         <TurnLeft
           onClick={() => {
@@ -249,7 +262,7 @@ const TurnLeft = styled.div`
   }
 `;
 
-const CompeleteTrainingSettingOutside = styled.div`
+const CompleteTrainingSettingOutside = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;

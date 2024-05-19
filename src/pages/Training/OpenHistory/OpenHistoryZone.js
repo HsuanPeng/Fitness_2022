@@ -1,98 +1,105 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useEffect, useState, useRef } from "react";
+import styled from "styled-components";
 
-import { useScript } from '../../../Hooks/useScript';
-import UserContext from '../../../contexts/UserContext';
-import OpenHistoryZoneTop from './OpenHistoryTop';
-import OpenHistoryZoneBottom from './OpenHistoryBottom';
-import OpenHistoryActions from './OpenHistoryActions';
-import OpenHistoryMiddle from './OpenHistoryMiddle';
+import { useScript } from "../../../Hooks/useScript";
+import UserContext from "../../../contexts/UserContext";
+import OpenHistoryZoneTop from "./OpenHistoryTop";
+import OpenHistoryZoneBottom from "./OpenHistoryBottom";
+import OpenHistoryActions from "./OpenHistoryActions";
+import OpenHistoryMiddle from "./OpenHistoryMiddle";
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
-import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../utils/firebase';
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";
+import { db } from "../../../utils/firebase";
+
+import {
+  bodyPartsArray,
+  bodyPartsLabel,
+  chartColors,
+} from "../../../constants/index";
 
 const OpenHistoryZone = (props) => {
   const { uid, alertPop, setContent } = useContext(UserContext);
 
-  const API = useScript('https://apis.google.com/js/api.js');
-  const Accounts = useScript('https://accounts.google.com/gsi/client');
+  const API = useScript("https://apis.google.com/js/api.js");
+  const Accounts = useScript("https://accounts.google.com/gsi/client");
 
   const [alreadyLoad, setAlreadyLoad] = useState(false);
 
   ChartJS.register(ArcElement, Tooltip, Legend);
 
-  const shoulderNumber = props.showHistoryActions.filter((item) => item.bodyPart === '肩').length;
-  const armNumber = props.showHistoryActions.filter((item) => item.bodyPart === '手臂').length;
-  const chestNumber = props.showHistoryActions.filter((item) => item.bodyPart === '胸').length;
-  const backNumber = props.showHistoryActions.filter((item) => item.bodyPart === '背').length;
-  const buttLegNumber = props.showHistoryActions.filter((item) => item.bodyPart === '臀腿').length;
-  const coreNumber = props.showHistoryActions.filter((item) => item.bodyPart === '核心').length;
-  const shoulderPercent = shoulderNumber / props.showHistoryActions.length;
-  const armPercent = armNumber / props.showHistoryActions.length;
-  const chestPercent = chestNumber / props.showHistoryActions.length;
-  const backPercent = backNumber / props.showHistoryActions.length;
-  const buttLegPercent = buttLegNumber / props.showHistoryActions.length;
-  const corePercent = coreNumber / props.showHistoryActions.length;
+  const bodyPartsForChart = bodyPartsArray.map((part) => bodyPartsLabel[part]);
+
+  const bodyPartCounts = {};
+  const bodyPartPercents = {};
+
+  bodyPartsForChart.forEach((part) => {
+    const count = props.showHistoryActions.filter(
+      (item) => item.bodyPart === part
+    ).length;
+    bodyPartCounts[part] = count;
+    bodyPartPercents[part] = count / props.showHistoryActions.length;
+  });
 
   const data = {
     datasets: [
       {
-        data: [shoulderPercent, armPercent, chestPercent, backPercent, buttLegPercent, corePercent],
-        backgroundColor: ['#f1f2f6', '#8ecae6', '#219ebc', '#74c6cc', '#ffb703', '#fb8500'],
+        data: bodyPartsForChart,
+        backgroundColor: chartColors,
         borderColor: [
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
         ],
         borderWidth: 0,
       },
     ],
-    labels: ['肩', '手臂', '胸', '背', '臀腿', '核心'],
+    labels: bodyPartsForChart,
   };
 
   const dataNull = {
     datasets: [
       {
         data: [1],
-        backgroundColor: ['grey'],
-        borderColor: ['rgba(0, 0, 0, 1)'],
+        backgroundColor: ["grey"],
+        borderColor: ["rgba(0, 0, 0, 1)"],
         borderWidth: 0,
       },
     ],
-    labels: ['無資料'],
+    labels: ["無資料"],
   };
 
   useEffect(() => {
-    if (API === 'ready' && alreadyLoad === false) {
+    if (API === "ready" && alreadyLoad === false) {
       gapiLoaded();
       setAlreadyLoad(true);
     }
   }, [props.openHistory]);
 
   useEffect(() => {
-    if (Accounts === 'ready' && alreadyLoad === false) {
+    if (Accounts === "ready" && alreadyLoad === false) {
       gisLoaded();
       setAlreadyLoad(true);
     }
   }, [props.openHistory]);
 
-  const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
-  const SCOPES = 'https://www.googleapis.com/auth/calendar';
+  const DISCOVERY_DOC =
+    "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
+  const SCOPES = "https://www.googleapis.com/auth/calendar";
 
   let tokenClient = useRef();
   let gapiInited = false;
   let gisInited = false;
 
   async function gapiLoaded() {
-    await window.gapi.load('client', intializeGapiClient);
+    await window.gapi.load("client", intializeGapiClient);
   }
 
   async function intializeGapiClient() {
@@ -107,7 +114,7 @@ const OpenHistoryZone = (props) => {
     tokenClient.current = await window.google.accounts.oauth2.initTokenClient({
       client_id: process.env.REACT_APP_CLIENT_ID,
       scope: SCOPES,
-      callback: '',
+      callback: "",
     });
     gisInited = true;
   }
@@ -120,9 +127,9 @@ const OpenHistoryZone = (props) => {
       await listUpcomingEvents();
     };
     if (window.gapi.client.getToken() === null) {
-      tokenClient.current.requestAccessToken({ prompt: 'consent' });
+      tokenClient.current.requestAccessToken({ prompt: "consent" });
     } else {
-      tokenClient.current.requestAccessToken({ prompt: '' });
+      tokenClient.current.requestAccessToken({ prompt: "" });
     }
   }
 
@@ -130,12 +137,12 @@ const OpenHistoryZone = (props) => {
     let response;
     try {
       const request = {
-        calendarId: 'primary',
+        calendarId: "primary",
         timeMin: new window.Date().toISOString(),
         showDeleted: false,
         singleEvents: true,
         maxResults: 10,
-        orderBy: 'startTime',
+        orderBy: "startTime",
       };
       response = await window.gapi.client.calendar.events.list(request);
     } catch (err) {
@@ -157,28 +164,30 @@ const OpenHistoryZone = (props) => {
       },
     };
     var request = window.gapi.client.calendar.events.insert({
-      calendarId: 'primary',
+      calendarId: "primary",
       resource: event,
     });
     request.execute(function (event) {});
     alertPop();
-    setContent('成功加入google日曆');
+    setContent("成功加入google日曆");
   }
 
   async function addFavoriteTraining() {
     try {
-      const query = await getDocs(collection(db, 'users', uid, 'favoriteTrainings'));
+      const query = await getDocs(
+        collection(db, "users", uid, "favoriteTrainings")
+      );
       query.forEach((doc) => {
         if (doc.data().title === props.showHistory.title) {
           alertPop();
-          setContent('您已加入過本菜單');
+          setContent("您已加入過本菜單");
         }
       });
-      const docRef = doc(collection(db, 'users', uid, 'favoriteTrainings'));
+      const docRef = doc(collection(db, "users", uid, "favoriteTrainings"));
       const data = {
         docID: docRef.id,
-        complete: '未完成',
-        picture: '',
+        complete: "未完成",
+        picture: "",
         title: props.showHistory.title,
         description: props.showHistory.description,
         totalActions: props.showHistoryActions.length,
@@ -189,7 +198,7 @@ const OpenHistoryZone = (props) => {
       };
       setDoc(docRef, data);
       alertPop();
-      setContent('成功加入喜愛菜單');
+      setContent("成功加入喜愛菜單");
     } catch (e) {
       console.log(e);
     }
@@ -258,7 +267,7 @@ const OpenHistory = styled.div`
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;
-  display: ${(props) => (props.$isActive ? 'block' : 'none')};
+  display: ${(props) => (props.$isActive ? "block" : "none")};
   background: #475260;
   max-width: 1000px;
   padding-top: 10px;
@@ -287,5 +296,5 @@ const Background = styled.div`
   position: fixed;
   width: 100vw;
   height: 100vh;
-  display: ${(props) => (props.$isActive ? 'block' : 'none')};
+  display: ${(props) => (props.$isActive ? "block" : "none")};
 `;
