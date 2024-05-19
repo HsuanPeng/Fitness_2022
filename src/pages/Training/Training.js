@@ -153,7 +153,7 @@ const Training = () => {
   }
 
   function getPageTwo() {
-    if (title !== "" && date !== "" && description !== "") {
+    if (title && date && description) {
       setOpenTrainingPage(2);
       setPart(bodyPartsOptionsEnum.SHOULDER);
     } else {
