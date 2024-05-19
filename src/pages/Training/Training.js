@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useEffect, useState, useRef } from "react";
+import styled from "styled-components";
 
 import {
   doc,
@@ -14,32 +14,33 @@ import {
   getDocs,
   startAfter,
   limit,
-} from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../utils/firebase';
+} from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../../utils/firebase";
 
-import UserContext from '../../contexts/UserContext';
-import HistoryZone from './HistoryZone';
-import OpenHistoryZone from './OpenHistory/OpenHistoryZone';
-import FavoritePage from './Favorite/FavoritePage';
-import SkeletonPage from './SkeletonPage';
-import TrainingOne from './TrainingOne';
-import TrainingTwo from './TrainingTwo';
-import DeleteZone from './DeleteZone';
-import TrainingButtonsZone from './TrainingButtonsZone';
+import UserContext from "../../contexts/UserContext";
+import HistoryZone from "./HistoryZone";
+import OpenHistoryZone from "./OpenHistory/OpenHistoryZone";
+import FavoritePage from "./Favorite/FavoritePage";
+import SkeletonPage from "./SkeletonPage";
+import TrainingOne from "./TrainingOne";
+import TrainingTwo from "./TrainingTwo";
+import DeleteZone from "./DeleteZone";
+import TrainingButtonsZone from "./TrainingButtonsZone";
 
-import ACTIONS from '../../utils/allActionsLists';
+import ACTIONS from "../../utils/allActionsLists";
 
-import emailjs from 'emailjs-com';
+import emailjs from "emailjs-com";
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-import { Blocks } from 'react-loader-spinner';
+import { Blocks } from "react-loader-spinner";
 
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 
 const Training = () => {
-  const { isLoggedIn, uid, signIn, alertPop, setContent } = useContext(UserContext);
+  const { isLoggedIn, uid, signIn, alertPop, setContent } =
+    useContext(UserContext);
 
   const [trainingData, setTrainingData] = useState([]);
   const [pagination, setPagination] = useState([]);
@@ -48,10 +49,10 @@ const Training = () => {
   const [openTrainingInput, setOpenTrainingInput] = useState(false);
   const [openTrainingPage, setOpenTrainingPage] = useState(0);
 
-  const [title, setTitle] = useState('');
-  const [date, setDate] = useState('');
-  const [description, setDescription] = useState('');
-  const [part, setPart] = useState('');
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [part, setPart] = useState("");
   const [promoteActions, setPromoteActions] = useState([]);
   const [choiceAction, setChoiceAction] = useState([]);
 
@@ -61,7 +62,7 @@ const Training = () => {
   const [historyIndex, setHistoryIndex] = useState();
 
   const [imageUpload, setImageUpload] = useState();
-  const [imageList, setImageList] = useState('');
+  const [imageList, setImageList] = useState("");
   const [pickHistory, setPickHistory] = useState();
 
   const [videoUrl, setVideoUrl] = useState(null);
@@ -83,12 +84,24 @@ const Training = () => {
 
   ChartJS.register(ArcElement, Tooltip, Legend);
 
-  const shoulderNumber = choiceAction.filter((item) => item.bodyPart === '肩').length;
-  const armNumber = choiceAction.filter((item) => item.bodyPart === '手臂').length;
-  const chestNumber = choiceAction.filter((item) => item.bodyPart === '胸').length;
-  const backNumber = choiceAction.filter((item) => item.bodyPart === '背').length;
-  const buttLegNumber = choiceAction.filter((item) => item.bodyPart === '臀腿').length;
-  const coreNumber = choiceAction.filter((item) => item.bodyPart === '核心').length;
+  const shoulderNumber = choiceAction.filter(
+    (item) => item.bodyPart === "肩"
+  ).length;
+  const armNumber = choiceAction.filter(
+    (item) => item.bodyPart === "手臂"
+  ).length;
+  const chestNumber = choiceAction.filter(
+    (item) => item.bodyPart === "胸"
+  ).length;
+  const backNumber = choiceAction.filter(
+    (item) => item.bodyPart === "背"
+  ).length;
+  const buttLegNumber = choiceAction.filter(
+    (item) => item.bodyPart === "臀腿"
+  ).length;
+  const coreNumber = choiceAction.filter(
+    (item) => item.bodyPart === "核心"
+  ).length;
   const shoulderPercent = shoulderNumber / choiceAction.length;
   const armPercent = armNumber / choiceAction.length;
   const chestPercent = chestNumber / choiceAction.length;
@@ -99,40 +112,57 @@ const Training = () => {
   const data = {
     datasets: [
       {
-        data: [shoulderPercent, armPercent, chestPercent, backPercent, buttLegPercent, corePercent],
-        backgroundColor: ['#f1f2f6', '#8ecae6', '#219ebc', '#74c6cc', '#ffb703', '#fb8500'],
+        data: [
+          shoulderPercent,
+          armPercent,
+          chestPercent,
+          backPercent,
+          buttLegPercent,
+          corePercent,
+        ],
+        backgroundColor: [
+          "#f1f2f6",
+          "#8ecae6",
+          "#219ebc",
+          "#74c6cc",
+          "#ffb703",
+          "#fb8500",
+        ],
         borderColor: [
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
-          'rgba(0, 0, 0, 1)',
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
+          "rgba(0, 0, 0, 1)",
         ],
         borderWidth: 0,
       },
     ],
-    labels: ['肩', '手臂', '胸', '背', '臀腿', '核心'],
+    labels: ["肩", "手臂", "胸", "背", "臀腿", "核心"],
   };
 
   const dataNull = {
     datasets: [
       {
         data: [1],
-        backgroundColor: ['grey'],
-        borderColor: ['rgba(0, 0, 0, 1)'],
+        backgroundColor: ["grey"],
+        borderColor: ["rgba(0, 0, 0, 1)"],
         borderWidth: 0,
       },
     ],
-    labels: ['無資料'],
+    labels: ["無資料"],
   };
 
   let re = /^[0-9]+.?[0-9]*$/;
   let totalWeight;
-  const total = choiceAction.reduce((prev, item) => prev + item.weight * item.times, 0);
+  const total = choiceAction.reduce(
+    (prev, item) => prev + item.weight * item.times,
+    0
+  );
   if (!re.test(total)) {
     alertPop();
-    setContent('請輸入數字');
+    setContent("請輸入數字");
   } else {
     totalWeight = Number(total.toFixed(1));
   }
@@ -141,7 +171,7 @@ const Training = () => {
     if (isLoggedIn) {
       setOpenTrainingInput(true);
       setOpenTrainingPage(1);
-      setImageList('');
+      setImageList("");
       setShowHistory(null);
     } else {
       signIn();
@@ -149,40 +179,40 @@ const Training = () => {
   }
 
   function getPageTwo() {
-    if (title !== '' && date !== '' && description !== '') {
+    if (title !== "" && date !== "" && description !== "") {
       setOpenTrainingPage(2);
-      setPart('肩');
+      setPart("肩");
     } else {
       alertPop();
-      setContent('請填寫完整資料');
+      setContent("請填寫完整資料");
     }
   }
 
   function closeAddTraining() {
     setOpenTrainingInput(false);
     setOpenTrainingPage(0);
-    setTitle('');
-    setDate('');
-    setDescription('');
+    setTitle("");
+    setDate("");
+    setDescription("");
     setChoiceAction([]);
     setPlaying(null);
   }
 
   function completeTraining() {
     alertPop();
-    setContent('恭喜完成本次鍛鍊');
+    setContent("恭喜完成本次鍛鍊");
     changeCompleteCondition();
   }
 
   async function changeCompleteCondition() {
     try {
-      const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
+      const docRef = await doc(db, "users", uid, "trainingTables", pickHistory);
       const data = {
-        complete: '已完成',
+        complete: "已完成",
       };
       await updateDoc(docRef, data);
       const newArr = [...trainingData];
-      newArr[historyIndex].complete = '已完成';
+      newArr[historyIndex].complete = "已完成";
       setTrainingData(newArr);
       setShowHistory(newArr[historyIndex]);
     } catch (e) {
@@ -193,12 +223,12 @@ const Training = () => {
   async function confirmDeleteTrainingItem() {
     setLoading(true);
     try {
-      const docRef = await doc(db, 'users', uid, 'trainingTables', pickHistory);
+      const docRef = await doc(db, "users", uid, "trainingTables", pickHistory);
       await deleteDoc(docRef);
       setShowHistoryToggle(false);
       setLoading(false);
       alertPop();
-      setContent('成功刪除菜單');
+      setContent("成功刪除菜單");
       setDeleteAlert(false);
       setCurrentPgae(1);
       setShowHistory(null);
@@ -208,21 +238,21 @@ const Training = () => {
   }
 
   useEffect(() => {
-    if (part === '背') {
+    if (part === "背") {
       setPromoteActions(ACTIONS.BACK);
-    } else if (part === '手臂') {
+    } else if (part === "手臂") {
       setPromoteActions(ACTIONS.ARM);
-    } else if (part === '胸') {
+    } else if (part === "胸") {
       setPromoteActions(ACTIONS.CHEST);
-    } else if (part === '臀腿') {
+    } else if (part === "臀腿") {
       setPromoteActions(ACTIONS.BUTTLEG);
-    } else if (part === '核心') {
+    } else if (part === "核心") {
       setPromoteActions(ACTIONS.CORE);
-    } else if (part === '肩') {
+    } else if (part === "肩") {
       setPromoteActions(ACTIONS.SHOULDER);
-    } else if (part === '上半身') {
+    } else if (part === "上半身") {
       setPromoteActions(ACTIONS.UPPERBODY);
-    } else if (part === '全身') {
+    } else if (part === "全身") {
       setPromoteActions(ACTIONS.ALL);
     }
   }, [part]);
@@ -247,14 +277,20 @@ const Training = () => {
     setChoiceAction(newNextChoiceAction);
   }
 
-  async function compeleteTrainingSetting() {
+  async function completeTrainingSetting() {
     try {
       if (totalWeight !== 0.0 && choiceAction.length > 0) {
         if (showHistory && showHistory.docID) {
-          const docRef = await doc(db, 'users', uid, 'trainingTables', showHistory.docID);
+          const docRef = await doc(
+            db,
+            "users",
+            uid,
+            "trainingTables",
+            showHistory.docID
+          );
           const data = {
             docID: docRef.id,
-            complete: '未完成',
+            complete: "未完成",
             picture: imageList,
             title: title,
             description: description,
@@ -270,17 +306,19 @@ const Training = () => {
           setChoiceAction([]);
           sendEmail();
           alertPop();
-          setContent('菜單更新成功');
-          setTitle('');
-          setDate('');
-          setDescription('');
+          setContent("菜單更新成功");
+          setTitle("");
+          setDate("");
+          setDescription("");
           setPlaying(null);
           setCurrentPgae(1);
         } else {
-          const docRef = await doc(collection(db, 'users', uid, 'trainingTables'));
+          const docRef = await doc(
+            collection(db, "users", uid, "trainingTables")
+          );
           const data = {
             docID: docRef.id,
-            complete: '未完成',
+            complete: "未完成",
             picture: imageList,
             title: title,
             description: description,
@@ -296,19 +334,19 @@ const Training = () => {
           setChoiceAction([]);
           sendEmail();
           alertPop();
-          setContent('完成設定並寄信通知');
-          setTitle('');
-          setDate('');
-          setDescription('');
+          setContent("完成設定並寄信通知");
+          setTitle("");
+          setDate("");
+          setDescription("");
           setPlaying(null);
           setCurrentPgae(1);
         }
       } else if (!choiceAction.length > 0) {
         alertPop();
-        setContent('請加入動作');
+        setContent("請加入動作");
       } else {
         alertPop();
-        setContent('請輸入數字');
+        setContent("請輸入數字");
       }
     } catch (e) {
       console.log(e);
@@ -323,8 +361,8 @@ const Training = () => {
         setSkeleton(true);
         if (currentPage === 1) {
           const first = await query(
-            collection(db, 'users', uid, 'trainingTables'),
-            orderBy('trainingDate', 'desc'),
+            collection(db, "users", uid, "trainingTables"),
+            orderBy("trainingDate", "desc"),
             limit(8)
           );
           onSnapshot(first, (item) => {
@@ -339,15 +377,17 @@ const Training = () => {
           }, 1000);
         } else {
           const before = await query(
-            collection(db, 'users', uid, 'trainingTables'),
-            orderBy('trainingDate', 'desc'),
+            collection(db, "users", uid, "trainingTables"),
+            orderBy("trainingDate", "desc"),
             limit(8 * currentPage)
           );
           const documentSnapshots = await getDocs(before);
-          const lastVisible = await documentSnapshots.docs[8 * (currentPage - 1) - 1];
+          const lastVisible = await documentSnapshots.docs[
+            8 * (currentPage - 1) - 1
+          ];
           const next = await query(
-            collection(db, 'users', uid, 'trainingTables'),
-            orderBy('trainingDate', 'desc'),
+            collection(db, "users", uid, "trainingTables"),
+            orderBy("trainingDate", "desc"),
             startAfter(lastVisible),
             limit(8)
           );
@@ -372,7 +412,7 @@ const Training = () => {
       setPagination([]);
     } else {
       async function getTrainingTablesPage() {
-        const docRef = collection(db, 'users', uid, 'trainingTables');
+        const docRef = collection(db, "users", uid, "trainingTables");
         const querySnapshot = await getDocs(docRef);
         const arr = [];
         for (let i = 1; i <= Math.ceil(querySnapshot.size / 8); i++) {
@@ -404,13 +444,13 @@ const Training = () => {
     uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
         setImageList(url);
-        const docRef = doc(db, 'users', uid, 'trainingTables', pickHistory);
+        const docRef = doc(db, "users", uid, "trainingTables", pickHistory);
         const data = {
           picture: url,
         };
         updateDoc(docRef, data);
         alertPop();
-        setContent('照片上傳成功');
+        setContent("照片上傳成功");
         setTimeout(() => {
           setUploadSkeleton(false);
         }, 1500);
@@ -420,14 +460,22 @@ const Training = () => {
 
   const form = useRef();
   const sendEmail = () => {
-    emailjs.sendForm('service_aqtfkmw', 'template_jq89u95', form.current, 'c1RPxdcmtzncbu3Wv');
+    emailjs.sendForm(
+      "service_aqtfkmw",
+      "template_jq89u95",
+      form.current,
+      "c1RPxdcmtzncbu3Wv"
+    );
   };
 
   async function getFavoriteTrainings() {
     if (isLoggedIn === false) {
       setFavoriteTrainings([]);
     } else {
-      const docRef = await query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
+      const docRef = await query(
+        collection(db, "users", uid, "favoriteTrainings"),
+        orderBy("setDate")
+      );
       onSnapshot(docRef, (item) => {
         const newData = [];
         item.forEach((doc) => {
@@ -440,13 +488,19 @@ const Training = () => {
 
   useEffect(() => {
     const showFavoriteTrainings = async () => {
-      const docRef = await doc(db, 'users', uid, 'favoriteTrainings', favoriteChoice);
+      const docRef = await doc(
+        db,
+        "users",
+        uid,
+        "favoriteTrainings",
+        favoriteChoice
+      );
       const docSnap = await getDoc(docRef);
       setTitle(docSnap.data().title);
       setDescription(docSnap.data().description);
       setChoiceAction(docSnap.data().actions);
       alertPop();
-      setContent('成功套用喜愛菜單');
+      setContent("成功套用喜愛菜單");
     };
     showFavoriteTrainings();
   }, [favoriteChoice]);
@@ -454,7 +508,10 @@ const Training = () => {
   async function manageFavoriteTraining() {
     if (isLoggedIn) {
       setOpenFavorite(true);
-      const docRef = await query(collection(db, 'users', uid, 'favoriteTrainings'), orderBy('setDate'));
+      const docRef = await query(
+        collection(db, "users", uid, "favoriteTrainings"),
+        orderBy("setDate")
+      );
       onSnapshot(docRef, (item) => {
         const newData = [];
         item.forEach((doc) => {
@@ -495,7 +552,10 @@ const Training = () => {
         </LoadingOutside>
       )}
       {deleteAlert && (
-        <DeleteZone setDeleteAlert={setDeleteAlert} confirmDeleteTrainingItem={confirmDeleteTrainingItem} />
+        <DeleteZone
+          setDeleteAlert={setDeleteAlert}
+          confirmDeleteTrainingItem={confirmDeleteTrainingItem}
+        />
       )}
       <Wrapper>
         <TrainingZone>
@@ -518,7 +578,14 @@ const Training = () => {
           />
           {skeleton && <SkeletonPage />}
           {trainingData.length > 0 ? (
-            <>{!skeleton && <HistoryZone trainingData={trainingData} openHistory={openHistory} />}</>
+            <>
+              {!skeleton && (
+                <HistoryZone
+                  trainingData={trainingData}
+                  openHistory={openHistory}
+                />
+              )}
+            </>
           ) : (
             <NoHistory>尚未建立菜單</NoHistory>
           )}
@@ -594,16 +661,16 @@ const Training = () => {
                   videoUrl={videoUrl}
                   data={data}
                   dataNull={dataNull}
-                  compeleteTrainingSetting={compeleteTrainingSetting}
+                  completeTrainingSetting={completeTrainingSetting}
                   sendEmail={sendEmail}
                   setOpenTrainingPage={setOpenTrainingPage}
                 />
               </TrainingOutsideTwo>
-            )}{' '}
+            )}{" "}
             <Background />
           </>
         )}
-      </Wrapper>{' '}
+      </Wrapper>{" "}
     </>
   );
 };
@@ -621,7 +688,7 @@ const PaginationOutside = styled.div`
 
 const PaginationItem = styled.div`
   margin: 0 18px;
-  background: ${(props) => (props.$isActive ? 'white' : '#74c6cc')};
+  background: ${(props) => (props.$isActive ? "white" : "#74c6cc")};
   padding: 5px 10px;
   cursor: pointer;
   border-radius: 12px;
@@ -681,7 +748,7 @@ const TrainingOutsideOne = styled.div`
   left: calc(50% - 280px);
   top: -22%;
   z-index: 20;
-  display: ${(props) => (props.$isActive ? 'bloock' : 'none')};
+  display: ${(props) => (props.$isActive ? "bloock" : "none")};
   background: #475260;
   max-width: 700px;
   margin-bottom: 100px;
