@@ -10,7 +10,7 @@ import {
   bodyPartsOptionsEnum,
   bodyPartsOptionsArray,
   bodyPartsOptionsLabel,
-} from "../../constants/app";
+} from "../../constants/index";
 
 const PromoteActionZone = (props) => {
   const [isOpen, setIsOpen] = useState(false);

@@ -32,7 +32,8 @@ import {
   bodyPartsArray,
   bodyPartsLabel,
   bodyPartsOptionsEnum,
-} from "../../constants/app";
+  chartColors,
+} from "../../constants/index";
 
 import ACTIONS from "../../utils/allActionsLists";
 
@@ -92,14 +93,6 @@ const Training = () => {
 
   const bodyPartsForChart = bodyPartsArray.map((part) => bodyPartsLabel[part]);
 
-  const backgroundColor = [
-    "#f1f2f6",
-    "#8ecae6",
-    "#219ebc",
-    "#74c6cc",
-    "#ffb703",
-    "#fb8500",
-  ];
   const borderColor = Array(bodyPartsForChart.length).fill("rgba(0, 0, 0, 1)");
 
   const bodyPartCounts = {};
@@ -115,7 +108,7 @@ const Training = () => {
     datasets: [
       {
         data: bodyPartsForChart.map((part) => bodyPartPercents[part]),
-        backgroundColor,
+        chartColors,
         borderColor,
         borderWidth: 0,
       },
@@ -219,22 +212,19 @@ const Training = () => {
   }
 
   useEffect(() => {
-    if (part === bodyPartsOptionsEnum.BACK) {
-      setPromoteActions(ACTIONS.BACK);
-    } else if (part === bodyPartsOptionsEnum.ARM) {
-      setPromoteActions(ACTIONS.ARM);
-    } else if (part === bodyPartsOptionsEnum.CHEST) {
-      setPromoteActions(ACTIONS.CHEST);
-    } else if (part === bodyPartsOptionsEnum.LEG) {
-      setPromoteActions(ACTIONS.LEG);
-    } else if (part === bodyPartsOptionsEnum.CORE) {
-      setPromoteActions(ACTIONS.CORE);
-    } else if (part === bodyPartsOptionsEnum.SHOULDER) {
-      setPromoteActions(ACTIONS.SHOULDER);
-    } else if (part === bodyPartsOptionsEnum.UPPERBODY) {
-      setPromoteActions(ACTIONS.UPPERBODY);
-    } else if (part === bodyPartsOptionsEnum.ALL) {
-      setPromoteActions(ACTIONS.ALL);
+    const actionsMap = {
+      [bodyPartsOptionsEnum.BACK]: ACTIONS.BACK,
+      [bodyPartsOptionsEnum.ARM]: ACTIONS.ARM,
+      [bodyPartsOptionsEnum.CHEST]: ACTIONS.CHEST,
+      [bodyPartsOptionsEnum.LEG]: ACTIONS.LEG,
+      [bodyPartsOptionsEnum.CORE]: ACTIONS.CORE,
+      [bodyPartsOptionsEnum.SHOULDER]: ACTIONS.SHOULDER,
+      [bodyPartsOptionsEnum.UPPERBODY]: ACTIONS.UPPERBODY,
+      [bodyPartsOptionsEnum.ALL]: ACTIONS.ALL,
+    };
+
+    if (actionsMap.hasOwnProperty(part)) {
+      setPromoteActions(actionsMap[part]);
     }
   }, [part]);
 

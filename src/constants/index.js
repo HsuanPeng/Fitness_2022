@@ -57,3 +57,12 @@ export const bodyPartsOptionsLabel = {
   [bodyPartsOptionsEnum.UPPERBODY]: "上半身",
   [bodyPartsOptionsEnum.ALL]: "全身",
 };
+
+export const chartColors = [
+  "#f1f2f6",
+  "#8ecae6",
+  "#219ebc",
+  "#74c6cc",
+  "#ffb703",
+  "#fb8500",
+];

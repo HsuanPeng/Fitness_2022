@@ -16,7 +16,11 @@ import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 
-import { bodyPartsArray, bodyPartsLabel } from "../../../constants/app";
+import {
+  bodyPartsArray,
+  bodyPartsLabel,
+  chartColors,
+} from "../../../constants/index";
 
 const OpenHistoryZone = (props) => {
   const { uid, alertPop, setContent } = useContext(UserContext);
@@ -45,14 +49,7 @@ const OpenHistoryZone = (props) => {
     datasets: [
       {
         data: bodyPartsForChart,
-        backgroundColor: [
-          "#f1f2f6",
-          "#8ecae6",
-          "#219ebc",
-          "#74c6cc",
-          "#ffb703",
-          "#fb8500",
-        ],
+        backgroundColor: chartColors,
         borderColor: [
           "rgba(0, 0, 0, 1)",
           "rgba(0, 0, 0, 1)",

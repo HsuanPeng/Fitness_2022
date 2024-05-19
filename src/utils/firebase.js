@@ -4,7 +4,7 @@ import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  apiKey: "AIzaSyDtlWrSX2x1e0oTxI1_MN52sQsVyEwaOzA",
   authDomain: "fitness2-d4aaf.firebaseapp.com",
   projectId: "fitness2-d4aaf",
   storageBucket: "fitness2-d4aaf.appspot.com",
