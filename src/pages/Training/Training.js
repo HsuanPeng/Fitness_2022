@@ -28,6 +28,12 @@ import TrainingTwo from "./TrainingTwo";
 import DeleteZone from "./DeleteZone";
 import TrainingButtonsZone from "./TrainingButtonsZone";
 
+import {
+  bodyPartsArray,
+  bodyPartsLabel,
+  bodyPartsOptionsEnum,
+} from "../../constants/app";
+
 import ACTIONS from "../../utils/allActionsLists";
 
 import emailjs from "emailjs-com";
@@ -84,62 +90,37 @@ const Training = () => {
 
   ChartJS.register(ArcElement, Tooltip, Legend);
 
-  const shoulderNumber = choiceAction.filter(
-    (item) => item.bodyPart === "肩"
-  ).length;
-  const armNumber = choiceAction.filter(
-    (item) => item.bodyPart === "手臂"
-  ).length;
-  const chestNumber = choiceAction.filter(
-    (item) => item.bodyPart === "胸"
-  ).length;
-  const backNumber = choiceAction.filter(
-    (item) => item.bodyPart === "背"
-  ).length;
-  const buttLegNumber = choiceAction.filter(
-    (item) => item.bodyPart === "臀腿"
-  ).length;
-  const coreNumber = choiceAction.filter(
-    (item) => item.bodyPart === "核心"
-  ).length;
-  const shoulderPercent = shoulderNumber / choiceAction.length;
-  const armPercent = armNumber / choiceAction.length;
-  const chestPercent = chestNumber / choiceAction.length;
-  const backPercent = backNumber / choiceAction.length;
-  const buttLegPercent = buttLegNumber / choiceAction.length;
-  const corePercent = coreNumber / choiceAction.length;
+  const bodyPartsForChart = bodyPartsArray.map((part) => bodyPartsLabel[part]);
+
+  const backgroundColor = [
+    "#f1f2f6",
+    "#8ecae6",
+    "#219ebc",
+    "#74c6cc",
+    "#ffb703",
+    "#fb8500",
+  ];
+  const borderColor = Array(bodyPartsForChart.length).fill("rgba(0, 0, 0, 1)");
+
+  const bodyPartCounts = {};
+  const bodyPartPercents = {};
+
+  bodyPartsForChart.forEach((part) => {
+    const count = choiceAction.filter((item) => item.bodyPart === part).length;
+    bodyPartCounts[part] = count;
+    bodyPartPercents[part] = count / choiceAction.length;
+  });
 
   const data = {
     datasets: [
       {
-        data: [
-          shoulderPercent,
-          armPercent,
-          chestPercent,
-          backPercent,
-          buttLegPercent,
-          corePercent,
-        ],
-        backgroundColor: [
-          "#f1f2f6",
-          "#8ecae6",
-          "#219ebc",
-          "#74c6cc",
-          "#ffb703",
-          "#fb8500",
-        ],
-        borderColor: [
-          "rgba(0, 0, 0, 1)",
-          "rgba(0, 0, 0, 1)",
-          "rgba(0, 0, 0, 1)",
-          "rgba(0, 0, 0, 1)",
-          "rgba(0, 0, 0, 1)",
-          "rgba(0, 0, 0, 1)",
-        ],
+        data: bodyPartsForChart.map((part) => bodyPartPercents[part]),
+        backgroundColor,
+        borderColor,
         borderWidth: 0,
       },
     ],
-    labels: ["肩", "手臂", "胸", "背", "臀腿", "核心"],
+    labels: bodyPartsForChart,
   };
 
   const dataNull = {
@@ -181,7 +162,7 @@ const Training = () => {
   function getPageTwo() {
     if (title !== "" && date !== "" && description !== "") {
       setOpenTrainingPage(2);
-      setPart("肩");
+      setPart(bodyPartsOptionsEnum.SHOULDER);
     } else {
       alertPop();
       setContent("請填寫完整資料");
@@ -238,21 +219,21 @@ const Training = () => {
   }
 
   useEffect(() => {
-    if (part === "背") {
+    if (part === bodyPartsOptionsEnum.BACK) {
       setPromoteActions(ACTIONS.BACK);
-    } else if (part === "手臂") {
+    } else if (part === bodyPartsOptionsEnum.ARM) {
       setPromoteActions(ACTIONS.ARM);
-    } else if (part === "胸") {
+    } else if (part === bodyPartsOptionsEnum.CHEST) {
       setPromoteActions(ACTIONS.CHEST);
-    } else if (part === "臀腿") {
-      setPromoteActions(ACTIONS.BUTTLEG);
-    } else if (part === "核心") {
+    } else if (part === bodyPartsOptionsEnum.LEG) {
+      setPromoteActions(ACTIONS.LEG);
+    } else if (part === bodyPartsOptionsEnum.CORE) {
       setPromoteActions(ACTIONS.CORE);
-    } else if (part === "肩") {
+    } else if (part === bodyPartsOptionsEnum.SHOULDER) {
       setPromoteActions(ACTIONS.SHOULDER);
-    } else if (part === "上半身") {
+    } else if (part === bodyPartsOptionsEnum.UPPERBODY) {
       setPromoteActions(ACTIONS.UPPERBODY);
-    } else if (part === "全身") {
+    } else if (part === bodyPartsOptionsEnum.ALL) {
       setPromoteActions(ACTIONS.ALL);
     }
   }, [part]);

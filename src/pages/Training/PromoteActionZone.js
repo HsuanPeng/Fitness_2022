@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideo, faCirclePlus, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-
-const options = ['肩', '手臂', '胸', '背', '臀腿', '核心', '上半身', '全身'];
+import React, { useState } from "react";
+import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faVideo,
+  faCirclePlus,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  bodyPartsOptionsEnum,
+  bodyPartsOptionsArray,
+  bodyPartsOptionsLabel,
+} from "../../constants/app";
 
 const PromoteActionZone = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,13 +28,20 @@ const PromoteActionZone = (props) => {
         <PartTitle>請選擇部位</PartTitle>
         <DropDownContainer>
           <DropDownHeader onClick={toggling}>
-            {props.part || '肩'} <FontAwesomeIcon icon={faChevronDown} style={{ pointerEvents: 'none' }} />
+            {bodyPartsOptionsLabel[props.part] ||
+              bodyPartsOptionsLabel[bodyPartsOptionsEnum.SHOULDER]}{" "}
+            <FontAwesomeIcon
+              icon={faChevronDown}
+              style={{ pointerEvents: "none" }}
+            />
           </DropDownHeader>
           {isOpen && (
             <DropDownListContainer>
               <DropDownList>
-                {options.map((option) => (
-                  <ListItem onClick={onOptionClicked(option)}>{option}</ListItem>
+                {bodyPartsOptionsArray.map((option) => (
+                  <ListItem onClick={onOptionClicked(option)}>
+                    {bodyPartsOptionsLabel[option]}
+                  </ListItem>
                 ))}
               </DropDownList>
             </DropDownListContainer>
@@ -43,7 +56,10 @@ const PromoteActionZone = (props) => {
               props.addActionItem(e);
             }}
           >
-            <FontAwesomeIcon icon={faCirclePlus} style={{ pointerEvents: 'none' }} />
+            <FontAwesomeIcon
+              icon={faCirclePlus}
+              style={{ pointerEvents: "none" }}
+            />
           </AddIcon>
           <PromoteListPart>{item.bodyPart}</PromoteListPart>
           <PromoteLisName>{item.actionName}</PromoteLisName>
@@ -55,7 +71,7 @@ const PromoteActionZone = (props) => {
               props.setPlaying(e.target.id);
             }}
           >
-            <FontAwesomeIcon icon={faVideo} style={{ pointerEvents: 'none' }} />
+            <FontAwesomeIcon icon={faVideo} style={{ pointerEvents: "none" }} />
           </VideoTag>
         </PromoteListOutside>
       ))}
@@ -109,12 +125,12 @@ const PartTitle = styled.div`
   color: white;
 `;
 
-const DropDownContainer = styled('div')`
+const DropDownContainer = styled("div")`
   width: 110px;
   letter-spacing: 1px;
 `;
 
-const DropDownHeader = styled('div')`
+const DropDownHeader = styled("div")`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -126,9 +142,9 @@ const DropDownHeader = styled('div')`
   cursor: pointer;
 `;
 
-const DropDownListContainer = styled('div')``;
+const DropDownListContainer = styled("div")``;
 
-const DropDownList = styled('ul')`
+const DropDownList = styled("ul")`
   width: 110px;
   padding: 0;
   margin: 0;
@@ -142,7 +158,7 @@ const DropDownList = styled('ul')`
   }
 `;
 
-const ListItem = styled('li')`
+const ListItem = styled("li")`
   list-style: none;
   cursor: pointer;
   padding: 0px 10px;
@@ -201,7 +217,7 @@ const PromoteLisName = styled.div`
 const VideoTag = styled.div`
   width: 10%;
   cursor: pointer;
-  color: ${(props) => (props.$playing ? '#74c6cc' : 'black')};
+  color: ${(props) => (props.$playing ? "#74c6cc" : "black")};
   &:hover {
     color: #74c6cc;
   }
